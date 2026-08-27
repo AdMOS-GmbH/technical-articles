@@ -17,7 +17,7 @@ The articles are organized into dedicated series, each focusing on a specific ar
 * **RVA — Reliability & Variability**
   Device degradation, defect dynamics, variability, reliability mechanisms, and their growing importance in nanoscale technologies.
 
-* **MAS — Modeling & Simulation**
+* **MOD — Modeling & Simulation**
   Modeling and simulation across different abstraction levels, from semiconductor devices to circuits and systems.
 
 Additional series and articles will be added as the collection grows.
