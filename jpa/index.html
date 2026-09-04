@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fachbeiträge | Peer-Review-Publikationen</title>
+
+  <!-- Poppins matches the navigation font used in the supplied AdMOS header code -->
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --admos-orange: #c97924;
+      --admos-text: #45494b;
+      --admos-bg: #ffffff;
+      --header-max: 1920px;
+      --header-pad: clamp(16px, 3vw, 48px);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Poppins, Arial, sans-serif;
+      color: var(--admos-text);
+      background: #fff;
+    }
+
+    /* =========================================================
+       HEADER REBUILT FROM THE SUPPLIED AdMOS WEBSITE CODE
+       ========================================================= */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      background: var(--admos-bg);
+      border-bottom: 1px solid rgba(69,73,75,.10);
+    }
+
+    .header-shell {
+      width: min(100%, var(--header-max));
+      margin: 0 auto;
+      padding: 8px var(--header-pad);
+    }
+
+    .header-row {
+      display: grid;
+      grid-template-columns: minmax(150px, 2fr) minmax(0, 10fr);
+      align-items: center;
+      gap: 24px;
+      min-height: 120px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      min-width: 0;
+      transform: translateX(-15px);
+    }
+    .brand img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .desktop-nav {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 0;
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: .2px;
+      line-height: 1.5;
+    }
+
+    .nav-item {
+      position: relative;
+    }
+
+    .nav-link,
+    .nav-button {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px 16px;
+      color: var(--admos-text);
+      text-decoration: none;
+      background: transparent;
+      border: 0;
+      font: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover,
+    .nav-button:hover,
+    .nav-item:focus-within > .nav-link,
+    .nav-item:focus-within > .nav-button {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.05);
+    }
+
+    .caret {
+      width: 8px;
+      height: 8px;
+      border-right: 1.6px solid currentColor;
+      border-bottom: 1.6px solid currentColor;
+      transform: rotate(45deg) translateY(-2px);
+      transform-origin: center;
+    }
+
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 2px);
+      right: 0;
+      min-width: 270px;
+      padding: 8px;
+      background: #fff;
+      border: 1px solid rgba(69,73,75,.10);
+      box-shadow: 0 12px 35px rgba(0,0,0,.10);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(6px);
+      transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
+    }
+
+    .nav-item:hover .dropdown,
+    .nav-item:focus-within .dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px 12px;
+      color: var(--admos-text);
+      text-decoration: none;
+      white-space: nowrap;
+      font-size: 15px;
+    }
+
+    .dropdown a:hover {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.10);
+    }
+
+    /* Mobile menu */
+    .menu-toggle {
+      display: none;
+    }
+
+    .menu-icon {
+      display: none;
+      justify-self: end;
+      width: 46px;
+      height: 46px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .menu-icon span,
+    .menu-icon span::before,
+    .menu-icon span::after {
+      content: "";
+      display: block;
+      width: 28px;
+      height: 3px;
+      background: var(--admos-text);
+      position: relative;
+      transition: .2s ease;
+    }
+
+    .menu-icon span::before {
+      position: absolute;
+      top: -9px;
+    }
+
+    .menu-icon span::after {
+      position: absolute;
+      top: 9px;
+    }
+
+    .mobile-nav {
+      display: none;
+    }
+
+    @media (max-width: 980px) {
+      .header-row {
+        grid-template-columns: 1fr auto;
+        min-height: 82px;
+      }
+
+      .brand a {
+        width: min(25vw, 210px);
+        min-width: 150px;
+      }
+
+      .desktop-nav {
+        display: none;
+      }
+      .menu-icon {
+        display: flex;
+      }
+
+      .menu-toggle:checked + .menu-icon span {
+        background: transparent;
+      }
+
+      .menu-toggle:checked + .menu-icon span::before {
+        top: 0;
+        transform: rotate(45deg);
+      }
+
+      .menu-toggle:checked + .menu-icon span::after {
+        top: 0;
+        transform: rotate(-45deg);
+      }
+
+      .menu-toggle:checked ~ .mobile-nav {
+        display: block;
+      }
+
+      .mobile-nav {
+        border-top: 1px solid rgba(69,73,75,.10);
+        padding: 10px 0 18px;
+      }
+
+      .mobile-nav a,
+      .mobile-nav summary {
+        display: block;
+        padding: 12px 4px;
+        color: var(--admos-text);
+        text-decoration: none;
+        cursor: pointer;
+        list-style: none;
+      }
+
+      .mobile-nav details {
+        border-bottom: 1px solid rgba(69,73,75,.07);
+      }
+
+      .mobile-nav details > div {
+        padding-left: 18px;
+      }
+
+      .mobile-nav details a {
+        padding: 9px 4px;
+        font-size: 15px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .brand a {
+        width: 50vw;
+        max-width: 188px;
+        min-width: 125px;
+      }
+    }
+
+    /* =========================================================
+       CUSTOM PAGE AREA
+       ========================================================= */
+    .hero {
+      min-height: 20vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 0;
+      background: linear-gradient(to right,  oklch(0.2 0.1 250), oklch(0.15 0.08 250 / 0.9), transparent), url("assets/bg.jpg");
+      background-size: cover;
+      background-position: center;
+    }
+
+   
+    .brand a {
+      display: block;
+      width: min(22vw, 300px);
+      min-width: 150px;
+      line-height: 0;
+    }
+
+    .content-wrap {
+      width: min(100%, 1180px);
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      margin-bottom: 24px;
+      color: var(--admos-orange);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+    .lead {
+      max-width: 760px;
+      margin-top: 34px;
+      font-size: clamp(18px, 2vw, 25px);
+      line-height: 1.5;
+      color: #ffffff;
+    }
+
+    .section {
+      padding: clamp(70px, 2vw, 120px) clamp(22px, 4vw, 120px);
+    }
+
+    h2 {
+      margin: 0 0 24px;
+      font-size: clamp(34px, 4vw, 62px);
+      line-height: 1.08;
+      color: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .h3-whitebg {
+      margin: 0 0 12px;
+      font-size: clamp(30px, 4vw, 45px);
+      line-height: 1.08;
+      color: #303F6E;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .section p {
+      max-width: 780px;
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    /* =========================================================
+       ARTICLE BOXES
+       ========================================================= */
+
+    .article-box {
+      display: flex;
+      width: 100%;
+      gap: 30px;
+      margin-top: 2rem;
+      margin-bottom: 3rem;
+      text-align: left;
+    }
+
+  /* Individual article card */
+    .article-box > section {
+      display: flex;
+      flex-direction: column;
+      flex: 0 1 calc((100% - 60px) / 3);
+      min-width: 0;
+
+    padding: 1rem;
+    gap: 20px;
+
+    background: #ffffff;
+    box-shadow: 0 0 15px 2px rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+  }
+
+    /* Content inside each card */
+    .article-box div {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    /* Article image */
+    .article-box img {
+      width: 100%;
+      height: 190px;
+      object-fit: contain;
+    }
+
+    /* Article title */
+    .article-box h3 {
+      margin: 0 0 10px;
+      font-size: 1.25rem;
+      color: #303F6E;
+    }
+
+    /* Article description */
+    .article-box p {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    /* Read more button */
+    .article-box a {
+      display: inline-block;
+      align-self: flex-start;
+      margin-top: auto;
+      text-decoration: none;
+      color: var(--admos-orange);
+      border: 2px solid var(--admos-orange);
+      padding: 0.3rem 0.6rem;
+      border-radius: 8px;
+    }
+
+
+    /* =========================================================
+       PUBLICATION METADATA
+       ========================================================= */
+    .publication-meta {
+      margin: 18px 0 20px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(69, 73, 75, 0.15);
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 8px !important;
+    }
+
+    .publication-meta > div {
+      display: grid !important;
+      grid-template-columns: 105px 1fr;
+      gap: 10px;
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
+    .publication-meta span {
+      color: #7a7d80;
+    }
+
+    .publication-meta strong {
+      color: #45494b;
+      font-weight: 500;
+    }
+
+    /* Mobile */
+    @media (max-width: 800px) {
+      .article-box {
+        flex-direction: column;
+      }
+
+      .article-box > section {
+        width: 100%;
+      }
+    }
+
+
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+    footer {
+      padding: 70px 0;
+      width: 100%;
+      background-color: #CAD2D9;
+    }
+
+    .footer-content {
+      margin: 0 auto;
+      max-width: 1200px;
+      width: 100%;
+      color: var(--admos-grey);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .footer-content div {
+      display: flex;
+      gap: 30px;
+      flex-direction: row;
+    }
+
+    .footer-content a {
+      text-decoration: none;
+      color: var(--admos-grey);
+    }
+
+    .footer-content h3 {
+      font-size: 1rem;
+    }
+
+    /* Active navigation item */
+    .nav-link.active {
+      color: var(--admos-orange);
+      position: relative;
+    }
+
+    .nav-link.active::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 4px;
+      height: 2px;
+      background: var(--admos-orange);
+    }
+
+    /* Tablet */
+    @media (max-width: 900px) {
+      .series-box {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      .series-box {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* =========================================================
+       LANGUAGE SELECTOR
+       ========================================================= */
+    .language-switcher {
+      position: fixed;
+      right: 38px;
+      bottom: 24px;
+      z-index: 10000;
+      font-family: Poppins, Arial, sans-serif;
+    }
+
+    .language-switcher-button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 118px;
+      padding: 10px 14px;
+      border: 0;
+      background: #ffffff;
+      color: #333333;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+      cursor: pointer;
+      font: inherit;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .language-switcher-button:hover {
+      background: #f7f7f7;
+    }
+
+    .language-flag {
+      width: 32px;
+      height: 21px;
+      display: block;
+      flex: 0 0 auto;
+    }
+
+    .language-switcher-arrow {
+      margin-left: auto;
+      width: 8px;
+      height: 8px;
+      border-right: 2px solid #555555;
+      border-bottom: 2px solid #555555;
+      transform: rotate(225deg);
+      transition: transform .2s ease;
+    }
+
+    .language-switcher.open .language-switcher-arrow {
+      transform: rotate(45deg);
+    }
+
+    .language-switcher-menu {
+      position: absolute;
+      left: 0;
+      bottom: calc(100% + 6px);
+      min-width: 150px;
+      padding: 6px;
+      margin: 0;
+      list-style: none;
+      background: #ffffff;
+      box-shadow: 0 3px 14px rgba(0, 0, 0, 0.16);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px);
+      transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
+    }
+
+    .language-switcher.open .language-switcher-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .language-switcher-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 9px 10px;
+      border: 0;
+      background: transparent;
+      color: #333333;
+      cursor: pointer;
+      font: inherit;
+      font-size: 15px;
+      text-align: left;
+    }
+
+    .language-switcher-option:hover,
+    .language-switcher-option.active {
+      background: rgba(201, 121, 36, .10);
+      color: var(--admos-orange);
+    }
+
+    @media (max-width: 600px) {
+      .language-switcher {
+        right: 16px;
+        bottom: 16px;
+      }
+
+      .language-switcher-button {
+        min-width: 106px;
+        padding: 9px 12px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- =========================================================
+     SITE HEADER
+     ========================================================= -->
+<header class="site-header">
+  <div class="header-shell">
+    <div class="header-row">
+
+      <div class="brand">
+        <a href="https://www.admos.de/" aria-label="AdMOS Startseite">
+          <img
+            src="https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-455x160.png"
+            srcset="
+              https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-188x66.png 188w,
+              https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-228x80.png 228w,
+              https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-320x113.png 320w,
+              https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-455x160.png 455w
+            "
+            sizes="(min-width:1024px) 17vw,(min-width:768px) 25vw,50vw"
+            alt="AdMOS">
+        </a>
+      </div>
+
+      <nav class="desktop-nav" aria-label="Kopfzeilen-Navigation">
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/" data-de="Startseite" data-en="Home">Startseite</a>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/leistungen-und-produkte/">
+            <span data-de="Leistungen und Produkte" data-en="Services &amp; Products">Leistungen und Produkte</span> <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/"><span data-de="1/f-Measurement System" data-en="1/f Measurement System">1/f-Measurement System</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/"><span data-de="CMOS Modellierung" data-en="CMOS Modeling">CMOS Modellierung</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/"><span data-de="Halbleiter - Messlabor" data-en="Semiconductor Measurement Lab">Halbleiter - Messlabor</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/"><span data-de="Softwareentwicklung" data-en="Software Development">Softwareentwicklung</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/"><span data-de="Designanalyse" data-en="Design Analysis">Designanalyse</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/"><span data-de="Simulation und Beratung" data-en="Simulation & Consulting">Simulation und Beratung</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/"><span data-de="Forschung" data-en="Research">Forschung</span></a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link active" href="https://www.admos.de/fachbeitraege/" data-de="Fachbeiträge" data-en="Technical Articles">Fachbeiträge</a>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/uber-admos/">
+            <span data-de="Über AdMOS" data-en="About AdMOS">Über AdMOS</span> <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/uber-admos/ueber-uns/"><span data-de="Über uns" data-en="About Us">Über uns</span></a>
+            <a href="https://www.admos.de/uber-admos/karriere/"><span data-de="Karriere" data-en="Careers">Karriere</span></a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/kontakt/" data-de="Kontakt" data-en="Contact">Kontakt</a>
+        </div>
+      </nav>
+
+      <input class="menu-toggle" type="checkbox" id="menu-toggle">
+      <label class="menu-icon" for="menu-toggle" aria-label="Menü öffnen">
+        <span></span>
+      </label>
+
+      <nav class="mobile-nav" aria-label="Mobile Navigation">
+        <a href="https://www.admos.de/"><span data-de="Startseite" data-en="Home">Startseite</span></a>
+
+        <details>
+          <summary data-de="Leistungen und Produkte" data-en="Services & Products">Leistungen und Produkte</summary>
+          <div>
+            <a href="https://www.admos.de/leistungen-und-produkte/"><span data-de="Übersicht" data-en="Overview">Übersicht</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/"><span data-de="1/f-Measurement System" data-en="1/f Measurement System">1/f-Measurement System</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/"><span data-de="CMOS Modellierung" data-en="CMOS Modeling">CMOS Modellierung</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/"><span data-de="Halbleiter - Messlabor" data-en="Semiconductor Measurement Lab">Halbleiter - Messlabor</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/"><span data-de="Softwareentwicklung" data-en="Software Development">Softwareentwicklung</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/"><span data-de="Designanalyse" data-en="Design Analysis">Designanalyse</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/"><span data-de="Simulation und Beratung" data-en="Simulation & Consulting">Simulation und Beratung</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/"><span data-de="Forschung" data-en="Research">Forschung</span></a>
+          </div>
+        </details>
+
+        <a href="https://www.admos.de/fachbeitraege/"><span data-de="Fachbeiträge" data-en="Technical Articles">Fachbeiträge</span></a>
+
+        <details>
+          <summary data-de="Über AdMOS" data-en="About AdMOS">Über AdMOS</summary>
+          <div>
+            <a href="https://www.admos.de/uber-admos/"><span data-de="Übersicht" data-en="Overview">Übersicht</span></a>
+            <a href="https://www.admos.de/uber-admos/ueber-uns/"><span data-de="Über uns" data-en="About Us">Über uns</span></a>
+            <a href="https://www.admos.de/uber-admos/karriere/"><span data-de="Karriere" data-en="Careers">Karriere</span></a>
+          </div>
+        </details>
+
+        <a href="https://www.admos.de/kontakt/"><span data-de="Kontakt" data-en="Contact">Kontakt</span></a>
+      </nav>
+
+    </div>
+  </div>
+</header>
+
+<!-- =========================================================
+     MAIN PAGE CONTENT
+     ========================================================= -->
+<main>
+
+  <!-- =========================================================
+       HERO
+       ========================================================= -->
+  <section class="hero">
+    <div class="content-wrap">
+      <div class="eyebrow" data-de="Fachbeiträge / Artikelserien" data-en="Technical Articles / Article Series">Fachbeiträge / Artikelserien</div>
+      <h2 data-de="Peer-Review-Publikationen" data-en="Peer-Reviewed Publications">Peer-Review-Publikationen</h2>
+      <p class="lead"
+         data-de="Entdecken Sie ausgewählte peer-reviewte Fachpublikationen und wissenschaftliche Forschungsergebnisse von AdMOS."
+         data-en="Explore selected peer-reviewed journal publications and scientific research results from AdMOS.">
+        Entdecken Sie ausgewählte peer-reviewte Fachpublikationen und wissenschaftliche Forschungsergebnisse von AdMOS.
+      </p>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       LATEST TECHNICAL ARTICLES
+       ========================================================= -->
+  <section class="section">
+    <div class="content-wrap">
+    <h3 class="h3-whitebg" data-de="Alle Beiträge" data-en="All Articles">Alle Beiträge</h3>
+
+    <div class="article-box">
+      <!-- JPA_002 -->
+      <section>
+        <img src="assets/Thumb2.png"
+             alt="Peer-Review-Publikation 2">
+
+        <div>
+          <h3>Cryogenic-Aware EDA-Compatible Design Libraries for FD-SOI Transistors</h3>
+
+          <p
+            data-de="Extending existing FD-SOI foundry libraries with temperature- and back-bias-dependent effects for seamless integration into established EDA design flows."
+            data-en="Extending existing FD-SOI foundry libraries with temperature- and back-bias-dependent effects for seamless integration into established EDA design flows.">
+            Extending existing FD-SOI foundry libraries with temperature- and back-bias-dependent effects for seamless integration into established EDA design flows.
+          </p>
+
+          <div class="publication-meta">
+            <div>
+              <span data-de="Publikation" data-en="Conference">Konferenz</span>
+              <strong>2026 10th IEEE Electron Devices Technology & Manufacturing Conference (EDTM)</strong>
+            </div>
+            <div>
+              <span data-de="Veröffentlicht" data-en="Published">Veröffentlicht</span>
+              <strong>06.05.2026</strong>
+            </div>
+          </div>
+
+          <a href="https://ieeexplore.ieee.org/document/11497092"
+             target="_blank"
+             rel="noopener noreferrer"
+             data-de="Lesen ►"
+             data-en="Read ►">Lesen ►</a>
+        </div>
+      </section>
+      <!-- JPA_001 -->
+      <section>
+        <img src="assets/Thumb1.png"
+             alt="Peer-Review-Publikation 1">
+
+        <div>
+          <h3>Evaluation of Cryogenic Model Libraries for FDSOI CMOS Transistors</h3>
+
+          <p
+            data-de="A cryogenic simulation library for FDSOI transistors enabling accurate device- and circuit-level modeling from 8 K to room temperature."
+            data-en="A cryogenic simulation library for FDSOI transistors enabling accurate device- and circuit-level modeling from 8 K to room temperature.">
+            A cryogenic simulation library for FDSOI transistors enabling accurate device- and circuit-level modeling from 8 K to room temperature.
+          </p>
+
+          <div class="publication-meta">
+            <div>
+              <span data-de="Publikation" data-en="Publication">Publikation</span>
+              <strong data-de="IEEE Transactions on Electron Devices" data-en="IEEE Transactions on Electron Devices">IEEE Transactions on Electron Devices</strong>
+            </div>
+            <div>
+              <span data-de="Veröffentlicht" data-en="Published">Veröffentlicht</span>
+              <strong data-de="25.03.2026" data-en="25.03.2026">25.03.2026</strong>
+            </div>
+          </div>
+
+          <a href="https://ieeexplore.ieee.org/abstract/document/11456105"
+             target="_blank"
+             rel="noopener noreferrer"
+             data-de="Lesen ►"
+             data-en="Read ►">Lesen ►</a>
+        </div>
+      </section>
+
+      
+
+      <!-- JPA_003 -->
+      <section>
+        <img src="assets/Thumb3.png"
+             alt="Peer-Review-Publikation 3">
+
+        <div>
+          <h3>Cryogenic Performance Assessment of FD-SOI Transistors with Counter-Doped Channel</h3>
+
+          <p
+            data-de="We explore counterdoping as a potential strategy to mitigate the increased threshold voltage at cryogenic temperatures, aiming to reduce power consumption. "
+            data-en="We explore counterdoping as a potential strategy to mitigate the increased threshold voltage at cryogenic temperatures, aiming to reduce power consumption. ">
+            We explore counterdoping as a potential strategy to mitigate the increased threshold voltage at cryogenic temperatures, aiming to reduce power consumption. 
+          </p>
+
+          <div class="publication-meta">
+            <div>
+              <span data-de="Publikation" data-en="Publication">Publikation</span>
+              <strong data-de="2025 IEEE European Solid-State Electronics Research Conference (ESSERC)" data-en="2025 IEEE European Solid-State Electronics Research Conference (ESSERC)">2025 IEEE European Solid-State Electronics Research Conference (ESSERC)</strong>
+            </div>
+            <div>
+              <span data-de="Veröffentlicht" data-en="Published">Veröffentlicht</span>
+              <strong data-de="05.11.2025" data-en="05.11.2025">05.11.2025</strong>
+            </div>
+          </div>
+
+          <a href="https://ieeexplore.ieee.org/document/11214120"
+             data-de="Lesen ►"
+             target="_blank"
+             rel="noopener noreferrer"
+             data-en="Read ►">Lesen ►</a>
+        </div>
+      </section>
+
+    </div>
+    </div>
+  </section>
+
+
+
+</main>
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+<footer>
+  <div class="footer-content">
+    <div>
+      <a href="https://www.admos.de/impressum/" data-de="Impressum" data-en="Legal Notice">Impressum</a>
+      <a href="https://www.admos.de/datenschutzerklarung/" data-de="Datenschutzerklärung" data-en="Privacy Policy">Datenschutzerklärung</a>
+    </div>
+    <p align="right" data-de="@Urheberrecht. Alle Rechte vorbehalten" data-en="@Copyright. All rights reserved">@Urheberrecht. Alle Rechte vorbehalten</p>
+  </div>
+</footer>
+
+
+<!-- =========================================================
+     LANGUAGE SELECTOR
+     ========================================================= -->
+<div class="language-switcher" id="languageSwitcher">
+  <button class="language-switcher-button" id="languageSwitcherButton"
+          type="button" aria-haspopup="true" aria-expanded="false">
+    <svg class="language-flag" id="currentFlag" viewBox="0 0 30 20" aria-hidden="true">
+      <rect width="30" height="6.67" y="0" fill="#000000"/>
+      <rect width="30" height="6.67" y="6.67" fill="#DD0000"/>
+      <rect width="30" height="6.66" y="13.34" fill="#FFCE00"/>
+    </svg>
+    <span id="currentLanguageCode">DE</span>
+    <span class="language-switcher-arrow"></span>
+  </button>
+
+  <div class="language-switcher-menu" role="menu">
+    <button class="language-switcher-option active" type="button" data-language="de" role="menuitem">
+      <svg class="language-flag" viewBox="0 0 30 20" aria-hidden="true">
+        <rect width="30" height="6.67" y="0" fill="#000000"/>
+        <rect width="30" height="6.67" y="6.67" fill="#DD0000"/>
+        <rect width="30" height="6.66" y="13.34" fill="#FFCE00"/>
+      </svg>
+      Deutsch
+    </button>
+
+    <button class="language-switcher-option" type="button" data-language="en" role="menuitem">
+      <svg class="language-flag" viewBox="0 0 60 30" aria-hidden="true">
+        <clipPath id="ukClip"><rect width="60" height="30"/></clipPath>
+        <g clip-path="url(#ukClip)">
+          <rect width="60" height="30" fill="#012169"/>
+          <path d="M0 0L60 30M60 0L0 30" stroke="#FFFFFF" stroke-width="6"/>
+          <path d="M0 0L60 30M60 0L0 30" stroke="#C8102E" stroke-width="2.5"/>
+          <path d="M30 0V30M0 15H60" stroke="#FFFFFF" stroke-width="10"/>
+          <path d="M30 0V30M0 15H60" stroke="#C8102E" stroke-width="6"/>
+        </g>
+      </svg>
+      English
+    </button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const switcher = document.getElementById("languageSwitcher");
+    const button = document.getElementById("languageSwitcherButton");
+    const code = document.getElementById("currentLanguageCode");
+    const options = switcher.querySelectorAll(".language-switcher-option");
+    const currentFlag = document.getElementById("currentFlag");
+
+    const germanFlag = `
+      <rect width="30" height="6.67" y="0" fill="#000000"/>
+      <rect width="30" height="6.67" y="6.67" fill="#DD0000"/>
+      <rect width="30" height="6.66" y="13.34" fill="#FFCE00"/>
+    `;
+
+    const englishFlag = `
+      <rect width="60" height="30" fill="#012169"/>
+      <path d="M0 0L60 30M60 0L0 30" stroke="#FFFFFF" stroke-width="6"/>
+      <path d="M0 0L60 30M60 0L0 30" stroke="#C8102E" stroke-width="2.5"/>
+      <path d="M30 0V30M0 15H60" stroke="#FFFFFF" stroke-width="10"/>
+      <path d="M30 0V30M0 15H60" stroke="#C8102E" stroke-width="6"/>
+    `;
+
+    function setLanguage(language) {
+      document.documentElement.lang = language;
+
+      document.querySelectorAll("[data-de][data-en]").forEach(function (element) {
+        element.textContent = element.dataset[language];
+      });
+
+      code.textContent = language.toUpperCase();
+
+      if (language === "de") {
+        currentFlag.setAttribute("viewBox", "0 0 30 20");
+        currentFlag.innerHTML = germanFlag;
+      } else {
+        currentFlag.setAttribute("viewBox", "0 0 60 30");
+        currentFlag.innerHTML = englishFlag;
+      }
+
+      options.forEach(function (option) {
+        option.classList.toggle("active", option.dataset.language === language);
+      });
+
+      localStorage.setItem("admos-articles-language", language);
+      switcher.classList.remove("open");
+      button.setAttribute("aria-expanded", "false");
+    }
+
+    button.addEventListener("click", function () {
+      const isOpen = switcher.classList.toggle("open");
+      button.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    options.forEach(function (option) {
+      option.addEventListener("click", function () {
+        setLanguage(option.dataset.language);
+      });
+    });
+
+    document.addEventListener("click", function (event) {
+      if (!switcher.contains(event.target)) {
+        switcher.classList.remove("open");
+        button.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    const savedLanguage = localStorage.getItem("admos-articles-language");
+    setLanguage(savedLanguage === "en" ? "en" : "de");
+  }());
+</script>
+
+</body>
+</html>
