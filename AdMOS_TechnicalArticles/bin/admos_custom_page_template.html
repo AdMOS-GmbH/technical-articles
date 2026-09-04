@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AdMOS Custom Page Template</title>
+
+  <!-- Poppins matches the navigation font used in the supplied AdMOS header code -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --admos-orange: #c97924;
+      --admos-text: #45494b;
+      --admos-bg: #ffffff;
+      --header-max: 1920px;
+      --header-inner: 960px;
+      --header-pad: clamp(16px, 3vw, 48px);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Poppins, Arial, sans-serif;
+      color: var(--admos-text);
+      background: #fff;
+    }
+
+    /* =========================================================
+       HEADER REBUILT FROM THE SUPPLIED AdMOS WEBSITE CODE
+       ========================================================= */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      background: var(--admos-bg);
+      border-bottom: 1px solid rgba(69,73,75,.10);
+    }
+
+    .header-shell {
+      width: min(100%, var(--header-max));
+      margin: 0 auto;
+      padding: 8px var(--header-pad);
+    }
+
+    .header-row {
+      display: grid;
+      grid-template-columns: minmax(150px, 2fr) minmax(0, 10fr);
+      align-items: center;
+      gap: 24px;
+      min-height: 96px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      min-width: 0;
+    }
+
+    .brand a {
+      display: block;
+      width: min(17vw, 228px);
+      min-width: 150px;
+      line-height: 0;
+    }
+
+    .brand img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .desktop-nav {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 0;
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: .2px;
+      line-height: 1.5;
+    }
+
+    .nav-item {
+      position: relative;
+    }
+
+    .nav-link,
+    .nav-button {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px 16px;
+      color: var(--admos-text);
+      text-decoration: none;
+      background: transparent;
+      border: 0;
+      font: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover,
+    .nav-button:hover,
+    .nav-item:focus-within > .nav-link,
+    .nav-item:focus-within > .nav-button {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.05);
+    }
+
+    .caret {
+      width: 8px;
+      height: 8px;
+      border-right: 1.6px solid currentColor;
+      border-bottom: 1.6px solid currentColor;
+      transform: rotate(45deg) translateY(-2px);
+      transform-origin: center;
+    }
+
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 2px);
+      right: 0;
+      min-width: 270px;
+      padding: 8px;
+      background: #fff;
+      border: 1px solid rgba(69,73,75,.10);
+      box-shadow: 0 12px 35px rgba(0,0,0,.10);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(6px);
+      transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
+    }
+
+    .nav-item:hover .dropdown,
+    .nav-item:focus-within .dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px 12px;
+      color: var(--admos-text);
+      text-decoration: none;
+      white-space: nowrap;
+      font-size: 15px;
+    }
+
+    .dropdown a:hover {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.10);
+    }
+
+    /* Mobile menu */
+    .menu-toggle {
+      display: none;
+    }
+
+    .menu-icon {
+      display: none;
+      justify-self: end;
+      width: 46px;
+      height: 46px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .menu-icon span,
+    .menu-icon span::before,
+    .menu-icon span::after {
+      content: "";
+      display: block;
+      width: 28px;
+      height: 3px;
+      background: var(--admos-text);
+      position: relative;
+      transition: .2s ease;
+    }
+
+    .menu-icon span::before {
+      position: absolute;
+      top: -9px;
+    }
+
+    .menu-icon span::after {
+      position: absolute;
+      top: 9px;
+    }
+
+    .mobile-nav {
+      display: none;
+    }
+
+    @media (max-width: 980px) {
+      .header-row {
+        grid-template-columns: 1fr auto;
+        min-height: 82px;
+      }
+
+      .brand a {
+        width: min(25vw, 210px);
+        min-width: 150px;
+      }
+
+      .desktop-nav { display: none; }
+      .menu-icon { display: flex; }
+
+      .menu-toggle:checked + .menu-icon span {
+        background: transparent;
+      }
+
+      .menu-toggle:checked + .menu-icon span::before {
+        top: 0;
+        transform: rotate(45deg);
+      }
+
+      .menu-toggle:checked + .menu-icon span::after {
+        top: 0;
+        transform: rotate(-45deg);
+      }
+
+      .menu-toggle:checked ~ .mobile-nav {
+        display: block;
+      }
+
+      .mobile-nav {
+        border-top: 1px solid rgba(69,73,75,.10);
+        padding: 10px 0 18px;
+      }
+
+      .mobile-nav a,
+      .mobile-nav summary {
+        display: block;
+        padding: 12px 4px;
+        color: var(--admos-text);
+        text-decoration: none;
+        cursor: pointer;
+        list-style: none;
+      }
+
+      .mobile-nav details {
+        border-bottom: 1px solid rgba(69,73,75,.07);
+      }
+
+      .mobile-nav details > div {
+        padding-left: 18px;
+      }
+
+      .mobile-nav details a {
+        padding: 9px 4px;
+        font-size: 15px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .brand a {
+        width: 50vw;
+        max-width: 188px;
+        min-width: 125px;
+      }
+    }
+
+    /* =========================================================
+       CUSTOM PAGE AREA
+       ========================================================= */
+    .hero {
+      min-height: 72vh;
+      display: flex;
+      align-items: center;  
+      padding: clamp(70px, 10vw, 150px) clamp(22px, 7vw, 120px);
+      background: linear-gradient(125deg,#f1f2f0 0%,#fff 58%,#ececea 100%);
+    }
+
+    .content-wrap {
+      width: min(100%, 1180px);
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      margin-bottom: 24px;
+      color: var(--admos-orange);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 980px;
+      margin: 0;
+      font-size: clamp(46px, 7vw, 104px);
+      line-height: .95;
+      letter-spacing: -.045em;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #242728;
+    }
+
+    .lead {
+      max-width: 760px;
+      margin-top: 34px;
+      font-size: clamp(18px, 2vw, 25px);
+      line-height: 1.5;
+    }
+
+    .section {
+      padding: clamp(70px, 8vw, 120px) clamp(22px, 7vw, 120px);
+    }
+
+    .section.alt { background: #f5f5f3; }
+
+    h2 {
+      margin: 0 0 24px;
+      font-size: clamp(34px, 4vw, 62px);
+      line-height: 1.08;
+      color: #242728;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .section p {
+      max-width: 780px;
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      margin-top: 42px;
+    }
+
+    .card {
+      padding: 28px;
+      min-height: 220px;
+      border: 1px solid #e2e2df;
+      background: #fff;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      color: #242728;
+      font-size: 23px;
+    }
+
+    @media (max-width: 800px) {
+      .cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-shell">
+    <div class="header-row">
+
+      <div class="brand">
+        <a href="https://www.admos.de/" aria-label="AdMOS Startseite">
+          <img
+            src="https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-455x160.png"
+            srcset="
+              https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-188x66.png 188w,
+              https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-228x80.png 228w,
+              https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-320x113.png 320w,
+              https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-455x160.png 455w
+            "
+            sizes="(min-width:1024px) 17vw,(min-width:768px) 25vw,50vw"
+            alt="AdMOS">
+        </a>
+      </div>
+
+      <nav class="desktop-nav" aria-label="Kopfzeilen-Navigation">
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/">Startseite</a>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/leistungen-und-produkte/">
+            Leistungen und Produkte <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/">1/f-Measurement System</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/">CMOS Modellierung</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/">Halbleiter - Messlabor</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/">Softwareentwicklung</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/">Designanalyse</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/">Simulation und Beratung</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/">Forschung</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/fachbeitraege/">Fachbeiträge</a>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/uber-admos/">
+            Über AdMOS <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/uber-admos/ueber-uns/">Über uns</a>
+            <a href="https://www.admos.de/uber-admos/karriere/">Karriere</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/kontakt/">Kontakt</a>
+        </div>
+      </nav>
+
+      <input class="menu-toggle" type="checkbox" id="menu-toggle">
+      <label class="menu-icon" for="menu-toggle" aria-label="Menü öffnen">
+        <span></span>
+      </label>
+
+      <nav class="mobile-nav" aria-label="Mobile Navigation">
+        <a href="https://www.admos.de/">Startseite</a>
+
+        <details>
+          <summary>Leistungen und Produkte</summary>
+          <div>
+            <a href="https://www.admos.de/leistungen-und-produkte/">Übersicht</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/">1/f-Measurement System</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/">CMOS Modellierung</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/">Halbleiter - Messlabor</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/">Softwareentwicklung</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/">Designanalyse</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/">Simulation und Beratung</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/">Forschung</a>
+          </div>
+        </details>
+
+        <a href="https://www.admos.de/fachbeitraege/">Fachbeiträge</a>
+
+        <details>
+          <summary>Über AdMOS</summary>
+          <div>
+            <a href="https://www.admos.de/uber-admos/">Übersicht</a>
+            <a href="https://www.admos.de/uber-admos/ueber-uns/">Über uns</a>
+            <a href="https://www.admos.de/uber-admos/karriere/">Karriere</a>
+          </div>
+        </details>
+
+        <a href="https://www.admos.de/kontakt/">Kontakt</a>
+      </nav>
+
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="content-wrap">
+      <div class="eyebrow">Custom AdMOS Page</div>
+      <h1>Your page content starts here.</h1>
+      <p class="lead">
+        This template keeps the AdMOS header and navigation separate from your custom page content.
+        Replace everything below the header with your own sections.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="content-wrap">
+      <h2>Custom content section</h2>
+      <p>
+        Add your product, research, measurement, modeling, simulation or project content here.
+      </p>
+
+      <div class="cards">
+        <article class="card">
+          <h3>Section One</h3>
+          <p>Your own content.</p>
+        </article>
+        <article class="card">
+          <h3>Section Two</h3>
+          <p>Your own content.</p>
+        </article>
+        <article class="card">
+          <h3>Section Three</h3>
+          <p>Your own content.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="content-wrap">
+      <h2>Another section</h2>
+      <p>Duplicate or remove sections as needed.</p>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>

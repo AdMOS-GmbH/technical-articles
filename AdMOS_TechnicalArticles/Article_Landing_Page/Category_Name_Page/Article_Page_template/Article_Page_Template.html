@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Article</title>
+        
+        <!--================================================================================================================-->
+                                                            <!--Stylesheet-->
+        <!--================================================================================================================-->
+
+        <style>
+    
+        /*==================================================Variables=========================================================*/
+
+            :root{
+                --bg-color: #ffffff;
+                --hero-text: #ffffff;
+                --admos-ice-blue:#CAD2D9;
+                --admos-orange:#C97924;
+                --admos-dark-blue:#303F6E;
+                --admos-light-blue:#548BC0;
+                --admos-grey: #45494b;
+                --header-max: 1920px;
+                --header-inner: 960px;
+                --header-pad: clamp(16px, 3vw, 48px);
+            }
+
+            *{
+                margin: 0;
+                padding: 0;
+            }
+        /*===================================================Base=============================================================*/
+        
+            body{
+                background-color: var(--bg-color);
+                font-family: 'Open Sans',sans-serif;
+                
+            }
+
+        /*===================================================Webpage===============================================================*/
+
+        /*======================================AdMOS Navigation============================================*/
+
+            .site-header {
+                position: sticky;
+                top: 0;
+                z-index:  9999;
+                background: white;
+              
+            }
+
+            .header-shell {
+                width: min(100%, var(--header-max));
+                margin: 0 auto;
+            }
+
+            .header-row {
+                display: grid;
+                grid-template-columns: minmax(150px, 2fr) minmax(0, 10fr);
+                align-items: center;
+                gap: 24px;
+                min-height: 96px;
+            }
+
+            .brand {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                min-width: 0;
+            }
+
+            .brand a {
+                display: block;
+                width: min(17vw, 228px);
+                min-width: 150px;
+                line-height: 0;
+            }
+
+            .brand img {
+                display: block;
+                width: 100%;
+                height: auto;
+            }
+
+            .desktop-nav {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 0;
+                font-size: 16px;
+                font-weight: 400;
+                letter-spacing: .2px;
+                line-height: 1.5;
+            }
+
+            .nav-item {
+                position: relative;
+            }
+
+            .nav-link,
+            .nav-button {
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                padding: 12px 16px;
+                color: var(--admos-grey);
+                text-decoration: none;
+                background: transparent;
+                border: 0;
+                font: inherit;
+                cursor: pointer;
+                white-space: nowrap;
+            }
+
+            .nav-link:hover,
+            .nav-button:hover,
+            .nav-item:focus-within > .nav-link,
+            .nav-item:focus-within > .nav-button {
+                color: var(--admos-orange);
+                background: rgba(201,121,36,.05);
+            }
+
+            .caret {
+                width: 8px;
+                height: 8px;
+                border-right: 1.6px solid currentColor;
+                border-bottom: 1.6px solid currentColor;
+                transform: rotate(45deg) translateY(-2px);
+                transform-origin: center;
+            }
+
+            .dropdown {
+                position: absolute;
+                z-index: 9999;
+                top: calc(100% + 2px);
+                right: 0;
+                min-width: 270px;
+                padding: 8px;
+                background: #fff;
+                border: 1px solid rgba(69,73,75,.10);
+                box-shadow: 0 12px 35px rgba(0,0,0,.10);
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(6px);
+                transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
+            }
+
+            .nav-item:hover .dropdown,
+            .nav-item:focus-within .dropdown {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+
+            .dropdown a {
+                display: block;
+                padding: 10px 12px;
+                color: var(--admos-grey);
+                text-decoration: none;
+                white-space: nowrap;
+                font-size: 15px;
+            }
+
+            .dropdown a:hover {
+                color: var(--admos-orange);
+                background: rgba(201,121,36,.10);
+            }
+
+            /* Mobile menu */
+            .menu-toggle {
+                display: none;
+            }
+
+            .menu-icon {
+                display: none;
+                justify-self: end;
+                width: 46px;
+                height: 46px;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+            }
+
+            .menu-icon span,
+            .menu-icon span::before,
+            .menu-icon span::after {
+                content: "";
+                display: block;
+                width: 28px;
+                height: 3px;
+                background: var(--admos-grey);
+                position: relative;
+                transition: .2s ease;
+            }
+
+            .menu-icon span::before {
+                position: absolute;
+                top: -9px;
+            }
+
+            .menu-icon span::after {
+                position: absolute;
+                top: 9px;
+            }
+
+            .mobile-nav {
+                display: none;
+            }
+
+            
+    /*=====================================================Breadcrumb=================================================*/
+            
+            .breadcrumb{
+                position: sticky;
+                top: 0;
+                z-index: 9;
+                align-self: flex-start;
+                background-color: var(--admos-dark-blue);
+            }
+
+            .breadcrumb ol{
+                display: flex;
+                width: min(100%, var(--header-max));
+                margin: 0 auto;
+                box-sizing: border-box;
+                color: white;
+                padding: 1rem;
+                flex-direction: row;
+                list-style: none;
+                gap: 1rem;
+            }
+
+            .breadcrumb li:not(:last-child)::after {
+                content: "►";
+                margin: 0 0 0 1rem;
+                color: white;
+            }
+
+            .breadcrumb a{
+                color: white;
+                text-decoration: none;
+            }
+
+            .breadcrumb a:hover{
+                color: var(--admos-orange);
+            }
+
+    /*=====================================================Hero=================================================*/
+            
+            .hero{
+                min-height: 40vh;
+                display: flex;
+                text-align: center;
+                align-items: center;
+                justify-content: center;
+                padding: 3rem 0;
+                background: linear-gradient(to top,  oklch(0.2 0.1 250), oklch(0.15 0.08 250 / 0.9), transparent), url("content/bg.jpg");
+                background-size: cover;
+                background-position: center;
+            }
+
+            .hero-content{
+              color: var(--hero-text);
+              padding: 1rem;
+              font-size: 1.5rem;
+              max-width: var(--header-max);
+              overflow-wrap: break-word;
+              text-align: center;
+            }
+
+            /*----Pdf Button---*/
+
+            .pdf{
+                display: inline-block;
+                text-decoration: none;
+                font-weight: bold;
+                border: solid 3px;
+                padding: 5px 5px;
+                border-radius: 8px;
+                color: var(--admos-orange);
+            }
+
+            .pdf:hover{
+                background-color: var(--admos-orange);
+                border-color: var(--admos-orange);
+                color: white;
+            }
+
+            /*---Information under the hero title---*/
+
+            .pub-info{
+                justify-content: center;
+                display: flex;
+                flex-direction: row;
+                gap: 3rem;
+                margin:1rem 0 2rem;
+            } 
+
+            /*----Hero Typography-----*/
+
+            .hero-content strong{
+                text-transform: uppercase;
+                font-size:  1rem;
+                color: var(--hero-text);
+            }
+
+            .hero-content h1 {
+                font-size: clamp(2rem, 5vw, 3.0rem);
+                line-height: 1.2;
+                margin: 1.5rem 0;
+            }
+
+            .hero-content p {
+                font-size: 1.25rem;
+                line-height: 1.6;
+                margin: 0;
+            }
+
+            .hero-content a{
+                font-size: 1rem;
+            }
+
+            .pub-info p{
+                font-size: 1rem;
+            }
+            
+
+    /*============================================Main Article==========================================*/
+        
+            /*------------------Layout----------------*/
+
+            .page-layout{
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                margin: 0 auto;
+            }
+
+            .sidebar{
+                max-width: 400px;
+                position: sticky;
+                top: clamp(10rem, 15vh, 12rem); 
+                align-self: flex-start;
+            }
+
+            .article{
+                max-width: 730px;
+            }
+        
+            .sidebar, .article{
+                display: flex;
+                flex-direction: column;
+                margin: 20px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                width: 100%;
+            }
+
+            /*---------------Sidebar-----------*/
+
+      /*------Related Articles----------*/
+
+            .relarticles a{
+                text-decoration: none;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                margin-bottom: 1.5rem;
+                max-width: 100%;  
+            }
+
+            .relarticles p{
+                font-size: 0.8rem;
+                margin-bottom: 5px;
+                color: black;
+            }
+
+            .relarticles h3{
+                font-size: 1rem;
+                color: var(--admos-dark-blue);
+                margin-bottom: 8px;
+            }
+
+            .relarticles img{
+                width: 80px;
+                height: 80px;
+                object-fit:cover;
+                margin-right: 1rem;
+            }
+
+      /*---------Article Tags-----------*/
+
+            .tags section{
+                display: flex;
+                flex-direction: row;
+                gap: 1rem;
+                max-width: 100%;
+                flex-wrap: wrap;
+            }
+
+          
+
+            /*--------------Main Article Typography----------*/
+
+            .sidebar h2{
+                margin-bottom: 1rem;
+                color: var(--admos-dark-blue);
+            }
+
+            .tags p{
+                text-align:center;
+                font-weight: bold;
+                text-decoration: none;
+                color: var(--admos-orange);
+                border: solid 3px;
+                border-radius: 8px;
+                box-sizing: border-box;
+                padding: 5px 5px;
+            }
+            
+          
+            .article h2 {
+                margin: 1rem 0 1rem 0;
+                font-size: clamp(1.5rem, 4vw + 1rem, 2rem); 
+                color: var(--admos-dark-blue);
+            }
+
+            .article p {
+                line-height: 1.6;
+                margin-bottom: 1.25rem;
+                font-size: clamp(1rem, 2vw + 0.5rem, 1.5rem);
+                color: var(--admos-light-blue);
+            }
+            .article figure{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin: 2rem 0;
+            }
+
+            .article img {
+                display: block;
+                max-width: 100%;
+                max-height: 70vh;
+                width: auto;      
+                height: auto;      
+                object-fit: contain;
+                margin-bottom: 1rem;
+            }
+
+            .article figcaption{
+                color: var(--admos-orange);
+                line-height: 1.5;
+            }
+
+            .article ol{
+              font-size: 0.9rem;
+              padding-left: 1rem;
+              color: var(--admos-grey);
+              margin-bottom: 2rem;
+            }
+
+            /*--------------Footer----------*/
+
+            footer { 
+                padding: 70px 0; 
+                width: 100%; 
+                background-color: var(--admos-ice-blue); 
+            } 
+
+            .footer-content { 
+                margin: 0 auto; 
+                max-width: 1200px;
+                width: 100%;
+                color: var(--admos-grey);
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center;
+                padding: 0 20px; 
+            } 
+
+            .footer-content div { 
+                display: flex;
+                gap: 30px;
+                flex-direction: row; 
+            }
+
+            .footer-content a{
+                text-decoration: none;
+                color: var(--admos-grey);
+            }
+
+            .footer-content h3{
+                font-size: 1rem;
+            }
+        
+        
+
+        /*================================================================================================MEDIA QUERY========Layout for mobile and stuff================================================================*/
+
+        @media (max-width: 980px) {
+          .header-row {
+              grid-template-columns: 1fr auto;
+              min-height: 82px;
+          }
+
+          .brand a {
+              width: min(25vw, 210px);
+              min-width: 150px;
+          }
+
+          .desktop-nav { display: none; }
+          .menu-icon { display: flex; }
+
+          .menu-toggle:checked + .menu-icon span {
+              background: transparent;
+          }
+
+          .menu-toggle:checked + .menu-icon span::before {
+              top: 0;
+              transform: rotate(45deg);
+          }
+
+          .menu-toggle:checked + .menu-icon span::after {
+              top: 0;
+              transform: rotate(-45deg);
+          }
+
+          .menu-toggle:checked ~ .mobile-nav {
+              display: block;
+          }
+
+          .mobile-nav {
+              border-top: 1px solid rgba(69,73,75,.10);
+              padding: 10px 0 18px;
+          }
+
+          .mobile-nav a,
+          .mobile-nav summary {
+              display: block;
+              padding: 12px 4px;
+              color: var(--admos-grey);
+              text-decoration: none;
+              cursor: pointer;
+              list-style: none;
+          }
+
+          .mobile-nav details {
+              border-bottom: 1px solid rgba(69,73,75,.07);
+          }
+
+          .mobile-nav details > div {
+              padding-left: 18px;
+          }
+
+          .mobile-nav details a {
+              padding: 9px 4px;
+              font-size: 15px;
+          }
+        }
+
+
+        @media (max-width: 600px) {
+          .brand a {
+              width: 50vw;
+              max-width: 188px;
+              min-width: 125px;
+          }
+        }
+
+
+        @media (max-width: 968px), (max-height: 650px) {
+            .page-layout {
+                flex-direction: column; 
+                align-items: center;    
+                }
+            
+            .sidebar{
+                align-self: center;
+            }
+            }
+
+
+        @media (max-width: 880px) {
+            .page-layout {
+                padding: 0 1.25rem;  /* 20px — keeps text off the edge */
+            }
+            .pub-info{
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 20px;
+            }
+            
+            .breadcrumb li:not(:nth-last-child(2)) {
+                display: none;
+            }
+            
+            .breadcrumb li:nth-last-child(2)::after {
+                content: none;
+            }
+
+            .breadcrumb li:nth-last-child(2) a::before {
+                content: "◄ Back to ";
+            }
+        }
+
+        </style>
+    </head>
+
+        <!--================================================================================================================-->
+                                                            <!--Text-->
+        <!--================================================================================================================-->
+
+
+    <body>
+        <header class="site-header">
+  <div class="header-shell">
+    <div class="header-row">
+        
+      <div class="brand">
+        <a href="https://www.admos.de/" aria-label="AdMOS Startseite">
+          <img
+            src="https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-455x160.png"
+            srcset="
+              https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-188x66.png 188w,
+              https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-228x80.png 228w,
+              https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-320x113.png 320w,
+              https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-455x160.png 455w
+            "
+            sizes="(min-width:1024px) 17vw,(min-width:768px) 25vw,50vw"
+            alt="AdMOS">
+        </a>
+      </div>
+
+      <nav class="desktop-nav" aria-label="Kopfzeilen-Navigation">
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/">Startseite</a>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/leistungen-und-produkte/">
+            Leistungen und Produkte <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/">1/f-Measurement System</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/">CMOS Modellierung</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/">Halbleiter - Messlabor</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/">Softwareentwicklung</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/">Designanalyse</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/">Simulation und Beratung</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/">Forschung</a>
+          </div>
+        </div>
+            
+          <a class="nav-link" href="../../Article_Landing_Page.html">Fachbeiträge </a>
+          
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/uber-admos/">
+            Über AdMOS <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/uber-admos/ueber-uns/">Über uns</a>
+            <a href="https://www.admos.de/uber-admos/karriere/">Karriere</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/kontakt/">Kontakt</a>
+        </div>
+      </nav>
+
+      
+      <input class="menu-toggle" type="checkbox" id="menu-toggle">
+      <label class="menu-icon" for="menu-toggle" aria-label="Menü öffnen">
+        <span></span>
+      </label>
+
+      <nav class="mobile-nav" aria-label="Mobile Navigation">
+        <a href="https://www.admos.de/">Startseite</a>
+
+        <details>
+          <summary>Leistungen und Produkte</summary>
+          <div>
+            <a href="https://www.admos.de/leistungen-und-produkte/">Übersicht</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/">1/f-Measurement System</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/">CMOS Modellierung</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/">Halbleiter - Messlabor</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/">Softwareentwicklung</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/">Designanalyse</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/">Simulation und Beratung</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/">Forschung</a>
+          </div>
+        </details>
+
+        <a href="https://www.admos.de/fachbeitraege/">Fachbeiträge</a>
+
+        <details>
+          <summary>Über AdMOS</summary>
+          <div>
+            <a href="https://www.admos.de/uber-admos/">Übersicht</a>
+            <a href="https://www.admos.de/uber-admos/ueber-uns/">Über uns</a>
+            <a href="https://www.admos.de/uber-admos/karriere/">Karriere</a>
+          </div>
+        </details>
+        <a href="https://www.admos.de/kontakt/">Kontakt</a>
+      </nav>
+    </div>
+  </div>
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+          <li><a href="../../Article_Landing_Page.html">Technical Papers</a></li>
+          <li><a href="../Category_Name_Page.html">Category</a></li>
+          <li><span aria-current="placeholder">Article</span></li>
+      </ol>
+  </nav>
+</header>
+        <section class="hero">
+            <div class="hero-content">
+                <strong>Category Name more like Cat Glory. you know, like Cats. meow</strong>
+                <h1>A wonderful Title for a wonderful time</h1>
+                <div class="pub-info">
+                    <p>Date it was released</p>
+                    <p>Time to read</p>
+                </div>
+                <a href="pdf/example.pdf" download="Article Name" class="pdf" >Download to pdf</a>
+            </div>
+        </section>
+        <div class="page-wrapper">
+             <div class=page-layout>
+                <div class="article">
+                    <article>
+                      <h2>Header 1</h2>
+                      <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Assumenda omnis rerum qui ad hic. Nostrum impedit deserunt, amet ex eligendi, neque soluta aut debitis in nemo laudantium, officia perspiciatis maiores.</p>
+                      <figure>
+                        <img src="content/placeholder.png" alt="placeholder">
+                        <figcaption>Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi deserunt corporis accusamus reiciendis impedit. Unde eum repellendus error voluptates tempore iusto magnam neque corporis asperiores aliquid quos iure, natus voluptatem?</figcaption>
+                      </figure>
+                      <h2>Header 2</h2>
+                      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex, animi laudantium unde quidem similique vero ullam quod voluptatibus maiores inventore amet, ipsam obcaecati repudiandae id? Tempore odio fugit molestias ad?</p>
+                      <figure>
+                        <img src="content/placeholder.png" alt="placeholder">
+                        <figcaption>Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi deserunt corporis accusamus reiciendis impedit. Unde eum repellendus error voluptates tempore iusto magnam neque corporis asperiores aliquid quos iure, natus voluptatem?</figcaption>
+                      </figure>
+                      <h2>Header 3</h2>
+                      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. A autem vero eos earum perferendis, recusandae, illum tempore amet iste unde, expedita est vel nam. Eaque dolore rerum fugiat cupiditate perferendis?</p>
+                      <figure>
+                        <img src="content/placeholder.png" alt="placeholder">
+                        <figcaption>Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi deserunt corporis accusamus reiciendis impedit. Unde eum repellendus error voluptates tempore iusto magnam neque corporis asperiores aliquid quos iure, natus voluptatem?</figcaption>
+                      </figure>
+                      <h2>Header 4</h2>
+                      <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit veritatis dolor saepe quam quia quod rem. Quaerat voluptatem nisi voluptates molestiae doloremque, quas delectus incidunt, amet fugiat tenetur perspiciatis veniam!</p>
+                      <figure>
+                        <img src="content/placeholder.png" alt="placeholder">
+                        <figcaption>Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi deserunt corporis accusamus reiciendis impedit. Unde eum repellendus error voluptates tempore iusto magnam neque corporis asperiores aliquid quos iure, natus voluptatem?</figcaption>
+                      </figure>
+                      <h2>References</h2>
+                      <ol>
+                        <li>Source 1</li>
+                        <li>Source 2</li>
+                        <li>Source 3</li>
+                        <li>Source 4</li>
+                      </ol>
+                    </article>
+                </div>
+                <div class="sidebar">
+                    <h2>Related Articles</h2>
+                    <div class="relarticles">
+                        <a href="Article_Page_Template.html">
+                            <img src="content/placeholder.png" alt="Article Image">
+                            <div>
+                                <h3>Catchy Title</h3>
+                                <p>Date of release</p>
+                            </div>
+                        </a>
+                        <a href="Article_Page_Template.html">
+                            <img src="content/placeholder.png" alt="Article Image">
+                            <div>
+                                <h3>Catchy Title</h3>
+                                <p>Date of release</p>
+                            </div>
+                        </a>
+                        <a href="Article_Page_Template.html">
+                            <img src="content/placeholder.png" alt="Article Image">
+                            <div>
+                                <h3>Catchy Title</h3>
+                                <p>Date of release</p>
+                            </div>
+                        </a>
+                    </div>
+                    <h2>Article Tags</h2>
+                    <div class="tags">
+                        <section>
+                            <p>1/f Noise</p>
+                            <p>Flicker Noise</p>
+                            <p>MOSFET</p>
+                            <p>TCAD</p>
+                            <p>BSIM</p>
+                            <p>Measurement</p>
+                        </section>
+                    </div>
+            </div>
+        </div>
+        <footer>
+        <div class="footer-content">
+            <div>
+            <a href="https://www.admos.de/impressum/">Impressum</a>
+            <a href="https://www.admos.de/datenschutzerklarung/">Datenschutzerklärung</a>
+            </div>
+            <h3>@Urheberrecht. Alle Rechte vorbehalten</h3>
+        </div>
+    </footer>
+    </body>
+
+</html> 
