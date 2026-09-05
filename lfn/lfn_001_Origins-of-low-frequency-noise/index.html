@@ -216,16 +216,10 @@
        ARTICLE HERO
        ========================================================= */
     .article-hero {
+      min-height: 20vh;
+      display: flex;
       padding: clamp(60px, 2vw, 110px) clamp(22px, 2vw, 120px);
-      background:
-        linear-gradient(
-          to right,
-          rgba(48, 63, 110, 0.98) 0%,
-          rgba(48, 63, 110, 0.90) 45%,
-          rgba(48, 63, 110, 0.62) 75%,
-          rgba(48, 63, 110, 0.28) 100%
-        ),
-        url("assets/bg.jpg");
+      background: linear-gradient(to right,  oklch(0.2 0.1 250), oklch(0.15 0.08 250 / 0.9), transparent), url("assets/bg.jpg");
       background-size: cover;
       background-position: center;
     }
