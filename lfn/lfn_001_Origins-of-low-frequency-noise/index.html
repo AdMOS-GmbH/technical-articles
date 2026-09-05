@@ -1,0 +1,955 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Small Signals, Huge Consequences | AdMOS Technical Articles</title>
+
+  <link rel="icon" type="image/png" href="../../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --admos-orange: #c97924;
+      --admos-text: #45494b;
+      --admos-bg: #ffffff;
+      --admos-blue: #303F6E;
+      --admos-ice: #CAD2D9;
+      --header-max: 1920px;
+      --header-pad: clamp(16px, 3vw, 48px);
+      --content-max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Poppins, Arial, sans-serif;
+      color: var(--admos-text);
+      background: #ffffff;
+    }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      background: var(--admos-bg);
+      border-bottom: 1px solid rgba(69,73,75,.10);
+    }
+
+    .header-shell {
+      width: min(100%, var(--header-max));
+      margin: 0 auto;
+      padding: 8px var(--header-pad);
+    }
+
+    .header-row {
+      display: grid;
+      grid-template-columns: minmax(150px, 2fr) minmax(0, 10fr);
+      align-items: center;
+      gap: 24px;
+      min-height: 120px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      min-width: 0;
+      transform: translateX(-15px);
+    }
+
+    .brand a {
+      display: block;
+      width: min(22vw, 300px);
+      min-width: 150px;
+      line-height: 0;
+    }
+
+    .brand img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .desktop-nav {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: .2px;
+      line-height: 1.5;
+    }
+
+    .nav-item { position: relative; }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px 16px;
+      color: var(--admos-text);
+      text-decoration: none;
+      background: transparent;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover,
+    .nav-item:focus-within > .nav-link {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.05);
+    }
+
+    .nav-link.active {
+      color: var(--admos-orange);
+      position: relative;
+    }
+
+    .nav-link.active::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 4px;
+      height: 2px;
+      background: var(--admos-orange);
+    }
+
+    .caret {
+      width: 8px;
+      height: 8px;
+      border-right: 1.6px solid currentColor;
+      border-bottom: 1.6px solid currentColor;
+      transform: rotate(45deg) translateY(-2px);
+    }
+
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 2px);
+      right: 0;
+      min-width: 270px;
+      padding: 8px;
+      background: #fff;
+      border: 1px solid rgba(69,73,75,.10);
+      box-shadow: 0 12px 35px rgba(0,0,0,.10);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(6px);
+      transition: .16s ease;
+    }
+
+    .nav-item:hover .dropdown,
+    .nav-item:focus-within .dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px 12px;
+      color: var(--admos-text);
+      text-decoration: none;
+      white-space: nowrap;
+      font-size: 15px;
+    }
+
+    .dropdown a:hover {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.10);
+    }
+
+    .menu-toggle { display: none; }
+
+    .menu-icon {
+      display: none;
+      justify-self: end;
+      width: 46px;
+      height: 46px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .menu-icon span,
+    .menu-icon span::before,
+    .menu-icon span::after {
+      content: "";
+      display: block;
+      width: 28px;
+      height: 3px;
+      background: var(--admos-text);
+      position: relative;
+      transition: .2s ease;
+    }
+
+    .menu-icon span::before { position: absolute; top: -9px; }
+    .menu-icon span::after { position: absolute; top: 9px; }
+    .mobile-nav { display: none; }
+    .eyebrow {
+      margin-bottom: 24px;
+      color: var(--admos-orange);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow a {
+      color: var(--admos-orange);
+      text-decoration: none;
+    }
+
+    .eyebrow a:hover {
+      color: #ffffff;
+    }
+
+    /* =========================================================
+       ARTICLE HERO
+       ========================================================= */
+    .article-hero {
+      padding: clamp(60px, 2vw, 110px) clamp(22px, 2vw, 120px);
+      background:
+        linear-gradient(
+          to right,
+          rgba(48, 63, 110, 0.98) 0%,
+          rgba(48, 63, 110, 0.90) 45%,
+          rgba(48, 63, 110, 0.62) 75%,
+          rgba(48, 63, 110, 0.28) 100%
+        ),
+        url("assets/bg.jpg");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero-inner {
+      width: min(100%, var(--content-max));
+      margin: 0 auto;
+      color: #ffffff;
+    }
+
+    .article-hero h1 {
+      max-width: 980px;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(38px, 5vw, 66px);
+      line-height: 1.06;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 28px;
+      margin-top: 24px;
+      font-size: 15px;
+    }
+
+    .pdf-button {
+      display: inline-block;
+      margin-top: 28px;
+      padding: 9px 14px;
+      border: 2px solid var(--admos-orange);
+      border-radius: 8px;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 500;
+      background: var(--admos-orange);
+    }
+
+    .pdf-button:hover {
+      color: var(--admos-ice);
+      background: var(--admos-orange);
+    }
+
+    /* =========================================================
+       ARTICLE LAYOUT
+       ========================================================= */
+    .page-layout {
+      width: min(100%, var(--content-max));
+      margin: 0 auto;
+      padding: 56px 0 80px;
+      display: grid;
+      grid-template-columns: minmax(0, 760px) minmax(250px, 320px);
+      gap: 70px;
+      align-items: start;
+    }
+
+    .article {
+      min-width: 0;
+    }
+
+    .article h2 {
+      margin: 2.3rem 0 1rem;
+      color: var(--admos-blue);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(26px, 3vw, 34px);
+      line-height: 1.15;
+    }
+
+    .article h2:first-child { margin-top: 0; }
+
+    .article p {
+      margin: 0 0 1.25rem;
+      color: var(--admos-text);
+      font-size: 17px;
+      line-height: 1.8;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .article figure {
+      margin: 2.3rem 0;
+    }
+
+    .article figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .article figcaption {
+      margin-top: 10px;
+      color: #6f7477;
+      font-size: 13px;
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    .equation {
+      margin: 1.4rem 0 1.8rem;
+      padding: 18px;
+      text-align: center;
+      font-family: "Times New Roman", serif;
+      font-size: 26px;
+      background: #f6f7f8;
+      border-left: 4px solid var(--admos-orange);
+    }
+
+    .references {
+      padding-left: 1.2rem;
+      margin-bottom: 0;
+    }
+
+    .references li {
+      margin-bottom: .8rem;
+      color: var(--admos-text);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* =========================================================
+       SIDEBAR
+       ========================================================= */
+    .sidebar {
+      position: sticky;
+      top: 150px;
+    }
+
+    .sidebar-block {
+      margin-bottom: 34px;
+      padding: 22px;
+      background: #f7f7f6;
+      border-top: 3px solid var(--admos-blue);
+    }
+
+    .sidebar h3 {
+      margin: 0 0 16px;
+      color: var(--admos-blue);
+      font-size: 19px;
+    }
+
+    .toc {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc li { margin-bottom: 10px; }
+
+    .toc a {
+      color: var(--admos-text);
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .toc a:hover { color: var(--admos-orange); }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      padding: 5px 9px;
+      border: 1px solid var(--admos-orange);
+      border-radius: 7px;
+      color: var(--admos-orange);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+    footer {
+      padding: 70px 0;
+      width: 100%;
+      background: var(--admos-ice);
+    }
+
+    .footer-content {
+      width: min(100%, 1200px);
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--admos-text);
+    }
+
+    .footer-content div {
+      display: flex;
+      gap: 30px;
+    }
+
+    .footer-content a {
+      color: var(--admos-text);
+      text-decoration: none;
+    }
+
+    /* =========================================================
+       LANGUAGE SELECTOR
+       ========================================================= */
+    .language-switcher {
+      position: fixed;
+      right: 38px;
+      bottom: 24px;
+      z-index: 10000;
+    }
+
+    .language-switcher-button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 118px;
+      padding: 10px 14px;
+      border: 0;
+      background: #ffffff;
+      color: #333333;
+      box-shadow: 0 2px 10px rgba(0,0,0,.12);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 600;
+    }
+
+    .language-flag {
+      width: 32px;
+      height: 21px;
+      display: block;
+      flex: 0 0 auto;
+    }
+
+    .language-switcher-arrow {
+      margin-left: auto;
+      width: 8px;
+      height: 8px;
+      border-right: 2px solid #555;
+      border-bottom: 2px solid #555;
+      transform: rotate(225deg);
+      transition: transform .2s ease;
+    }
+
+    .language-switcher.open .language-switcher-arrow {
+      transform: rotate(45deg);
+    }
+
+    .language-switcher-menu {
+      position: absolute;
+      right: 0;
+      bottom: calc(100% + 6px);
+      min-width: 150px;
+      padding: 6px;
+      background: #ffffff;
+      box-shadow: 0 3px 14px rgba(0,0,0,.16);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px);
+      transition: .16s ease;
+    }
+
+    .language-switcher.open .language-switcher-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .language-switcher-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 9px 10px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      font: inherit;
+      text-align: left;
+    }
+
+    .language-switcher-option:hover,
+    .language-switcher-option.active {
+      background: rgba(201,121,36,.10);
+      color: var(--admos-orange);
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+    @media (max-width: 980px) {
+      .header-row {
+        grid-template-columns: 1fr auto;
+        min-height: 82px;
+      }
+
+      .brand a {
+        width: min(25vw, 210px);
+        min-width: 150px;
+      }
+
+      .desktop-nav { display: none; }
+      .menu-icon { display: flex; }
+
+      .menu-toggle:checked + .menu-icon span { background: transparent; }
+      .menu-toggle:checked + .menu-icon span::before { top: 0; transform: rotate(45deg); }
+      .menu-toggle:checked + .menu-icon span::after { top: 0; transform: rotate(-45deg); }
+      .menu-toggle:checked ~ .mobile-nav { display: block; }
+
+      .mobile-nav {
+        border-top: 1px solid rgba(69,73,75,.10);
+        padding: 10px 0 18px;
+      }
+
+      .mobile-nav a,
+      .mobile-nav summary {
+        display: block;
+        padding: 12px 4px;
+        color: var(--admos-text);
+        text-decoration: none;
+      }
+
+      .mobile-nav details > div { padding-left: 18px; }
+
+      .page-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+
+      .sidebar { position: static; }
+    }
+
+    @media (max-width: 700px) {
+
+      .hero-meta {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+
+      .language-switcher {
+        right: 16px;
+        bottom: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="header-shell">
+    <div class="header-row">
+
+      <div class="brand">
+        <a href="https://www.admos.de/" aria-label="AdMOS Home">
+          <img
+            src="https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-455x160.png"
+            alt="AdMOS">
+        </a>
+      </div>
+
+      <nav class="desktop-nav" aria-label="Header navigation">
+        <div class="nav-item"><a class="nav-link" href="https://www.admos.de/" data-de="Startseite" data-en="Home">Home</a></div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/leistungen-und-produkte/">
+            <span data-de="Leistungen und Produkte" data-en="Services &amp; Products">Services &amp; Products</span>
+            <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/">1/f-Measurement System</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/" data-de="CMOS Modellierung" data-en="CMOS Modeling">CMOS Modeling</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/" data-de="Halbleiter - Messlabor" data-en="Semiconductor Measurement Lab">Semiconductor Measurement Lab</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/" data-de="Softwareentwicklung" data-en="Software Development">Software Development</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/" data-de="Designanalyse" data-en="Design Analysis">Design Analysis</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/" data-de="Simulation und Beratung" data-en="Simulation &amp; Consulting">Simulation &amp; Consulting</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/" data-de="Forschung" data-en="Research">Research</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link active" href="../../" data-de="Fachbeiträge" data-en="Technical Articles">Technical Articles</a>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/uber-admos/">
+            <span data-de="Über AdMOS" data-en="About AdMOS">About AdMOS</span>
+            <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/uber-admos/ueber-uns/" data-de="Über uns" data-en="About Us">About Us</a>
+            <a href="https://www.admos.de/uber-admos/karriere/" data-de="Karriere" data-en="Careers">Careers</a>
+          </div>
+        </div>
+
+        <div class="nav-item"><a class="nav-link" href="https://www.admos.de/kontakt/" data-de="Kontakt" data-en="Contact">Contact</a></div>
+      </nav>
+
+      <input class="menu-toggle" type="checkbox" id="menu-toggle">
+      <label class="menu-icon" for="menu-toggle" aria-label="Open menu"><span></span></label>
+
+      <nav class="mobile-nav" aria-label="Mobile navigation">
+        <a href="https://www.admos.de/" data-de="Startseite" data-en="Home">Home</a>
+        <a href="../../" data-de="Fachbeiträge" data-en="Technical Articles">Technical Articles</a>
+        <a href="https://www.admos.de/kontakt/" data-de="Kontakt" data-en="Contact">Contact</a>
+      </nav>
+
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="article-hero">
+    <div class="hero-inner">
+      <div class="eyebrow"><a href="../../" data-de="Fachbeiträge" data-en="Technical Articles">Technical Articles</a> / <a href="../" data-de="Artikelserien" data-en="Article Series">Article Series</a> / <span data-de="Artikel" data-en="Article">Article</span></div>
+
+      <h1>Small Signals, Huge Consequences: Understanding the Origins of Low-frequency Noise in Electronic Devices</h1>
+
+      <div class="hero-meta">
+        <span><strong data-de="Veröffentlicht:" data-en="Published:">Published:</strong> 18 May 2026</span>
+        <span><strong data-de="Lesezeit:" data-en="Reading time:">Reading time:</strong> <span data-de="ca. 8 Minuten" data-en="approx. 8 minutes">approx. 8 minutes</span></span>
+        <span><strong data-de="Artikel-ID:" data-en="Article ID:">Article ID:</strong> LFN_001</span>
+    </div>
+
+      <a class="pdf-button"
+         href="assets/LFN_001_Origins_of_Low-frequency_Noise.pdf"
+         target="_blank"
+         rel="noopener noreferrer"
+         data-de="PDF öffnen"
+         data-en="Open PDF">Open PDF</a>
+    </div>
+  </section>
+
+  <div class="page-layout">
+
+    <article class="article">
+
+      <h2 id="impact" data-de="Die wachsende Bedeutung von Niederfrequenzrauschen" data-en="The Growing Impact of Low-Frequency Noise">The Growing Impact of Low-Frequency Noise</h2>
+
+      <p data-de="Mit der Skalierung von Transistoren in den Nanometerbereich führen kleinere Ladungsträgerpopulationen, geringere Signalpegel und engere Rauschmargen dazu, dass Schaltungen zunehmend empfindlich auf mikroskopische Fluktuationen reagieren. Niederfrequentes Rauschen, das in größeren Bauelementen oft vernachlässigbar war, kann heute Timing-Stabilität, analoge Präzision, HF-Leistung und Zuverlässigkeit deutlich beeinflussen. In nanoskaligen Technologien kann bereits ein einzelner Defekt oder ein einzelnes Einfangereignis groß genug sein, um das Bauelementverhalten sichtbar zu verändern."
+         data-en="As transistors scale into the nanometer regime, reduced carrier populations, smaller signal levels, and tighter noise margins make circuits increasingly sensitive to microscopic fluctuations. Low-frequency noise that was once negligible in larger devices can now significantly influence timing stability, analog precision, RF performance, and overall reliability. In nanoscale technologies, even a single defect or trapping event can become large enough to noticeably affect device behavior.">
+        As transistors scale into the nanometer regime, reduced carrier populations, smaller signal levels, and tighter noise margins make circuits increasingly sensitive to microscopic fluctuations. Low-frequency noise that was once negligible in larger devices can now significantly influence timing stability, analog precision, RF performance, and overall reliability. In nanoscale technologies, even a single defect or trapping event can become large enough to noticeably affect device behavior.
+      </p>
+
+      <figure>
+        <img src="assets/Fig1.png" alt="Ocean liner and kayak encountering waves">
+        <figcaption data-de="Abbildung 1: Ein Ozeandampfer und ein Kajak treffen auf dieselben Wellen, reagieren aufgrund ihrer unterschiedlichen Größe jedoch völlig verschieden."
+                    data-en="Figure 1: An ocean liner and a kayak encounter the same waves, yet their responses are dramatically different. While the massive ship remains largely stable, the kayak is constantly disturbed by the very same turbulence.">
+          Figure 1: An ocean liner and a kayak encounter the same waves, yet their responses are dramatically different. While the massive ship remains largely stable, the kayak is constantly disturbed by the very same turbulence.
+        </figcaption>
+      </figure>
+
+      <h2 id="fingerprint" data-de="Der elektronische Fingerabdruck von Niederfrequenzrauschen" data-en="Electronic Fingerprint of Low-frequency Noise">Electronic Fingerprint of Low-frequency Noise</h2>
+
+      <p data-de="In elektronischen Bauelementen bezeichnet Niederfrequenzrauschen (LFN) elektrische Fluktuationen, die den unteren Bereich des Frequenzspektrums dominieren, typischerweise von wenigen Millihertz bis zu mehreren Kilohertz – abhängig vom Bauelement und der Anwendung. Im Gegensatz zu schnell variierenden hochfrequenten Rauschprozessen entsteht LFN durch vergleichsweise langsame Vorgänge im Bauelement selbst, darunter defektunterstützte Ladungsträgerwechselwirkungen, Generations-Rekombinations-Prozesse und stochastische Fluktuationen lokalisierter Unvollkommenheiten. LFN ist intrinsisch und grundsätzlich von extern eingekoppelten Störungen wie elektromagnetischer Interferenz oder Umweltrauschen zu unterscheiden."
+         data-en="In electronic devices, the term low-frequency noise (LFN) refers to electrical fluctuations that dominate the lower end of the frequency spectrum, typically ranging from a few millihertz to several kilohertz depending on the device and application. Unlike rapidly varying high-frequency noise processes, LFN originates from comparatively slow phenomena within the device itself, including defect-assisted carrier interactions, generation-recombination processes, and stochastic fluctuations associated with localized imperfections. LFN is intrinsic to devices and fundamentally different from externally coupled disturbances such as electromagnetic interference or environmental noise.">
+        In electronic devices, the term low-frequency noise (LFN) refers to electrical fluctuations that dominate the lower end of the frequency spectrum, typically ranging from a few millihertz to several kilohertz depending on the device and application. Unlike rapidly varying high-frequency noise processes, LFN originates from comparatively slow phenomena within the device itself, including defect-assisted carrier interactions, generation-recombination processes, and stochastic fluctuations associated with localized imperfections. LFN is intrinsic to devices and fundamentally different from externally coupled disturbances such as electromagnetic interference or environmental noise.
+      </p>
+
+      <p data-de="Der Strom durch ein elektronisches Bauelement ist nicht perfekt konstant. Kleine zufällige Fluktuationen werden sichtbar, wenn der Strom über die Zeit beobachtet wird. Das Zeitsignal zeigt zwar die Existenz des Rauschens, liefert jedoch noch kein vollständiges Bild über die beteiligten Frequenzanteile. Durch eine schnelle Fourier-Transformation (FFT) wird das zeitabhängige Stromsignal in den Frequenzbereich überführt und daraus die spektrale Leistungsdichte (PSD) bestimmt. Die PSD beschreibt die Verteilung der Rauschleistung über die Frequenz und bildet damit einen direkten Fingerabdruck der zugrunde liegenden Rauschmechanismen. Zu niedrigen Frequenzen steigt die Rauschleistung stark an und folgt näherungsweise einer 1/f-Abhängigkeit. Daher wird LFN häufig auch als 1/f- oder Flicker-Rauschen bezeichnet."
+         data-en="The current flowing through an electronic device is not perfectly constant. Instead, small random fluctuations can be observed by monitoring the current over time. While the time-domain signal reveals the presence of noise, it does not provide the full picture regarding the characteristic frequencies contributing to these fluctuations. The time-dependent current signal is transformed into the frequency domain using a Fast Fourier Transform (FFT), from which the power spectral density (PSD) is obtained. The PSD describes how the noise power is distributed over frequency and provides a direct fingerprint of the underlying noise mechanisms in the device. The noise power increases significantly toward lower frequencies, following approximately a 1/f dependence. For this reason, LFN is also generally referred to as 1/f noise or flicker noise.">
+        The current flowing through an electronic device is not perfectly constant. Instead, small random fluctuations can be observed by monitoring the current over time. While the time-domain signal reveals the presence of noise, it does not provide the full picture regarding the characteristic frequencies contributing to these fluctuations. The time-dependent current signal is transformed into the frequency domain using a Fast Fourier Transform (FFT), from which the power spectral density (PSD) is obtained. The PSD describes how the noise power is distributed over frequency and provides a direct fingerprint of the underlying noise mechanisms in the device. The noise power increases significantly toward lower frequencies, following approximately a 1/f dependence. For this reason, LFN is also generally referred to as 1/f noise or flicker noise.
+      </p>
+
+      <figure>
+        <img src="assets/Fig2.png" alt="Time-domain current fluctuations and power spectral density">
+        <figcaption data-de="Abbildung 2: (a) Stromfluktuationen eines Transistors im Zeitbereich. (b) Aus der FFT bestimmte spektrale Leistungsdichte mit unterschiedlichen Mittelungsfenstern."
+                    data-en="Figure 2: (a) Fluctuations in a transistor current in the time domain. (b) Power spectral density obtained from FFT with different averaging windows.">
+          Figure 2: (a) Fluctuations in a transistor current in the time domain. (b) Power spectral density obtained from FFT with different averaging windows.
+        </figcaption>
+      </figure>
+
+      <p data-de="Das 1/f-Verhalten wird universell in einer großen Bandbreite elektronischer Komponenten beobachtet [1,2], darunter Widerstände, Dioden, Bipolartransistoren (BJTs), MOSFETs und andere Halbleiterbauelemente. Die dominante physikalische Ursache kann sich jedoch je nach Materialsystem und Transportmechanismus unterscheiden."
+         data-en="The 1/f behavior is universally observed across a wide range of electronic components [1,2], including resistors, diodes, bipolar junction transistors (BJTs), metal–oxide–semiconductor field-effect transistors (MOSFETs), and other semiconductor devices, although the dominant origin of the noise may vary depending on the material system and transport mechanism involved.">
+        The 1/f behavior is universally observed across a wide range of electronic components [1,2], including resistors, diodes, bipolar junction transistors (BJTs), metal–oxide–semiconductor field-effect transistors (MOSFETs), and other semiconductor devices, although the dominant origin of the noise may vary depending on the material system and transport mechanism involved.
+      </p>
+
+      <h2 id="components" data-de="Rauschkomponenten in Halbleitern" data-en="Noise Components in Semiconductors">Noise Components in Semiconductors</h2>
+
+      <p data-de="In Halbleiterbauelementen wird das gemessene Rauschspektrum über den gesamten Frequenzbereich nur selten von einem einzigen Mechanismus bestimmt. Stattdessen dominieren unterschiedliche physikalische Prozesse in verschiedenen Frequenzbereichen. Ein wichtiger Beitrag ist das Generations-Rekombinations-Rauschen (G-R), das durch das Einfangen und Freisetzen von Ladungsträgern an lokalisierten Defektzuständen entsteht. Im Frequenzbereich erscheinen solche Prozesse als lorentzförmige Beiträge in der PSD, die jeweils durch eine charakteristische Relaxationszeit beschrieben werden. Bei sehr niedrigen Frequenzen zeigt sich ein Plateau, gefolgt von einem Abfall mit 1/f²-Abhängigkeit. Die Überlagerung vieler Lorentz-Spektren mit breit verteilten Zeitkonstanten kann gemeinsam das typische 1/f-Verhalten erzeugen. Zusätzlich bilden thermisches und Schrotrauschen einen frequenzunabhängigen weißen Rauschhintergrund."
+         data-en="In semiconductor devices, the measured noise spectrum is rarely governed by a single mechanism over the entire frequency range. Instead, different physical processes dominate at different frequencies, giving rise to a characteristic spectrum. One important contribution arises from generation–recombination (G–R) noise, which originates from the trapping and de-trapping of charge carriers at localized defect states. In the frequency domain, such processes appear as Lorentzian-shaped features in the PSD, each characterized by a specific relaxation time constant. At very low frequencies, a distinct plateau is observed, after which the spectrum rolls off with a 1/f² dependence. The superposition of many Lorentzian spectra spanning a broad distribution of time constants can collectively produce the characteristic 1/f-like dependence. In addition, thermal and shot noise contribute a frequency-independent white-noise background.">
+        In semiconductor devices, the measured noise spectrum is rarely governed by a single mechanism over the entire frequency range. Instead, different physical processes dominate at different frequencies, giving rise to a characteristic spectrum. One important contribution arises from generation–recombination (G–R) noise, which originates from the trapping and de-trapping of charge carriers at localized defect states. In the frequency domain, such processes appear as Lorentzian-shaped features in the PSD, each characterized by a specific relaxation time constant. At very low frequencies, a distinct plateau is observed, after which the spectrum rolls off with a 1/f² dependence. The superposition of many Lorentzian spectra spanning a broad distribution of time constants can collectively produce the characteristic 1/f-like dependence. In addition, thermal and shot noise contribute a frequency-independent white-noise background.
+      </p>
+
+      <figure>
+        <img src="assets/Fig3.png" alt="Semiconductor noise spectrum and Lorentzian superposition">
+        <figcaption data-de="Abbildung 3: (a) Typisches Rauschspektrum in Halbleiterbauelementen mit den dominanten Mechanismen in unterschiedlichen Frequenzbereichen. (b) Die Überlagerung mehrerer Lorentz-Spektren ergibt ein 1/f-ähnliches Verhalten."
+                    data-en="Figure 3: (a) Typical noise spectrum observed in semiconductor devices illustrating the dominant noise mechanisms across different frequency regimes. (b) Superposition of multiple Lorentzian spectra results in a 1/f-like behavior.">
+          Figure 3: (a) Typical noise spectrum observed in semiconductor devices illustrating the dominant noise mechanisms across different frequency regimes. (b) Superposition of multiple Lorentzian spectra results in a 1/f-like behavior.
+        </figcaption>
+      </figure>
+
+      <h2 id="rtn" data-de="Random Telegraph Noise in nanoskaligen Bauelementen" data-en="Emergence of Random Telegraph Noise in Nanoscale Devices">Emergence of Random Telegraph Noise in Nanoscale Devices</h2>
+
+      <p data-de="In modernen Halbleitertechnologien – insbesondere nanoskaligen MOSFETs, FinFETs, Gate-All-Around-Transistoren und niedrigdimensionalen Materialsystemen – verstärkt die aggressive Skalierung den Einfluss einzelner Defekte auf die elektrischen Eigenschaften. Dadurch kann die Dynamik einzelner Ladungsfallen direkt im gemessenen Strom als Random Telegraph Noise (RTN) sichtbar werden. Ein typisches RTN-Signal zeigt zufällige Sprünge zwischen zwei diskreten Stromniveaus. RTN kann als diskreter Grenzfall des G-R-Rauschens verstanden werden, wenn ein einzelner Defekt stark genug ist, den Bauelementstrom direkt zu modulieren."
+         data-en="For advanced semiconductor technologies, particularly in nanoscale MOSFETs, FinFETs, gate-all-around (GAA) transistors, and low-dimensional material systems, aggressive device scaling enhances the influence of individual defects on the electrical characteristics of the device. As a result, the dynamics of single charge traps can directly manifest in the measured current in the form of random telegraph noise (RTN). A typical RTN signal randomly switches between two discrete current levels over time. RTN can be understood as the discrete limit of G–R noise, arising when the activity of an individual defect or trap becomes sufficiently strong to directly modulate the device current.">
+        For advanced semiconductor technologies, particularly in nanoscale MOSFETs, FinFETs, gate-all-around (GAA) transistors, and low-dimensional material systems, aggressive device scaling enhances the influence of individual defects on the electrical characteristics of the device. As a result, the dynamics of single charge traps can directly manifest in the measured current in the form of random telegraph noise (RTN). A typical RTN signal randomly switches between two discrete current levels over time. RTN can be understood as the discrete limit of G–R noise, arising when the activity of an individual defect or trap becomes sufficiently strong to directly modulate the device current.
+      </p>
+
+      <figure>
+        <img src="assets/Fig4.png" alt="Random telegraph noise signal and bimodal histogram">
+        <figcaption data-de="Abbildung 4: Klassisches Beispiel für RTN-Schalten mit stochastischen Einfang- und Emissionszeiten von Ladungsträgern. Das Histogramm zeigt eine charakteristische bimodale Stromverteilung."
+                    data-en="Figure 4: A classic example of RTN switching, illustrating the stochastic capture and emission times of charge carriers. The corresponding histogram reveals a characteristic bimodal current distribution.">
+          Figure 4: A classic example of RTN switching, illustrating the stochastic capture and emission times of charge carriers. The corresponding histogram reveals a characteristic bimodal current distribution.
+        </figcaption>
+      </figure>
+
+      <p data-de="Komplexeres mehrstufiges RTN kann auftreten, wenn mehrere Fallen oder wechselwirkende Defektsysteme gleichzeitig den Leitkanal beeinflussen. Dann springt der Strom zwischen mehreren diskreten Zuständen. Charakteristisch ist, dass die Zeitkonstanten aktiver Fallen vergleichbar sind und einzelne Schaltvorgänge zeitlich unterscheidbar bleiben. Konventionelles 1/f-Rauschen entsteht dagegen aus der kollektiven Wirkung sehr vieler Fallen mit über mehrere Größenordnungen verteilten Relaxationszeiten. Die Überlagerung dieser zahlreichen Fluktuatoren verwischt die diskreten Signaturen und führt zum kontinuierlichen 1/f-ähnlichen Spektrum."
+         data-en="More complex multi-level RTN behavior may also occur when multiple traps or interacting defect systems simultaneously influence the conduction channel. In such cases, the current fluctuates between several discrete states. A key characteristic of RTN is that the time constants of the active traps are typically of comparable magnitude, allowing the individual switching events to remain temporally distinguishable. In contrast, conventional 1/f noise emerges from the collective contribution of a very large number of traps with relaxation times distributed over several orders of magnitude. The superposition and averaging of these numerous fluctuators smear out the discrete switching signatures, resulting instead in the continuous 1/f-like spectrum.">
+        More complex multi-level RTN behavior may also occur when multiple traps or interacting defect systems simultaneously influence the conduction channel. In such cases, the current fluctuates between several discrete states. A key characteristic of RTN is that the time constants of the active traps are typically of comparable magnitude, allowing the individual switching events to remain temporally distinguishable. In contrast, conventional 1/f noise emerges from the collective contribution of a very large number of traps with relaxation times distributed over several orders of magnitude. The superposition and averaging of these numerous fluctuators smear out the discrete switching signatures, resulting instead in the continuous 1/f-like spectrum.
+      </p>
+
+      <h2 id="schools" data-de="Die zwei Schulen hinter LFN" data-en="The Two Schools Behind LFN">The Two Schools Behind LFN</h2>
+
+      <p data-de="Trotz jahrzehntelanger Forschung bleibt der mikroskopische Ursprung von Niederfrequenzrauschen eines der meistdiskutierten Themen der Halbleiterphysik. Zwei zentrale Theorien wurden entwickelt, um das charakteristische 1/f-Verhalten zu erklären."
+         data-en="Despite decades of research, the microscopic origin of low-frequency noise (LFN) remains one of the most debated topics in semiconductor physics. Two major theories emerged to explain the characteristic 1/f behavior.">
+        Despite decades of research, the microscopic origin of low-frequency noise (LFN) remains one of the most debated topics in semiconductor physics. Two major theories emerged to explain the characteristic 1/f behavior.
+      </p>
+
+      <p data-de="Das für MOS-Bauelemente am weitesten verbreitete Modell ist die Carrier-Number-Fluctuation-(CNF)-Theorie [1]. Dabei werden Ladungsträger zufällig von Oxid- oder Grenzflächenfallen nahe des Inversionskanals eingefangen und wieder freigesetzt. Diese Ereignisse verändern die Zahl der freien Ladungsträger und führen zu Stromfluktuationen. Die zugehörige Rausch-PSD folgt der bekannten Beziehung:"
+         data-en="The most widely accepted model for MOS devices is the carrier number fluctuation (CNF) theory [1], where carriers are randomly captured and emitted by oxide or interface traps near the channel inversion region. These trapping events modulate the number of free carriers participating in conduction, leading to current fluctuations. The corresponding noise PSD follows the well-known relation:">
+        The most widely accepted model for MOS devices is the carrier number fluctuation (CNF) theory [1], where carriers are randomly captured and emitted by oxide or interface traps near the channel inversion region. These trapping events modulate the number of free carriers participating in conduction, leading to current fluctuations. The corresponding noise PSD follows the well-known relation:
+      </p>
+
+      <div class="equation">S(f) ∝ 1 / f<sup>γ</sup></div>
+
+      <p data-de="wobei γ ≈ 1 für klassisches Flicker-Rauschen gilt, das aus der Überlagerung mehrerer Fallen entsteht."
+         data-en="where γ ≈ 1 for classical flicker noise emerging from the superposition of several traps.">
+        where γ ≈ 1 for classical flicker noise emerging from the superposition of several traps.
+      </p>
+
+      <p data-de="Die CNF-Theorie kann 1/f-Rauschen in homogenen Materialien und Widerständen, in denen Oxidfallen vernachlässigbar sind, nicht vollständig erklären. Eine alternative Beschreibung liefert Hooges Carrier-Mobility-Fluctuation-(CMF)-Theorie [4]. Sie führt LFN auf Schwankungen der Ladungsträgerbeweglichkeit infolge von Streuprozessen durch Gitterschwingungen, Oberflächenrauigkeit und Kristalldefekte zurück. Hooge schlug dafür die empirische Beziehung vor:"
+         data-en="The CNF theory cannot fully explain the presence of 1/f noise in homogeneous materials and resistors, where oxide trapping effects are negligible. An alternative explanation is provided by the carrier mobility fluctuation (CMF) theory by Hooge [4], which attributes LFN to variations in carrier mobility caused by scattering processes due to lattice vibrations, surface roughness, and crystal defects. Hooge proposed the empirical relation for the PSD as:">
+        The CNF theory cannot fully explain the presence of 1/f noise in homogeneous materials and resistors, where oxide trapping effects are negligible. An alternative explanation is provided by the carrier mobility fluctuation (CMF) theory by Hooge [4], which attributes LFN to variations in carrier mobility caused by scattering processes due to lattice vibrations, surface roughness, and crystal defects. Hooge proposed the empirical relation for the PSD as:
+      </p>
+
+      <div class="equation">S(f) = I² · α<sub>H</sub> / (N · f)</div>
+
+      <p data-de="Dabei ist I der Strom, αH der Hooge-Parameter und N die Anzahl freier Ladungsträger. Die Beziehung sagt voraus, dass das relative Rauschen mit abnehmender Ladungsträgerzahl zunimmt, was die wachsende Bedeutung von LFN in stark skalierten Bauelementen erklärt."
+         data-en="where I is the current, αH is Hooge’s parameter and N is the number of free carriers. The relation predicts that the relative noise increases as the carrier population decreases, explaining why LFN becomes increasingly important in aggressively scaled nanoscale devices.">
+        where I is the current, αH is Hooge’s parameter and N is the number of free carriers. The relation predicts that the relative noise increases as the carrier population decreases, explaining why LFN becomes increasingly important in aggressively scaled nanoscale devices.
+      </p>
+
+      <p data-de="CNF- und CMF-Theorien wurden lange Zeit als konkurrierende Erklärungen betrachtet. Moderne experimentelle Beobachtungen deuten jedoch darauf hin, dass beide Mechanismen oft eng gekoppelt sind. Eine eingefangene Ladung verändert nicht nur die Ladungsträgerdichte im Kanal, sondern auch das lokale elektrische Feld und die Streuumgebung und damit gleichzeitig die Beweglichkeit. Dieses gekoppelte Verhalten führte zum Konzept einer korrelierten CMF/CNF-Theorie [5], die in modernen nanoskaligen Bauelementen besonders relevant ist."
+         data-en="For many years, the CNF and CMF theories were treated as competing explanations. However, modern experimental observations suggest that both mechanisms are often intrinsically linked. A trapped charge not only changes the carrier density in the channel but also influences the local electric field and scattering environment, thereby affecting carrier mobility simultaneously. This coupled behavior led to the concept of a unified correlated CMF/CNF theory [5]. Such correlated effects become particularly important in modern nanoscale devices, where even a single defect can significantly perturb the entire conductive channel.">
+        For many years, the CNF and CMF theories were treated as competing explanations. However, modern experimental observations suggest that both mechanisms are often intrinsically linked. A trapped charge not only changes the carrier density in the channel but also influences the local electric field and scattering environment, thereby affecting carrier mobility simultaneously. This coupled behavior led to the concept of a unified correlated CMF/CNF theory [5]. Such correlated effects become particularly important in modern nanoscale devices, where even a single defect can significantly perturb the entire conductive channel.
+      </p>
+
+      <h2 id="conclusion" data-de="Fazit" data-en="Conclusion">Conclusion</h2>
+
+      <p data-de="Niederfrequenzrauschen ist eines der klarsten Beispiele dafür, wie Defektdynamik auf atomarer Ebene technologische Auswirkungen auf makroskopischer Ebene hervorrufen kann. Das Einfangen und Freisetzen weniger Ladungsträger kann letztlich Prozessor-Timing, Kommunikationszuverlässigkeit, Sensorgenauigkeit, Bauelementvariabilität und Langzeitstabilität beeinflussen. Mit fortschreitender Skalierung und zunehmender Komplexität moderner Halbleiterarchitekturen wird die relative Bedeutung von LFN weiter steigen. Gleichzeitig ist LFN nicht nur eine Leistungsgrenze, sondern auch ein leistungsfähiges diagnostisches Fenster in die fundamentalen Wechselwirkungen zwischen Ladungsträgern, Defekten und Materialien."
+         data-en="Low-frequency noise represents one of the clearest examples of how atomic-scale defect dynamics can produce large-scale technological consequences. What begins as the trapping and release of one or few charge carriers can ultimately influence processor timing, communication reliability, sensor accuracy, device variability, and long-term operational stability. As semiconductor technologies continue to evolve toward increasingly scaled and complex nanoscale architectures, the relative importance of low-frequency noise will continue to grow, making its understanding essential for both device optimization and reliability engineering. Beyond being a performance limitation, low-frequency noise also serves as a powerful diagnostic window into the fundamental interactions between carriers, defects, and materials that ultimately govern the behavior of modern electronic devices.">
+        Low-frequency noise represents one of the clearest examples of how atomic-scale defect dynamics can produce large-scale technological consequences. What begins as the trapping and release of one or few charge carriers can ultimately influence processor timing, communication reliability, sensor accuracy, device variability, and long-term operational stability. As semiconductor technologies continue to evolve toward increasingly scaled and complex nanoscale architectures, the relative importance of low-frequency noise will continue to grow, making its understanding essential for both device optimization and reliability engineering. Beyond being a performance limitation, low-frequency noise also serves as a powerful diagnostic window into the fundamental interactions between carriers, defects, and materials that ultimately govern the behavior of modern electronic devices.
+      </p>
+
+      <h2 id="references" data-de="Literatur" data-en="References">References</h2>
+
+      <ol class="references">
+        <li>A. L. McWhorter, <em>1/f Noise and Germanium Surface Properties</em>, Semiconductor Surface Physics, University of Pennsylvania, 1957.</li>
+        <li>P. Dutta and P. M. Horn, “Low-frequency fluctuations in solids: 1/f noise,” <em>Rev. Mod. Phys.</em>, vol. 53, no. 3, pp. 497–516, Jul. 1981.</li>
+        <li>M. J. Uren, D. J. Day, and M. J. Kirton, “1/f and random telegraph noise in silicon metal-oxide-semiconductor field-effect transistors,” <em>Appl. Phys. Lett.</em>, vol. 47, no. 11, pp. 1195–1197, 1985.</li>
+        <li>F. N. Hooge, “1/f Noise Sources,” <em>IEEE Transactions on Electron Devices</em>, vol. 41, no. 11, pp. 1926–1935, 1994.</li>
+        <li>K. K. Hung et al., “A unified model for the flicker noise in metal-oxide-semiconductor field-effect transistors,” <em>IEEE Transactions on Electron Devices</em>, vol. 37, no. 3, pp. 654–665, 1990.</li>
+      </ol>
+
+    </article>
+
+    <aside class="sidebar">
+
+      <div class="sidebar-block">
+        <h3 data-de="Auf dieser Seite" data-en="On this page">On this page</h3>
+        <ul class="toc">
+          <li><a href="#impact" data-de="Wachsende Bedeutung" data-en="Growing Impact">Growing Impact</a></li>
+          <li><a href="#fingerprint" data-de="Elektronischer Fingerabdruck" data-en="Electronic Fingerprint">Electronic Fingerprint</a></li>
+          <li><a href="#components" data-de="Rauschkomponenten" data-en="Noise Components">Noise Components</a></li>
+          <li><a href="#rtn" data-de="Random Telegraph Noise" data-en="Random Telegraph Noise">Random Telegraph Noise</a></li>
+          <li><a href="#schools" data-de="Die zwei Schulen hinter LFN" data-en="The Two Schools Behind LFN">The Two Schools Behind LFN</a></li>
+          <li><a href="#conclusion" data-de="Fazit" data-en="Conclusion">Conclusion</a></li>
+          <li><a href="#references" data-de="Literatur" data-en="References">References</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-block">
+        <h3 data-de="Artikel-Tags" data-en="Article Tags">Article Tags</h3>
+        <div class="tags">
+          <span class="tag">1/f Noise</span>
+          <span class="tag">Flicker Noise</span>
+          <span class="tag">RTN</span>
+          <span class="tag">G-R Noise</span>
+          <span class="tag">MOSFET</span>
+          <span class="tag">Defects</span>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-content">
+    <div>
+      <a href="https://www.admos.de/impressum/" data-de="Impressum" data-en="Legal Notice">Legal Notice</a>
+      <a href="https://www.admos.de/datenschutzerklarung/" data-de="Datenschutzerklärung" data-en="Privacy Policy">Privacy Policy</a>
+    </div>
+    <p data-de="@Urheberrecht. Alle Rechte vorbehalten" data-en="@Copyright. All rights reserved">@Copyright. All rights reserved</p>
+  </div>
+</footer>
+
+<div class="language-switcher" id="languageSwitcher">
+  <button class="language-switcher-button" id="languageSwitcherButton" type="button" aria-haspopup="true" aria-expanded="false">
+    <svg class="language-flag" id="currentFlag" viewBox="0 0 60 30" aria-hidden="true">
+      <rect width="60" height="30" fill="#012169"/>
+      <path d="M0 0L60 30M60 0L0 30" stroke="#FFFFFF" stroke-width="6"/>
+      <path d="M0 0L60 30M60 0L0 30" stroke="#C8102E" stroke-width="2.5"/>
+      <path d="M30 0V30M0 15H60" stroke="#FFFFFF" stroke-width="10"/>
+      <path d="M30 0V30M0 15H60" stroke="#C8102E" stroke-width="6"/>
+    </svg>
+    <span id="currentLanguageCode">EN</span>
+    <span class="language-switcher-arrow"></span>
+  </button>
+
+  <div class="language-switcher-menu" role="menu">
+    <button class="language-switcher-option" type="button" data-language="de" role="menuitem">
+      <svg class="language-flag" viewBox="0 0 30 20" aria-hidden="true">
+        <rect width="30" height="6.67" y="0" fill="#000000"/>
+        <rect width="30" height="6.67" y="6.67" fill="#DD0000"/>
+        <rect width="30" height="6.66" y="13.34" fill="#FFCE00"/>
+      </svg>
+      Deutsch
+    </button>
+
+    <button class="language-switcher-option active" type="button" data-language="en" role="menuitem">
+      <svg class="language-flag" viewBox="0 0 60 30" aria-hidden="true">
+        <rect width="60" height="30" fill="#012169"/>
+        <path d="M0 0L60 30M60 0L0 30" stroke="#FFFFFF" stroke-width="6"/>
+        <path d="M0 0L60 30M60 0L0 30" stroke="#C8102E" stroke-width="2.5"/>
+        <path d="M30 0V30M0 15H60" stroke="#FFFFFF" stroke-width="10"/>
+        <path d="M30 0V30M0 15H60" stroke="#C8102E" stroke-width="6"/>
+      </svg>
+      English
+    </button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const switcher = document.getElementById("languageSwitcher");
+    const button = document.getElementById("languageSwitcherButton");
+    const code = document.getElementById("currentLanguageCode");
+    const options = switcher.querySelectorAll(".language-switcher-option");
+    const currentFlag = document.getElementById("currentFlag");
+
+    const germanFlag = `
+      <rect width="30" height="6.67" y="0" fill="#000000"/>
+      <rect width="30" height="6.67" y="6.67" fill="#DD0000"/>
+      <rect width="30" height="6.66" y="13.34" fill="#FFCE00"/>
+    `;
+
+    const englishFlag = `
+      <rect width="60" height="30" fill="#012169"/>
+      <path d="M0 0L60 30M60 0L0 30" stroke="#FFFFFF" stroke-width="6"/>
+      <path d="M0 0L60 30M60 0L0 30" stroke="#C8102E" stroke-width="2.5"/>
+      <path d="M30 0V30M0 15H60" stroke="#FFFFFF" stroke-width="10"/>
+      <path d="M30 0V30M0 15H60" stroke="#C8102E" stroke-width="6"/>
+    `;
+
+    function setLanguage(language) {
+      document.documentElement.lang = language;
+
+      document.querySelectorAll("[data-de][data-en]").forEach(function (element) {
+        element.textContent = element.dataset[language];
+      });
+
+      code.textContent = language.toUpperCase();
+
+      if (language === "de") {
+        currentFlag.setAttribute("viewBox", "0 0 30 20");
+        currentFlag.innerHTML = germanFlag;
+      } else {
+        currentFlag.setAttribute("viewBox", "0 0 60 30");
+        currentFlag.innerHTML = englishFlag;
+      }
+
+      options.forEach(function (option) {
+        option.classList.toggle("active", option.dataset.language === language);
+      });
+
+      localStorage.setItem("admos-articles-language", language);
+      switcher.classList.remove("open");
+      button.setAttribute("aria-expanded", "false");
+    }
+
+    button.addEventListener("click", function () {
+      const isOpen = switcher.classList.toggle("open");
+      button.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    options.forEach(function (option) {
+      option.addEventListener("click", function () {
+        setLanguage(option.dataset.language);
+      });
+    });
+
+    document.addEventListener("click", function (event) {
+      if (!switcher.contains(event.target)) {
+        switcher.classList.remove("open");
+        button.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    const savedLanguage = localStorage.getItem("admos-articles-language");
+    setLanguage(savedLanguage === "de" ? "de" : "en");
+  }());
+</script>
+
+</body>
+</html>
