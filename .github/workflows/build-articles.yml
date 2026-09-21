@@ -1,0 +1,65 @@
+name: Build Technical Articles
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - main
+    paths:
+      - "source/**"
+      - ".github/workflows/build-articles.yml"
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find article directories
+        id: set-matrix
+        shell: bash
+        run: |
+          articles=$(find source -type f -name "article.tex" -printf '%h\n' | sort -u)
+
+          matrix=$(printf '%s\n' "$articles" \
+            | jq -R -s -c 'split("\n")[:-1]')
+
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: discover
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        article_dir: ${{ fromJson(needs.discover.outputs.matrix) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile article
+        uses: xu-cheng/texlive-action@v3
+        with:
+          run: |
+            cd "${{ matrix.article_dir }}"
+
+            pdflatex -interaction=nonstopmode -halt-on-error article.tex
+            pdflatex -interaction=nonstopmode -halt-on-error article.tex
+
+            article_id=$(basename "${{ matrix.article_dir }}")
+
+            mv article.pdf "${article_id}.pdf"
+
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.article_dir }}
+          path: ${{ matrix.article_dir }}/*.pdf
+          if-no-files-found: error
