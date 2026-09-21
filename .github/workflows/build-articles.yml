@@ -10,6 +10,9 @@ on:
       - "source/**"
       - ".github/workflows/build-articles.yml"
 
+permissions:
+  contents: write
+
 jobs:
   discover:
     runs-on: ubuntu-latest
@@ -44,6 +47,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Get article ID and series
+        id: article
+        shell: bash
+        run: |
+          article_id=$(basename "${{ matrix.article_dir }}")
+          series=$(basename "$(dirname "${{ matrix.article_dir }}")")
+
+          echo "id=$article_id" >> "$GITHUB_OUTPUT"
+          echo "series=$series" >> "$GITHUB_OUTPUT"
+
       - name: Compile article
         uses: xu-cheng/texlive-action@v3
         with:
@@ -54,19 +67,41 @@ jobs:
             pdflatex -interaction=nonstopmode -halt-on-error article.tex
 
             article_id=$(basename "${{ matrix.article_dir }}")
-
             mv article.pdf "${article_id}.pdf"
 
-      - name: Get article ID
-        id: article
+      - name: Copy PDF to article folder
         shell: bash
         run: |
-          article_id=$(basename "${{ matrix.article_dir }}")
-          echo "id=$article_id" >> "$GITHUB_OUTPUT"
+          article_id="${{ steps.article.outputs.id }}"
+          series="${{ steps.article.outputs.series }}"
 
-      - name: Upload PDF
+          mkdir -p "articles/$series/$article_id"
+
+          cp \
+            "${{ matrix.article_dir }}/${article_id}.pdf" \
+            "articles/$series/$article_id/${article_id}.pdf"
+
+      - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.article.outputs.id }}
           path: ${{ matrix.article_dir }}/*.pdf
           if-no-files-found: error
+
+      - name: Commit generated PDF
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          article_id="${{ steps.article.outputs.id }}"
+          series="${{ steps.article.outputs.series }}"
+
+          git add "articles/$series/$article_id/${article_id}.pdf"
+
+          if git diff --cached --quiet; then
+            echo "No PDF changes to commit."
+          else
+            git commit -m "Build ${article_id} PDF"
+            git push
+          fi
