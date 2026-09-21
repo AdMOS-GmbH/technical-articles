@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>A Practical Guide to Low-frequency Noise Measurements in Electronic Devices | AdMOS Technical Articles</title>
+
+  <link rel="icon" type="image/png" href="../../../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --admos-orange: #c97924;
+      --admos-text: #45494b;
+      --admos-bg: #ffffff;
+      --admos-blue: #303F6E;
+      --admos-ice: #CAD2D9;
+      --header-max: 1920px;
+      --header-pad: clamp(16px, 3vw, 48px);
+      --content-max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Poppins, Arial, sans-serif;
+      color: var(--admos-text);
+      background: #ffffff;
+    }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      background: var(--admos-bg);
+      border-bottom: 1px solid rgba(69,73,75,.10);
+    }
+
+    .header-shell {
+      width: min(100%, var(--header-max));
+      margin: 0 auto;
+      padding: 8px var(--header-pad);
+    }
+
+    .header-row {
+      display: grid;
+      grid-template-columns: minmax(150px, 2fr) minmax(0, 10fr);
+      align-items: center;
+      gap: 24px;
+      min-height: 120px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      min-width: 0;
+      transform: translateX(-15px);
+    }
+
+    .brand a {
+      display: block;
+      width: min(22vw, 300px);
+      min-width: 150px;
+      line-height: 0;
+    }
+
+    .brand img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .desktop-nav {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: .2px;
+      line-height: 1.5;
+    }
+
+    .nav-item { position: relative; }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px 16px;
+      color: var(--admos-text);
+      text-decoration: none;
+      background: transparent;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover,
+    .nav-item:focus-within > .nav-link {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.05);
+    }
+
+    .nav-link.active {
+      color: var(--admos-orange);
+      position: relative;
+    }
+
+    .nav-link.active::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 4px;
+      height: 2px;
+      background: var(--admos-orange);
+    }
+
+    .caret {
+      width: 8px;
+      height: 8px;
+      border-right: 1.6px solid currentColor;
+      border-bottom: 1.6px solid currentColor;
+      transform: rotate(45deg) translateY(-2px);
+    }
+
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 2px);
+      right: 0;
+      min-width: 270px;
+      padding: 8px;
+      background: #fff;
+      border: 1px solid rgba(69,73,75,.10);
+      box-shadow: 0 12px 35px rgba(0,0,0,.10);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(6px);
+      transition: .16s ease;
+    }
+
+    .nav-item:hover .dropdown,
+    .nav-item:focus-within .dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px 12px;
+      color: var(--admos-text);
+      text-decoration: none;
+      white-space: nowrap;
+      font-size: 15px;
+    }
+
+    .dropdown a:hover {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.10);
+    }
+
+    .menu-toggle { display: none; }
+
+    .menu-icon {
+      display: none;
+      justify-self: end;
+      width: 46px;
+      height: 46px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .menu-icon span,
+    .menu-icon span::before,
+    .menu-icon span::after {
+      content: "";
+      display: block;
+      width: 28px;
+      height: 3px;
+      background: var(--admos-text);
+      position: relative;
+      transition: .2s ease;
+    }
+
+    .menu-icon span::before { position: absolute; top: -9px; }
+    .menu-icon span::after { position: absolute; top: 9px; }
+
+    .mobile-nav { display: none; }
+
+    .eyebrow {
+      margin-bottom: 24px;
+      color: var(--admos-orange);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow a {
+      color: var(--admos-orange);
+      text-decoration: none;
+    }
+
+    .eyebrow a:hover { color: #ffffff; }
+
+    /* =========================================================
+       ARTICLE HERO
+       ========================================================= */
+    .article-hero {
+      padding: 2rem 0;
+      background:
+        linear-gradient(
+          to right,
+          rgba(48, 63, 110, 0.98) 0%,
+          rgba(48, 63, 110, 0.90) 45%,
+          rgba(48, 63, 110, 0.62) 75%,
+          rgba(48, 63, 110, 0.28) 100%
+        ),
+        url("assets/bg.jpg");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero-inner {
+      width: min(100%, var(--content-max));
+      margin: 0 auto;
+      color: #ffffff;
+    }
+
+    .article-hero h1 {
+      max-width: 980px;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(38px, 5vw, 66px);
+      line-height: 1.06;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 28px;
+      margin-top: 24px;
+      font-size: 15px;
+    }
+
+    .pdf-button {
+      display: inline-block;
+      margin-top: 28px;
+      padding: 9px 14px;
+      border: 2px solid var(--admos-orange);
+      border-radius: 8px;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 500;
+      background: var(--admos-orange);
+    }
+
+    .pdf-button:hover {
+      color: var(--admos-ice);
+      background: var(--admos-orange);
+    }
+
+    /* =========================================================
+       ARTICLE LAYOUT
+       ========================================================= */
+    .page-layout {
+      width: min(100%, var(--content-max));
+      margin: 0 auto;
+      padding: 56px 0 80px;
+      display: grid;
+      grid-template-columns: minmax(0, 760px) minmax(250px, 320px);
+      gap: 70px;
+      align-items: start;
+    }
+
+    .article { min-width: 0; }
+
+    .article h2 {
+      margin: 2.3rem 0 1rem;
+      color: var(--admos-blue);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(26px, 3vw, 34px);
+      line-height: 1.15;
+    }
+
+    .article h2:first-child { margin-top: 0; }
+
+    .article h3 {
+      margin: 1.8rem 0 .8rem;
+      color: var(--admos-blue);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .article p {
+      margin: 0 0 1.25rem;
+      color: var(--admos-text);
+      font-size: 17px;
+      line-height: 1.8;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .article figure { margin: 2.3rem 0; }
+
+    .article figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .article figcaption {
+      margin-top: 10px;
+      color: var(--admos-orange);
+      font-size: 13px;
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    .article table {
+      width: 100%;
+      margin: 0;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+
+    .table-wrapper {
+      margin: 2.3rem 0;
+    }
+
+    .table-caption {
+      margin-top: 10px;
+      color: var(--admos-orange);
+      font-size: 13px;
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    .caption-label {
+      font-weight: 600;
+    }
+
+    .article th,
+    .article td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #d8dadd;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .article th {
+      color: var(--admos-blue);
+      font-weight: 600;
+      border-top: 2px solid var(--admos-blue);
+      border-bottom: 1px solid var(--admos-blue);
+    }
+
+    .equation {
+      margin: 1.4rem 0 1.8rem;
+      padding: 18px;
+      text-align: center;
+      font-family: "Times New Roman", serif;
+      font-size: 26px;
+      background: #f6f7f8;
+      border-left: 4px solid var(--admos-orange);
+    }
+
+    .references {
+      padding-left: 1.2rem;
+      margin-bottom: 0;
+    }
+
+    .references li {
+      margin-bottom: .8rem;
+      color: var(--admos-text);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* =========================================================
+       SIDEBAR
+       ========================================================= */
+    .sidebar {
+      position: sticky;
+      top: 150px;
+    }
+
+    .sidebar-block {
+      margin-bottom: 34px;
+      padding: 22px;
+      background: #f7f7f6;
+      border-top: 3px solid var(--admos-blue);
+    }
+
+    .sidebar h3 {
+      margin: 0 0 16px;
+      color: var(--admos-blue);
+      font-size: 19px;
+    }
+
+    .toc {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc li { margin-bottom: 10px; }
+
+    .toc a {
+      color: var(--admos-text);
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .toc a:hover { color: var(--admos-orange); }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      padding: 5px 9px;
+      border: 1px solid var(--admos-orange);
+      border-radius: 7px;
+      color: var(--admos-orange);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+    footer {
+      padding: 70px 0;
+      width: 100%;
+      background: var(--admos-ice);
+    }
+
+    .footer-content {
+      width: min(100%, 1200px);
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--admos-text);
+    }
+
+    .footer-content div {
+      display: flex;
+      gap: 30px;
+    }
+
+    .footer-content a {
+      color: var(--admos-text);
+      text-decoration: none;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+    @media (max-width: 980px) {
+      .header-row {
+        grid-template-columns: 1fr auto;
+        min-height: 82px;
+      }
+
+      .brand a {
+        width: min(25vw, 210px);
+        min-width: 150px;
+      }
+
+      .desktop-nav { display: none; }
+      .menu-icon { display: flex; }
+
+      .menu-toggle:checked + .menu-icon span { background: transparent; }
+      .menu-toggle:checked + .menu-icon span::before { top: 0; transform: rotate(45deg); }
+      .menu-toggle:checked + .menu-icon span::after { top: 0; transform: rotate(-45deg); }
+      .menu-toggle:checked ~ .mobile-nav { display: block; }
+
+      .mobile-nav {
+        border-top: 1px solid rgba(69,73,75,.10);
+        padding: 10px 0 18px;
+      }
+
+      .mobile-nav a,
+      .mobile-nav summary {
+        display: block;
+        padding: 12px 4px;
+        color: var(--admos-text);
+        text-decoration: none;
+      }
+
+      .mobile-nav details > div { padding-left: 18px; }
+
+      .page-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+
+      .sidebar { position: static; }
+    }
+
+    @media (max-width: 700px) {
+      .hero-meta {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true,
+        tags: 'none'
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script
+    id="MathJax-script"
+    async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+  <style>
+    .math-display {
+      text-align: center;
+      margin: 1.4rem 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+  </style>
+
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="header-shell">
+    <div class="header-row">
+
+      <div class="brand">
+        <a href="https://www.admos.de/" aria-label="AdMOS Home">
+          <img
+            src="https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-455x160.png"
+            alt="AdMOS">
+        </a>
+      </div>
+
+      <nav class="desktop-nav" aria-label="Header navigation">
+        <div class="nav-item"><a class="nav-link" href="https://www.admos.de/">Home</a></div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/leistungen-und-produkte/">
+            <span>Services &amp; Products</span>
+            <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/">1/f-Measurement System</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/">CMOS Modeling</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/">Semiconductor Measurement Lab</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/">Software Development</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/">Design Analysis</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/">Simulation &amp; Consulting</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/">Research</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link active" href="../../../">Technical Articles</a>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/uber-admos/">
+            <span>About AdMOS</span>
+            <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/uber-admos/ueber-uns/">About Us</a>
+            <a href="https://www.admos.de/uber-admos/karriere/">Careers</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/kontakt/">Contact</a>
+        </div>
+      </nav>
+
+      <input class="menu-toggle" type="checkbox" id="menu-toggle">
+      <label class="menu-icon" for="menu-toggle" aria-label="Open menu"><span></span></label>
+
+      <nav class="mobile-nav" aria-label="Mobile navigation">
+        <a href="https://www.admos.de/">Home</a>
+        <a href="../../../">Technical Articles</a>
+        <a href="https://www.admos.de/kontakt/">Contact</a>
+      </nav>
+
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="article-hero">
+    <div class="hero-inner">
+
+      <div class="eyebrow">
+        <a href="../../../">Technical Articles</a>
+        /
+        <a href="../../">Article Series</a>
+        /
+        <span>Article</span>
+      </div>
+
+      <h1>A Practical Guide to Low-frequency Noise Measurements in Electronic Devices</h1>
+
+      <div class="hero-meta">
+        <span><strong>Published:</strong> 25.06.2026</span>
+        <span><strong>Reading time:</strong> approx. 8 minutes</span>
+        <span><strong>Article ID:</strong> MAC_001</span>
+      </div>
+
+      <a
+        class="pdf-button"
+        href="MAC_001.pdf"
+        target="_blank"
+        rel="noopener noreferrer">
+        Open PDF
+      </a>
+
+    </div>
+  </section>
+
+  <div class="page-layout">
+
+    <article class="article">
+<h2 id="the-measurement-challenge">The Measurement Challenge</h2>
+
+<p>Low-frequency noise (LFN) measurements are among the most demanding experiments in electronic characterization. Unlike conventional electrical measurements, where signals are intentionally large and easy to detect, LFN measurements attempt to resolve extremely small fluctuations hidden within the device current itself. At these scales, the measurement setup can easily become noisier than the device under investigation. Power-line interference, thermal drift, grounding problems, vibrations, and even moving cables can all generate signals that mask the intrinsic device noise. As a result, building a stable and reliable measurement setup together with careful measurement practices becomes just as important as the device being characterized.</p>
+
+<figure id="figure-fig-measurement-interference">
+  <img src="assets/Fig1.png" alt="External interference from the measurement setup can easily exceed the intrinsic noise of the device under test.">
+  <figcaption><span class="caption-label">Figure 1:</span> External interference from the measurement setup can easily exceed the intrinsic noise of the device under test.</figcaption>
+</figure>
+
+<h2 id="anatomy-of-noise-measurement-setup">Anatomy of Noise Measurement Setup</h2>
+
+<p>The signal chain of the measurement setup should be carefully designed to isolate the device under test (DUT) from external interferences. A typical setup comprises of bias sources connected to the DUT, which is biased under controlled operating conditions. The resulting fluctuations from the DUT are continuously amplified using a low-noise amplifier (LNA) and transformed into the frequency domain using Fast Fourier Transform (FFT) to extract the Power Spectral Density (PSD).</p>
+
+<p>Figure&nbsp;<a href="#figure-fig-measurement-chain">2</a> shows a simplified instrumentation chain for a typical low-frequency noise measurement setup using a transistor as the DUT. Independent source-measure units (SMUs) provide stable drain and gate bias conditions, while low-pass filters (LPFs) suppress noise originating from the bias circuitry itself. A measurement resistor, $R_{\mathrm{Meas}}$, converts the drain current fluctuations into measurable voltage fluctuations. Since the DC bias component is several orders of magnitude larger than the noise signal of interest, an AC-coupling capacitor, $C_k$, blocks the DC component and passes only the small noise signal to the LNA. The amplified noise signal is then fed into a dynamic signal analyzer (DSA), which incorporates analog-to-digital conversion and FFT processing to compute the PSD.</p>
+
+<figure id="figure-fig-measurement-chain">
+  <img src="assets/Fig2.png" alt="Simplified measurement chain illustrating the extraction of noise spectra from a biased transistor.">
+  <figcaption><span class="caption-label">Figure 2:</span> Simplified measurement chain illustrating the extraction of noise spectra from a biased transistor.</figcaption>
+</figure>
+
+<h2 id="bias-stability-and-long-term-drift">Bias Stability and Long-term Drift</h2>
+
+<p>The lower the frequency being measured, the longer the required observation time. Accessing the millihertz (mHz) regime can require measurements lasting several hours or even days, placing stringent demands on bias stability and environmental control. Over such timescales, even small variations in operating conditions can introduce artifacts that obscure the intrinsic device noise.</p>
+
+<p>Long-term drift typically appears as a gradual change in the average device current over time. As illustrated in Figure&nbsp;<a href="#figure-fig-bias-drift">3</a>, a stable operating point produces fluctuations around a constant mean value, whereas an unstable bias introduces slow trends and systematic variations. These effects may originate from bias-source instability, self-heating, ambient temperature fluctuations, contact degradation, or slow charging and discharging processes within the device itself. The consequences become particularly apparent in the frequency domain. Since drift contains significant low-frequency components, it artificially elevates the measured PSD at the lowest frequencies, potentially leading to misinterpretation of the noise data. For this reason, maintaining a stable bias is one of the most critical aspects of any LFN measurement setup.</p>
+
+<figure id="figure-fig-bias-drift">
+  <img src="assets/Fig3.png" alt="Comparison of stable and drifting operating point plotted in time and frequency domain.">
+  <figcaption><span class="caption-label">Figure 3:</span> Comparison of stable and drifting operating point plotted in time and frequency domain.</figcaption>
+</figure>
+
+<p>Battery-powered biasing is often considered the ideal solution because it provides a cleaner DC source inherently isolated from power-line disturbances. In practice, batteries become cumbersome for automated measurements, voltage sweeps, and long-duration experiments. Modern SMUs offer a far more practical alternative, combining programmable biasing with integrated measurement capabilities. Although SMUs may introduce residual output noise from internal regulators and digital control circuitry, their flexibility makes them the preferred choice in most laboratory environments. LPFs are commonly inserted between the bias source and the DUT to suppress the residual noise. The filter cutoff frequency should be chosen low enough to reject unwanted disturbances, yet high enough to avoid excessively slow stabilization after a bias change.</p>
+
+<h2 id="low-noise-amplification">Low-noise Amplification</h2>
+
+<p>The amplifier is one of the most critical components in an LFN measurement system. Regardless of how carefully the DUT is biased or how well environmental disturbances are controlled, the measured spectrum will ultimately be limited by the noise and bandwidth of the front-end amplifier. Several amplifier characteristics influence the quality of an LFN measurement. First, the amplifier noise floor must be sufficiently low so that the measured PSD remains dominated by the DUT rather than the measurement system itself. Second, the amplifier flicker corner should be low enough to avoid obscuring the low-frequency behavior of interest. Finally, the amplifier must provide adequate bandwidth to capture the desired frequency range without introducing excessive attenuation.</p>
+
+<p>Figure&nbsp;<a href="#figure-fig-lna-tradeoffs">4</a>(a) illustrates the noise characteristics of two different LNAs. LNA 1 exhibits a lower flicker corner frequency, $f_{c1}$, making it better suited for measurements at very low frequencies. However, this advantage comes at the expense of a higher white-noise floor. In contrast, LNA 2 offers a substantially lower white-noise floor but exhibits a higher flicker corner frequency, $f_{c2}$. Measurements focused on the deepest low-frequency regime may benefit from a lower flicker corner, whereas measurements requiring the highest sensitivity at moderate and high frequencies often favor a lower white-noise floor. The optimum choice depends on both the expected DUT noise level and the frequency range of interest.</p>
+
+<p>In practice, amplifier selection involves more than simply minimizing the noise floor. Figure&nbsp;<a href="#figure-fig-lna-tradeoffs">4</a>(b) highlights the trade-off between measurement sensitivity and bandwidth. LNA 1 achieves a lower effective measurement floor, enabling the detection of smaller fluctuations from the DUT. However, its usable bandwidth is limited by the amplifier gain response, causing the measured spectrum to roll off at higher frequencies. LNA 2, on the other hand, maintains a wider measurement bandwidth but exhibits a higher overall noise floor. Consequently, although LNA 2 may be less sensitive to small fluctuations, it can accurately characterize noise over a broader frequency range.</p>
+
+<figure id="figure-fig-lna-tradeoffs">
+  <img src="assets/Fig4.png" alt="Key trade-offs in LNA selection: (a) flicker corner frequency versus white-noise floor, and (b) measurement sensitivity versus bandwidth.">
+  <figcaption><span class="caption-label">Figure 4:</span> Key trade-offs in LNA selection: (a) flicker corner frequency versus white-noise floor, and (b) measurement sensitivity versus bandwidth.</figcaption>
+</figure>
+
+<p>The choice between different amplifier architectures follows similar considerations. Voltage amplifiers are often preferred when the DUT exhibits a relatively low output impedance, whereas current amplifiers or transimpedance amplifiers can provide superior sensitivity for high-impedance devices and current-noise measurements. Regardless of the topology, the fundamental requirement remains the same, the amplifier noise contribution must remain below the DUT noise across the frequency range of interest while providing sufficient bandwidth for the intended measurement.</p>
+
+<p>Ultimately, there is no universal amplifier for all LFN measurements. Different applications place different demands on noise floor, flicker corner, bandwidth, and DUT impedance. As a result, practical LFN systems often employ different amplifier configurations, each optimized for a particular measurement objective.</p>
+
+<h2 id="turning-fluctuations-into-spectra">Turning Fluctuations into Spectra</h2>
+
+<p>The output of the LNA is still a time-domain signal containing the amplified fluctuations of the DUT. To determine how the noise power is distributed across frequency, the signal must be digitized and transformed into a corresponding PSD. The conversion begins with digitization of the analog waveform by the ADC. The resulting digital time record is divided into a series of overlapping segments, allowing multiple independent spectral estimates to be extracted from a single measurement. To minimize spectral leakage arising from the finite length of each segment, a window function such as the most widely used Hann window&nbsp;[<a href="#ref-1">1</a>] is applied. Each windowed segment is then transformed using the FFT, which results in a set of coefficients which are used in the estimation of the PSD of each segment. The PSD obtained from a single segment exhibits significant statistical scatter. Welch's method&nbsp;[<a href="#ref-2">2</a>] addresses this limitation by averaging the PSDs calculated from all segments, producing a smoother and more statistically robust estimate of the underlying noise spectrum.</p>
+
+<figure id="figure-fig-welch-averaging">
+  <img src="assets/Fig5.png" alt="Typical conversion of the time-domain signal into PSD implemented withing the DSA using FFT-based Welch averaging.">
+  <figcaption><span class="caption-label">Figure 5:</span> Typical conversion of the time-domain signal into PSD implemented withing the DSA using FFT-based Welch averaging.</figcaption>
+</figure>
+
+<p>The measurable frequency range is ultimately determined by the acquisition settings. The sampling frequency defines the highest observable frequency according to the Nyquist criterion&nbsp;[<a href="#ref-3">3</a>], whereas the total acquisition time determines the lowest resolvable frequency and the achievable spectral resolution. Consequently, characterization of LFN in the millihertz regime often requires measurement durations extending over several hours.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>LFN measurements represent one of the most sensitive electrical characterization techniques available for modern electronic devices. Extracting meaningful information requires more than simply measuring current fluctuations. It demands careful attention to bias stability, shielding, amplification, and spectral analysis. Accurate and reliable LFN measurements provide a powerful window into defect dynamics, carrier transport, and device reliability, enabling engineers and researchers to probe physical processes that are often invisible to conventional electrical characterization techniques.</p>
+
+<h2 id="references">References</h2>
+
+<ol class="references">
+
+<li id="ref-1">F. J. Harris, &ldquo;On the use of windows for harmonic analysis with the discrete Fourier transform,&rdquo; <em>Proceedings of the IEEE</em>, vol. 66, no. 1, pp. 51–83, Jan. 1978.</li>
+
+<li id="ref-2">P. Welch, &ldquo;The use of fast Fourier transform for the estimation of power spectra: A method based on time averaging over short, modified periodograms,&rdquo; <em>IEEE Transactions on Audio and Electroacoustics</em>, vol. 15, no. 2, pp. 70–73, June 1967.</li>
+
+<li id="ref-3">H. Nyquist, &ldquo;Certain Topics in Telegraph Transmission Theory,&rdquo; <em>Transactions of the American Institute of Electrical Engineers</em>, vol. 47, no. 2, pp. 617–644, April 1928.</li>
+
+</ol>
+    </article>
+
+    <aside class="sidebar">
+
+      <div class="sidebar-block">
+        <h3>On this page</h3>
+        <ul class="toc">
+          <li><a href="#the-measurement-challenge">The Measurement Challenge</a></li>
+          <li><a href="#anatomy-of-noise-measurement-setup">Anatomy of Noise Measurement Setup</a></li>
+          <li><a href="#bias-stability-and-long-term-drift">Bias Stability and Long-term Drift</a></li>
+          <li><a href="#low-noise-amplification">Low-noise Amplification</a></li>
+          <li><a href="#turning-fluctuations-into-spectra">Turning Fluctuations into Spectra</a></li>
+          <li><a href="#conclusion">Conclusion</a></li>
+          <li><a href="#references">References</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-block">
+        <h3>Article Tags</h3>
+        <div class="tags">
+          <span class="tag">Low-Frequency Noise</span>
+          <span class="tag">Noise Measurement</span>
+          <span class="tag">Power Spectral Density</span>
+          <span class="tag">Low-Noise Amplifiers</span>
+          <span class="tag">Welch Method</span>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-content">
+    <div>
+      <a href="https://www.admos.de/impressum/">Legal Notice</a>
+      <a href="https://www.admos.de/datenschutzerklarung/">Privacy Policy</a>
+    </div>
+    <p>@Copyright. All rights reserved</p>
+  </div>
+</footer>
+
+</body>
+</html>
