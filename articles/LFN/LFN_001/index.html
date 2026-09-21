@@ -531,6 +531,34 @@
       }
     }
   </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true,
+        tags: 'none'
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script
+    id="MathJax-script"
+    async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+  <style>
+    .math-display {
+      text-align: center;
+      margin: 1.4rem 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+  </style>
+
 </head>
 
 <body>
@@ -682,13 +710,21 @@
 
 <p>The most widely accepted model for MOS devices is the carrier number fluctuation (CNF) theory&nbsp;[<a href="#ref-1">1</a>], where carriers are randomly captured and emitted by oxide or interface traps near the channel inversion region. These trapping events modulate the number of free carriers participating in conduction, leading to current fluctuations. The corresponding noise PSD follows the well-known relation:</p>
 
-<p>\begin{equation} S(f) \propto \frac{1}{f^{\gamma}} \label{eq:cnf} \end{equation}</p>
+<div class="math-display" id="equation-eq-cnf">
+\[
+S(f) \propto \frac{1}{f^{\gamma}}\tag{1}
+\]
+</div>
 
 <p>where $\gamma \approx 1$ for classical flicker noise emerging from the superposition of several traps.</p>
 
 <p>The CNF theory cannot fully explain the presence of $1/f$ noise in homogenous materials and resistors, where oxide trapping effects are negligible. An alternative explanation is provided by the carrier mobility fluctuation (CMF) theory by Hooge&nbsp;[<a href="#ref-4">4</a>], which attributes LFN to variations in carrier mobility caused by scattering processes due to lattice vibrations, surface roughness, and crystal defects. Hooge proposed the empirical relation for the PSD as:</p>
 
-<p>\begin{equation} S(f) = \frac{I^{2}\alpha_{H}}{Nf} \label{eq:hooge} \end{equation}</p>
+<div class="math-display" id="equation-eq-hooge">
+\[
+S(f) = \frac{I^{2}\alpha_{H}}{Nf}\tag{2}
+\]
+</div>
 
 <p>where $I$ is the current, $\alpha_{H}$ is Hooge's parameter and $N$ is the number of free carriers. The relation predicts that the relative noise increases as the carrier population decreases, explaining why LFN becomes increasingly important in aggressively scaled nanoscale devices.</p>
 
