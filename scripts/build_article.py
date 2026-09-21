@@ -49,6 +49,7 @@ def remove_comments(text):
 def find_braced_content(text, start):
     """
     Read a balanced {...} expression beginning at start.
+
     Returns:
         content, end_position
     """
@@ -89,8 +90,9 @@ def find_braced_content(text, start):
 
 def extract_newcommand(text, command):
     """
-    Extract:
-        \newcommand{\ArticleTitle}{...}
+    Extract commands such as:
+
+    \newcommand{\ArticleTitle}{...}
     """
 
     patterns = [
@@ -131,7 +133,11 @@ def slugify(text):
     value = latex_plain_text(text)
     value = value.lower()
 
-    value = re.sub(r"[^a-z0-9]+", "-", value)
+    value = re.sub(
+        r"[^a-z0-9]+",
+        "-",
+        value
+    )
 
     return value.strip("-")
 
@@ -139,26 +145,32 @@ def slugify(text):
 def latex_plain_text(text):
     """
     Convert basic LaTeX markup to plain text.
-    Useful for titles, alt text and IDs.
+    Useful for titles, captions, alt text and IDs.
     """
 
-    text = re.sub(
-        r"\\textit\s*{([^{}]*)}",
-        r"\1",
-        text
-    )
+    previous = None
 
-    text = re.sub(
-        r"\\emph\s*{([^{}]*)}",
-        r"\1",
-        text
-    )
+    while previous != text:
 
-    text = re.sub(
-        r"\\textbf\s*{([^{}]*)}",
-        r"\1",
-        text
-    )
+        previous = text
+
+        text = re.sub(
+            r"\\textit\s*{([^{}]*)}",
+            r"\1",
+            text
+        )
+
+        text = re.sub(
+            r"\\emph\s*{([^{}]*)}",
+            r"\1",
+            text
+        )
+
+        text = re.sub(
+            r"\\textbf\s*{([^{}]*)}",
+            r"\1",
+            text
+        )
 
     text = text.replace(r"\&", "&")
     text = text.replace(r"\_", "_")
@@ -169,7 +181,11 @@ def latex_plain_text(text):
     text = text.replace("``", '"')
     text = text.replace("''", '"')
 
-    text = re.sub(r"\\[a-zA-Z]+\*?", "", text)
+    text = re.sub(
+        r"\\[a-zA-Z]+\*?",
+        "",
+        text
+    )
 
     text = text.replace("{", "")
     text = text.replace("}", "")
@@ -206,7 +222,9 @@ def extract_bibliography(body):
         r"\\bibitem{([^}]+)}"
     )
 
-    matches = list(pattern.finditer(bibliography_text))
+    matches = list(
+        pattern.finditer(bibliography_text)
+    )
 
     items = []
     citation_numbers = {}
@@ -222,7 +240,9 @@ def extract_bibliography(body):
         else:
             end = len(bibliography_text)
 
-        content = bibliography_text[start:end].strip()
+        content = bibliography_text[
+            start:end
+        ].strip()
 
         number = index + 1
 
@@ -249,7 +269,11 @@ def extract_bibliography(body):
 # INLINE LATEX TO HTML
 # ============================================================
 
-def convert_inline(text, citation_numbers=None, reference_map=None):
+def convert_inline(
+    text,
+    citation_numbers=None,
+    reference_map=None
+):
 
     if citation_numbers is None:
         citation_numbers = {}
@@ -262,8 +286,6 @@ def convert_inline(text, citation_numbers=None, reference_map=None):
     if not text:
         return ""
 
-    # Protect common escaped characters before HTML escaping.
-
     replacements = {
         r"\&": "___LATEX_AMP___",
         r"\_": "___LATEX_UNDERSCORE___",
@@ -273,27 +295,61 @@ def convert_inline(text, citation_numbers=None, reference_map=None):
     }
 
     for latex_value, placeholder in replacements.items():
-        text = text.replace(latex_value, placeholder)
 
-    text = html.escape(text, quote=False)
+        text = text.replace(
+            latex_value,
+            placeholder
+        )
 
-    # Restore escaped characters.
+    text = html.escape(
+        text,
+        quote=False
+    )
 
-    text = text.replace("___LATEX_AMP___", "&amp;")
-    text = text.replace("___LATEX_UNDERSCORE___", "_")
-    text = text.replace("___LATEX_PERCENT___", "%")
-    text = text.replace("___LATEX_HASH___", "#")
-    text = text.replace("___LATEX_DOLLAR___", "$")
+    text = text.replace(
+        "___LATEX_AMP___",
+        "&amp;"
+    )
 
-    # Typography.
+    text = text.replace(
+        "___LATEX_UNDERSCORE___",
+        "_"
+    )
 
-    text = text.replace("``", "&ldquo;")
-    text = text.replace("''", "&rdquo;")
+    text = text.replace(
+        "___LATEX_PERCENT___",
+        "%"
+    )
 
-    text = text.replace("---", "—")
-    text = text.replace("--", "–")
+    text = text.replace(
+        "___LATEX_HASH___",
+        "#"
+    )
 
-    # Italics.
+    text = text.replace(
+        "___LATEX_DOLLAR___",
+        "$"
+    )
+
+    text = text.replace(
+        "``",
+        "&ldquo;"
+    )
+
+    text = text.replace(
+        "''",
+        "&rdquo;"
+    )
+
+    text = text.replace(
+        "---",
+        "—"
+    )
+
+    text = text.replace(
+        "--",
+        "–"
+    )
 
     previous = None
 
@@ -319,8 +375,6 @@ def convert_inline(text, citation_numbers=None, reference_map=None):
             text
         )
 
-    # Citations.
-
     def replace_citation(match):
 
         keys = [
@@ -341,7 +395,9 @@ def convert_inline(text, citation_numbers=None, reference_map=None):
                 )
 
             else:
-                numbers.append(html.escape(key))
+                numbers.append(
+                    html.escape(key)
+                )
 
         return "[" + ", ".join(numbers) + "]"
 
@@ -350,8 +406,6 @@ def convert_inline(text, citation_numbers=None, reference_map=None):
         replace_citation,
         text
     )
-
-    # References.
 
     def replace_reference(match):
 
@@ -374,11 +428,10 @@ def convert_inline(text, citation_numbers=None, reference_map=None):
         text
     )
 
-    # Non-breaking spaces from LaTeX.
-
-    text = text.replace("~", "&nbsp;")
-
-    # Remove a few layout-only commands.
+    text = text.replace(
+        "~",
+        "&nbsp;"
+    )
 
     commands_to_remove = [
         r"\centering",
@@ -389,16 +442,104 @@ def convert_inline(text, citation_numbers=None, reference_map=None):
     ]
 
     for command in commands_to_remove:
-        text = text.replace(command, "")
+
+        text = text.replace(
+            command,
+            ""
+        )
 
     return clean_whitespace(text)
+
+
+# ============================================================
+# FIGURE FILE RESOLUTION
+# ============================================================
+
+def resolve_figure_filename(
+    article_dir,
+    latex_path
+):
+    """
+    Resolve the image referenced by \includegraphics.
+
+    Supports:
+        figures/Fig1.png
+        figures/Fig1
+        Fig1.png
+        Fig1
+    """
+
+    latex_path = latex_path.strip()
+
+    requested = Path(latex_path)
+
+    source_figures = (
+        article_dir
+        / "figures"
+    )
+
+    candidate_name = requested.name
+
+    if not source_figures.exists():
+        return candidate_name
+
+    exact = (
+        source_figures
+        / candidate_name
+    )
+
+    if exact.exists():
+        return exact.name
+
+    if requested.suffix == "":
+
+        extensions = [
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".webp",
+            ".svg",
+            ".pdf"
+        ]
+
+        for extension in extensions:
+
+            candidate = (
+                source_figures
+                / f"{candidate_name}{extension}"
+            )
+
+            if candidate.exists():
+                return candidate.name
+
+    requested_stem = (
+        requested.stem.lower()
+    )
+
+    for item in source_figures.iterdir():
+
+        if not item.is_file():
+            continue
+
+        if (
+            item.stem.lower()
+            == requested_stem
+        ):
+            return item.name
+
+    return candidate_name
 
 
 # ============================================================
 # FIGURES
 # ============================================================
 
-def parse_figures(body, citation_numbers, reference_map):
+def parse_figures(
+    body,
+    citation_numbers,
+    reference_map,
+    article_dir
+):
 
     pattern = re.compile(
         r"\\begin{figure}(?:\[[^\]]*\])?(.*?)\\end{figure}",
@@ -419,9 +560,16 @@ def parse_figures(body, citation_numbers, reference_map):
         if not image_match:
             return ""
 
-        image_path = image_match.group(1).strip()
+        image_path = (
+            image_match
+            .group(1)
+            .strip()
+        )
 
-        image_name = Path(image_path).name
+        image_name = resolve_figure_filename(
+            article_dir,
+            image_path
+        )
 
         caption = ""
 
@@ -432,7 +580,10 @@ def parse_figures(body, citation_numbers, reference_map):
 
         if caption_match:
 
-            start = caption_match.end() - 1
+            start = (
+                caption_match.end()
+                - 1
+            )
 
             caption, _ = find_braced_content(
                 content,
@@ -447,14 +598,27 @@ def parse_figures(body, citation_numbers, reference_map):
         )
 
         if label_match:
-            label = label_match.group(1).strip()
+
+            label = (
+                label_match
+                .group(1)
+                .strip()
+            )
 
         number = len(figures) + 1
 
         if label:
-            html_id = "figure-" + slugify(label)
+
+            html_id = (
+                "figure-"
+                + slugify(label)
+            )
+
         else:
-            html_id = f"figure-{number}"
+
+            html_id = (
+                f"figure-{number}"
+            )
 
         if label:
 
@@ -477,7 +641,8 @@ def parse_figures(body, citation_numbers, reference_map):
 
         figure_html = (
             f'<figure id="{html_id}">\n'
-            f'  <img src="assets/{html.escape(image_name)}" '
+            f'  <img '
+            f'src="assets/{html.escape(image_name)}" '
             f'alt="{alt_text}">\n'
             f'  <figcaption>'
             f'Figure {number}: {caption_html}'
@@ -485,13 +650,24 @@ def parse_figures(body, citation_numbers, reference_map):
             f'</figure>'
         )
 
-        token = f"@@FIGURE_{len(figures)}@@"
+        token = (
+            f"@@FIGURE_{len(figures)}@@"
+        )
 
-        figures.append(figure_html)
+        figures.append(
+            figure_html
+        )
 
-        return "\n\n" + token + "\n\n"
+        return (
+            "\n\n"
+            + token
+            + "\n\n"
+        )
 
-    body = pattern.sub(replacement, body)
+    body = pattern.sub(
+        replacement,
+        body
+    )
 
     return body, figures
 
@@ -516,7 +692,59 @@ def split_table_cells(row):
     ]
 
 
-def parse_tables(body, citation_numbers, reference_map):
+def extract_tabular_content(content):
+    """
+    Extract the body of a tabular environment while correctly
+    handling column specifications such as:
+
+        {@{}ll@{}}
+
+    A simple regex cannot parse these correctly because they contain
+    nested braces.
+    """
+
+    tabular_start = re.search(
+        r"\\begin{tabular}\s*{",
+        content
+    )
+
+    if not tabular_start:
+        return None
+
+    column_spec_start = (
+        tabular_start.end()
+        - 1
+    )
+
+    _, column_spec_end = find_braced_content(
+        content,
+        column_spec_start
+    )
+
+    if (
+        column_spec_end
+        <= column_spec_start
+    ):
+        return None
+
+    tabular_end = content.find(
+        r"\end{tabular}",
+        column_spec_end
+    )
+
+    if tabular_end == -1:
+        return None
+
+    return content[
+        column_spec_end:tabular_end
+    ]
+
+
+def parse_tables(
+    body,
+    citation_numbers,
+    reference_map
+):
 
     pattern = re.compile(
         r"\\begin{table}(?:\[[^\]]*\])?(.*?)\\end{table}",
@@ -538,7 +766,10 @@ def parse_tables(body, citation_numbers, reference_map):
 
         if caption_match:
 
-            start = caption_match.end() - 1
+            start = (
+                caption_match.end()
+                - 1
+            )
 
             caption, _ = find_braced_content(
                 content,
@@ -553,18 +784,19 @@ def parse_tables(body, citation_numbers, reference_map):
         )
 
         if label_match:
-            label = label_match.group(1).strip()
 
-        tabular_match = re.search(
-            r"\\begin{tabular}{[^}]*}(.*?)\\end{tabular}",
-            content,
-            re.DOTALL
+            label = (
+                label_match
+                .group(1)
+                .strip()
+            )
+
+        table_body = extract_tabular_content(
+            content
         )
 
-        if not tabular_match:
+        if table_body is None:
             return ""
-
-        table_body = tabular_match.group(1)
 
         table_body = table_body.replace(
             r"\toprule",
@@ -597,41 +829,87 @@ def parse_tables(body, citation_numbers, reference_map):
             if not row:
                 continue
 
+            row = row.replace(
+                r"\centering",
+                ""
+            ).strip()
+
             if "@@TOPRULE@@" in row:
-                row = row.replace("@@TOPRULE@@", "").strip()
+
+                row = row.replace(
+                    "@@TOPRULE@@",
+                    ""
+                ).strip()
 
             if "@@MIDRULE@@" in row:
 
-                before = row.replace("@@MIDRULE@@", "").strip()
+                before = row.replace(
+                    "@@MIDRULE@@",
+                    ""
+                ).strip()
 
                 if before:
+
                     parsed_rows.append(
-                        ("header", split_table_cells(before))
+                        (
+                            "header",
+                            split_table_cells(
+                                before
+                            )
+                        )
                     )
 
                 header_mode = False
                 continue
 
             if "@@BOTTOMRULE@@" in row:
-                row = row.replace("@@BOTTOMRULE@@", "").strip()
+
+                row = row.replace(
+                    "@@BOTTOMRULE@@",
+                    ""
+                ).strip()
 
             if not row:
                 continue
 
-            cells = split_table_cells(row)
+            cells = split_table_cells(
+                row
+            )
 
             if header_mode:
-                parsed_rows.append(("header", cells))
+
+                parsed_rows.append(
+                    (
+                        "header",
+                        cells
+                    )
+                )
+
                 header_mode = False
+
             else:
-                parsed_rows.append(("body", cells))
+
+                parsed_rows.append(
+                    (
+                        "body",
+                        cells
+                    )
+                )
 
         number = len(tables) + 1
 
         if label:
-            html_id = "table-" + slugify(label)
+
+            html_id = (
+                "table-"
+                + slugify(label)
+            )
+
         else:
-            html_id = f"table-{number}"
+
+            html_id = (
+                f"table-{number}"
+            )
 
         if label:
 
@@ -651,10 +929,18 @@ def parse_tables(body, citation_numbers, reference_map):
 
         for row_type, cells in parsed_rows:
 
-            if row_type == "header" and not header_written:
+            if (
+                row_type == "header"
+                and not header_written
+            ):
 
-                html_lines.append("<thead>")
-                html_lines.append("<tr>")
+                html_lines.append(
+                    "<thead>"
+                )
+
+                html_lines.append(
+                    "<tr>"
+                )
 
                 for cell in cells:
 
@@ -674,18 +960,29 @@ def parse_tables(body, citation_numbers, reference_map):
                         f"<th>{value}</th>"
                     )
 
-                html_lines.append("</tr>")
-                html_lines.append("</thead>")
+                html_lines.append(
+                    "</tr>"
+                )
+
+                html_lines.append(
+                    "</thead>"
+                )
 
                 header_written = True
 
             else:
 
                 if not body_started:
-                    html_lines.append("<tbody>")
+
+                    html_lines.append(
+                        "<tbody>"
+                    )
+
                     body_started = True
 
-                html_lines.append("<tr>")
+                html_lines.append(
+                    "<tr>"
+                )
 
                 for cell in cells:
 
@@ -699,12 +996,19 @@ def parse_tables(body, citation_numbers, reference_map):
                         f"<td>{value}</td>"
                     )
 
-                html_lines.append("</tr>")
+                html_lines.append(
+                    "</tr>"
+                )
 
         if body_started:
-            html_lines.append("</tbody>")
 
-        html_lines.append("</table>")
+            html_lines.append(
+                "</tbody>"
+            )
+
+        html_lines.append(
+            "</table>"
+        )
 
         if caption:
 
@@ -716,21 +1020,33 @@ def parse_tables(body, citation_numbers, reference_map):
 
             html_lines.append(
                 f'<div class="table-caption">'
-                f'Table {number}: {caption_html}'
+                f'Table {number}: '
+                f'{caption_html}'
                 f'</div>'
             )
 
-        html_lines.append("</div>")
+        html_lines.append(
+            "</div>"
+        )
 
-        token = f"@@TABLE_{len(tables)}@@"
+        token = (
+            f"@@TABLE_{len(tables)}@@"
+        )
 
         tables.append(
             "\n".join(html_lines)
         )
 
-        return "\n\n" + token + "\n\n"
+        return (
+            "\n\n"
+            + token
+            + "\n\n"
+        )
 
-    body = pattern.sub(replacement, body)
+    body = pattern.sub(
+        replacement,
+        body
+    )
 
     return body, tables
 
@@ -739,9 +1055,16 @@ def parse_tables(body, citation_numbers, reference_map):
 # LISTS
 # ============================================================
 
-def parse_lists(body, citation_numbers, reference_map):
+def parse_lists(
+    body,
+    citation_numbers,
+    reference_map
+):
 
-    def convert_list(match, ordered=False):
+    def convert_list(
+        match,
+        ordered=False
+    ):
 
         content = match.group(1)
 
@@ -756,7 +1079,11 @@ def parse_lists(body, citation_numbers, reference_map):
             if item.strip()
         ]
 
-        tag = "ol" if ordered else "ul"
+        tag = (
+            "ol"
+            if ordered
+            else "ul"
+        )
 
         html_items = []
 
@@ -780,14 +1107,20 @@ def parse_lists(body, citation_numbers, reference_map):
 
     body = re.sub(
         r"\\begin{itemize}(.*?)\\end{itemize}",
-        lambda m: convert_list(m, ordered=False),
+        lambda match: convert_list(
+            match,
+            ordered=False
+        ),
         body,
         flags=re.DOTALL
     )
 
     body = re.sub(
         r"\\begin{enumerate}(.*?)\\end{enumerate}",
-        lambda m: convert_list(m, ordered=True),
+        lambda match: convert_list(
+            match,
+            ordered=True
+        ),
         body,
         flags=re.DOTALL
     )
@@ -799,7 +1132,10 @@ def parse_lists(body, citation_numbers, reference_map):
 # ARTICLE BODY
 # ============================================================
 
-def parse_article_body(tex):
+def parse_article_body(
+    tex,
+    article_dir
+):
 
     document_start = tex.find(
         r"\begin{document}"
@@ -809,19 +1145,26 @@ def parse_article_body(tex):
         r"\end{document}"
     )
 
-    if document_start == -1 or document_end == -1:
+    if (
+        document_start == -1
+        or document_end == -1
+    ):
+
         raise RuntimeError(
-            "Could not find \\begin{document} and \\end{document}."
+            "Could not find "
+            "\\begin{document} and "
+            "\\end{document}."
         )
 
     body = tex[
-        document_start + len(r"\begin{document}"):
+        document_start
+        + len(r"\begin{document}"):
         document_end
     ]
 
-    body = remove_comments(body)
-
-    # Remove template commands that are already represented in the web hero.
+    body = remove_comments(
+        body
+    )
 
     commands_to_remove = [
         r"\pagestyle{empty}",
@@ -830,22 +1173,25 @@ def parse_article_body(tex):
     ]
 
     for command in commands_to_remove:
-        body = body.replace(command, "")
 
-    # Bibliography must be parsed first so citations know their numbers.
+        body = body.replace(
+            command,
+            ""
+        )
 
-    body, bibliography, citation_numbers = extract_bibliography(
-        body
+    body, bibliography, citation_numbers = (
+        extract_bibliography(
+            body
+        )
     )
 
     reference_map = {}
 
-    # Parse figures and tables before paragraph conversion.
-
     body, figures = parse_figures(
         body,
         citation_numbers,
-        reference_map
+        reference_map,
+        article_dir
     )
 
     body, tables = parse_tables(
@@ -860,8 +1206,6 @@ def parse_article_body(tex):
         reference_map
     )
 
-    # Convert sections into placeholders.
-
     blocks = []
 
     toc_entries = []
@@ -872,12 +1216,16 @@ def parse_article_body(tex):
             match.group(1)
         )
 
-        section_id = slugify(title)
+        section_id = slugify(
+            title
+        )
 
         toc_entries.append(
             {
                 "level": 2,
-                "title": latex_plain_text(title),
+                "title": latex_plain_text(
+                    title
+                ),
                 "id": section_id
             }
         )
@@ -888,11 +1236,19 @@ def parse_article_body(tex):
             f'</h2>'
         )
 
-        token = f"@@BLOCK_{len(blocks)}@@"
+        token = (
+            f"@@BLOCK_{len(blocks)}@@"
+        )
 
-        blocks.append(block)
+        blocks.append(
+            block
+        )
 
-        return "\n\n" + token + "\n\n"
+        return (
+            "\n\n"
+            + token
+            + "\n\n"
+        )
 
     body = re.sub(
         r"\\section\s*{([^{}]*)}",
@@ -906,12 +1262,16 @@ def parse_article_body(tex):
             match.group(1)
         )
 
-        section_id = slugify(title)
+        section_id = slugify(
+            title
+        )
 
         toc_entries.append(
             {
                 "level": 3,
-                "title": latex_plain_text(title),
+                "title": latex_plain_text(
+                    title
+                ),
                 "id": section_id
             }
         )
@@ -922,11 +1282,19 @@ def parse_article_body(tex):
             f'</h3>'
         )
 
-        token = f"@@BLOCK_{len(blocks)}@@"
+        token = (
+            f"@@BLOCK_{len(blocks)}@@"
+        )
 
-        blocks.append(block)
+        blocks.append(
+            block
+        )
 
-        return "\n\n" + token + "\n\n"
+        return (
+            "\n\n"
+            + token
+            + "\n\n"
+        )
 
     body = re.sub(
         r"\\subsection\s*{([^{}]*)}",
@@ -934,35 +1302,47 @@ def parse_article_body(tex):
         body
     )
 
-    # Convert figure and table tokens into generic block tokens.
+    for index, figure_html in enumerate(
+        figures
+    ):
 
-    for index, figure_html in enumerate(figures):
+        token = (
+            f"@@FIGURE_{index}@@"
+        )
 
-        token = f"@@FIGURE_{index}@@"
+        block_token = (
+            f"@@BLOCK_{len(blocks)}@@"
+        )
 
-        block_token = f"@@BLOCK_{len(blocks)}@@"
-
-        blocks.append(figure_html)
+        blocks.append(
+            figure_html
+        )
 
         body = body.replace(
             token,
             block_token
         )
 
-    for index, table_html in enumerate(tables):
+    for index, table_html in enumerate(
+        tables
+    ):
 
-        token = f"@@TABLE_{index}@@"
+        token = (
+            f"@@TABLE_{index}@@"
+        )
 
-        block_token = f"@@BLOCK_{len(blocks)}@@"
+        block_token = (
+            f"@@BLOCK_{len(blocks)}@@"
+        )
 
-        blocks.append(table_html)
+        blocks.append(
+            table_html
+        )
 
         body = body.replace(
             token,
             block_token
         )
-
-    # Split remaining content into paragraphs and blocks.
 
     parts = re.split(
         r"\n\s*\n",
@@ -982,8 +1362,10 @@ def parse_article_body(tex):
         if not part:
             continue
 
-        block_match = block_pattern.match(
-            part
+        block_match = (
+            block_pattern.match(
+                part
+            )
         )
 
         if block_match:
@@ -998,17 +1380,16 @@ def parse_article_body(tex):
 
             continue
 
-        # Raw HTML lists produced earlier.
-
         if (
             part.startswith("<ul>")
             or part.startswith("<ol>")
         ):
 
-            html_parts.append(part)
-            continue
+            html_parts.append(
+                part
+            )
 
-        # Remove remaining layout commands.
+            continue
 
         part = re.sub(
             r"\\vspace\s*{[^}]*}",
@@ -1022,7 +1403,9 @@ def parse_article_body(tex):
             part
         )
 
-        part = clean_whitespace(part)
+        part = clean_whitespace(
+            part
+        )
 
         if not part:
             continue
@@ -1034,11 +1417,10 @@ def parse_article_body(tex):
         )
 
         if paragraph_html:
+
             html_parts.append(
                 f"<p>{paragraph_html}</p>"
             )
-
-    # Add bibliography.
 
     if bibliography:
 
@@ -1053,7 +1435,9 @@ def parse_article_body(tex):
         )
 
         html_parts.append(
-            f'<h2 id="{reference_id}">References</h2>'
+            f'<h2 id="{reference_id}">'
+            f'References'
+            f'</h2>'
         )
 
         html_parts.append(
@@ -1074,9 +1458,9 @@ def parse_article_body(tex):
                 f'</li>'
             )
 
-        html_parts.append("</ol>")
-
-    # Build TOC.
+        html_parts.append(
+            "</ol>"
+        )
 
     toc_html = []
 
@@ -1085,7 +1469,10 @@ def parse_article_body(tex):
         css_class = ""
 
         if entry["level"] == 3:
-            css_class = ' class="toc-subsection"'
+
+            css_class = (
+                ' class="toc-subsection"'
+            )
 
         toc_html.append(
             f'          <li{css_class}>'
@@ -1122,7 +1509,10 @@ def build_tags(tex):
     ]
 
     return "\n".join(
-        f'          <span class="tag">{html.escape(tag)}</span>'
+        f'          '
+        f'<span class="tag">'
+        f'{html.escape(tag)}'
+        f'</span>'
         for tag in tags
     )
 
@@ -1131,7 +1521,9 @@ def build_tags(tex):
 # READING TIME
 # ============================================================
 
-def calculate_reading_time(article_body_html):
+def calculate_reading_time(
+    article_body_html
+):
 
     plain = re.sub(
         r"<[^>]+>",
@@ -1139,7 +1531,9 @@ def calculate_reading_time(article_body_html):
         article_body_html
     )
 
-    plain = html.unescape(plain)
+    plain = html.unescape(
+        plain
+    )
 
     words = re.findall(
         r"\b[\w'-]+\b",
@@ -1148,20 +1542,27 @@ def calculate_reading_time(article_body_html):
 
     minutes = max(
         1,
-        math.ceil(len(words) / 200)
+        math.ceil(
+            len(words) / 200
+        )
     )
 
     if minutes == 1:
         return "approx. 1 minute"
 
-    return f"approx. {minutes} minutes"
+    return (
+        f"approx. {minutes} minutes"
+    )
 
 
 # ============================================================
 # ASSET COPYING
 # ============================================================
 
-def copy_assets(article_dir, output_dir):
+def copy_assets(
+    article_dir,
+    output_dir
+):
 
     source_figures = (
         article_dir
@@ -1180,7 +1581,9 @@ def copy_assets(article_dir, output_dir):
             exist_ok=True
         )
 
-        for item in source_figures.rglob("*"):
+        for item in source_figures.rglob(
+            "*"
+        ):
 
             if not item.is_file():
                 continue
@@ -1204,41 +1607,30 @@ def copy_assets(article_dir, output_dir):
                 destination
             )
 
-    # Optional article-specific background image.
+    # Copy common hero background.
+    # Your template expects assets/bg.jpg.
 
-    possible_backgrounds = [
+    background_candidates = [
         article_dir / "bg.jpg",
-        article_dir / "bg.png",
-        ROOT / "templates" / "bg.jpg",
-        ROOT / "templates" / "bg.png"
+        ROOT / "templates" / "bg.jpg"
     ]
 
-    for background in possible_backgrounds:
+    for background in background_candidates:
 
-        if background.exists():
+        if not background.exists():
+            continue
 
-            target_assets.mkdir(
-                parents=True,
-                exist_ok=True
-            )
+        target_assets.mkdir(
+            parents=True,
+            exist_ok=True
+        )
 
-            suffix = background.suffix.lower()
+        shutil.copy2(
+            background,
+            target_assets / "bg.jpg"
+        )
 
-            target = (
-                target_assets
-                / f"bg{suffix}"
-            )
-
-            shutil.copy2(
-                background,
-                target
-            )
-
-            # The current template expects bg.jpg.
-            # If the source is PNG, leave it available as bg.png.
-            # Prefer using a JPG background for the template.
-
-            break
+        break
 
 
 # ============================================================
@@ -1286,9 +1678,13 @@ def main():
         encoding="utf-8"
     )
 
-    article_id = article_dir.name
+    article_id = (
+        article_dir.name
+    )
 
-    series = article_dir.parent.name
+    series = (
+        article_dir.parent.name
+    )
 
     article_title = extract_newcommand(
         tex,
@@ -1308,7 +1704,8 @@ def main():
     )
 
     article_body, toc = parse_article_body(
-        tex
+        tex,
+        article_dir
     )
 
     reading_time = calculate_reading_time(
@@ -1347,14 +1744,29 @@ def main():
     html_output = template
 
     replacements = {
-        "{{PAGE_TITLE}}": html.escape(page_title),
-        "{{ARTICLE_TITLE}}": article_title_html,
-        "{{ARTICLE_DATE}}": html.escape(article_date),
-        "{{ARTICLE_ID}}": html.escape(article_id),
-        "{{READING_TIME}}": html.escape(reading_time),
-        "{{ARTICLE_BODY}}": article_body,
-        "{{TABLE_OF_CONTENTS}}": toc,
-        "{{ARTICLE_TAGS}}": tags
+        "{{PAGE_TITLE}}":
+            html.escape(page_title),
+
+        "{{ARTICLE_TITLE}}":
+            article_title_html,
+
+        "{{ARTICLE_DATE}}":
+            html.escape(article_date),
+
+        "{{ARTICLE_ID}}":
+            html.escape(article_id),
+
+        "{{READING_TIME}}":
+            html.escape(reading_time),
+
+        "{{ARTICLE_BODY}}":
+            article_body,
+
+        "{{TABLE_OF_CONTENTS}}":
+            toc,
+
+        "{{ARTICLE_TAGS}}":
+            tags
     }
 
     for placeholder, value in replacements.items():
