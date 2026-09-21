@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>When One Defect Is Enough: Reliability in the Nanoscale Era | AdMOS Technical Articles</title>
+
+  <link rel="icon" type="image/png" href="../../../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --admos-orange: #c97924;
+      --admos-text: #45494b;
+      --admos-bg: #ffffff;
+      --admos-blue: #303F6E;
+      --admos-ice: #CAD2D9;
+      --header-max: 1920px;
+      --header-pad: clamp(16px, 3vw, 48px);
+      --content-max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Poppins, Arial, sans-serif;
+      color: var(--admos-text);
+      background: #ffffff;
+    }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      background: var(--admos-bg);
+      border-bottom: 1px solid rgba(69,73,75,.10);
+    }
+
+    .header-shell {
+      width: min(100%, var(--header-max));
+      margin: 0 auto;
+      padding: 8px var(--header-pad);
+    }
+
+    .header-row {
+      display: grid;
+      grid-template-columns: minmax(150px, 2fr) minmax(0, 10fr);
+      align-items: center;
+      gap: 24px;
+      min-height: 120px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      min-width: 0;
+      transform: translateX(-15px);
+    }
+
+    .brand a {
+      display: block;
+      width: min(22vw, 300px);
+      min-width: 150px;
+      line-height: 0;
+    }
+
+    .brand img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .desktop-nav {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: .2px;
+      line-height: 1.5;
+    }
+
+    .nav-item { position: relative; }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px 16px;
+      color: var(--admos-text);
+      text-decoration: none;
+      background: transparent;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover,
+    .nav-item:focus-within > .nav-link {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.05);
+    }
+
+    .nav-link.active {
+      color: var(--admos-orange);
+      position: relative;
+    }
+
+    .nav-link.active::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 4px;
+      height: 2px;
+      background: var(--admos-orange);
+    }
+
+    .caret {
+      width: 8px;
+      height: 8px;
+      border-right: 1.6px solid currentColor;
+      border-bottom: 1.6px solid currentColor;
+      transform: rotate(45deg) translateY(-2px);
+    }
+
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 2px);
+      right: 0;
+      min-width: 270px;
+      padding: 8px;
+      background: #fff;
+      border: 1px solid rgba(69,73,75,.10);
+      box-shadow: 0 12px 35px rgba(0,0,0,.10);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(6px);
+      transition: .16s ease;
+    }
+
+    .nav-item:hover .dropdown,
+    .nav-item:focus-within .dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px 12px;
+      color: var(--admos-text);
+      text-decoration: none;
+      white-space: nowrap;
+      font-size: 15px;
+    }
+
+    .dropdown a:hover {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.10);
+    }
+
+    .menu-toggle { display: none; }
+
+    .menu-icon {
+      display: none;
+      justify-self: end;
+      width: 46px;
+      height: 46px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .menu-icon span,
+    .menu-icon span::before,
+    .menu-icon span::after {
+      content: "";
+      display: block;
+      width: 28px;
+      height: 3px;
+      background: var(--admos-text);
+      position: relative;
+      transition: .2s ease;
+    }
+
+    .menu-icon span::before { position: absolute; top: -9px; }
+    .menu-icon span::after { position: absolute; top: 9px; }
+
+    .mobile-nav { display: none; }
+
+    .eyebrow {
+      margin-bottom: 24px;
+      color: var(--admos-orange);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow a {
+      color: var(--admos-orange);
+      text-decoration: none;
+    }
+
+    .eyebrow a:hover { color: #ffffff; }
+
+    /* =========================================================
+       ARTICLE HERO
+       ========================================================= */
+    .article-hero {
+      padding: 2rem 0;
+      background:
+        linear-gradient(
+          to right,
+          rgba(48, 63, 110, 0.98) 0%,
+          rgba(48, 63, 110, 0.90) 45%,
+          rgba(48, 63, 110, 0.62) 75%,
+          rgba(48, 63, 110, 0.28) 100%
+        ),
+        url("assets/bg.jpg");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero-inner {
+      width: min(100%, var(--content-max));
+      margin: 0 auto;
+      color: #ffffff;
+    }
+
+    .article-hero h1 {
+      max-width: 980px;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(38px, 5vw, 66px);
+      line-height: 1.06;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 28px;
+      margin-top: 24px;
+      font-size: 15px;
+    }
+
+    .pdf-button {
+      display: inline-block;
+      margin-top: 28px;
+      padding: 9px 14px;
+      border: 2px solid var(--admos-orange);
+      border-radius: 8px;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 500;
+      background: var(--admos-orange);
+    }
+
+    .pdf-button:hover {
+      color: var(--admos-ice);
+      background: var(--admos-orange);
+    }
+
+    /* =========================================================
+       ARTICLE LAYOUT
+       ========================================================= */
+    .page-layout {
+      width: min(100%, var(--content-max));
+      margin: 0 auto;
+      padding: 56px 0 80px;
+      display: grid;
+      grid-template-columns: minmax(0, 760px) minmax(250px, 320px);
+      gap: 70px;
+      align-items: start;
+    }
+
+    .article { min-width: 0; }
+
+    .article h2 {
+      margin: 2.3rem 0 1rem;
+      color: var(--admos-blue);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(26px, 3vw, 34px);
+      line-height: 1.15;
+    }
+
+    .article h2:first-child { margin-top: 0; }
+
+    .article h3 {
+      margin: 1.8rem 0 .8rem;
+      color: var(--admos-blue);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .article p {
+      margin: 0 0 1.25rem;
+      color: var(--admos-text);
+      font-size: 17px;
+      line-height: 1.8;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .article figure { margin: 2.3rem 0; }
+
+    .article figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .article figcaption {
+      margin-top: 10px;
+      color: var(--admos-orange);
+      font-size: 13px;
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    .article table {
+      width: 100%;
+      margin: 0;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+
+    .table-wrapper {
+      margin: 2.3rem 0;
+    }
+
+    .table-caption {
+      margin-top: 10px;
+      color: var(--admos-orange);
+      font-size: 13px;
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    .caption-label {
+      font-weight: 600;
+    }
+
+    .article th,
+    .article td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #d8dadd;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .article th {
+      color: var(--admos-blue);
+      font-weight: 600;
+      border-top: 2px solid var(--admos-blue);
+      border-bottom: 1px solid var(--admos-blue);
+    }
+
+    .equation {
+      margin: 1.4rem 0 1.8rem;
+      padding: 18px;
+      text-align: center;
+      font-family: "Times New Roman", serif;
+      font-size: 26px;
+      background: #f6f7f8;
+      border-left: 4px solid var(--admos-orange);
+    }
+
+    .references {
+      padding-left: 1.2rem;
+      margin-bottom: 0;
+    }
+
+    .references li {
+      margin-bottom: .8rem;
+      color: var(--admos-text);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* =========================================================
+       SIDEBAR
+       ========================================================= */
+    .sidebar {
+      position: sticky;
+      top: 150px;
+    }
+
+    .sidebar-block {
+      margin-bottom: 34px;
+      padding: 22px;
+      background: #f7f7f6;
+      border-top: 3px solid var(--admos-blue);
+    }
+
+    .sidebar h3 {
+      margin: 0 0 16px;
+      color: var(--admos-blue);
+      font-size: 19px;
+    }
+
+    .toc {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc li { margin-bottom: 10px; }
+
+    .toc a {
+      color: var(--admos-text);
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .toc a:hover { color: var(--admos-orange); }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      padding: 5px 9px;
+      border: 1px solid var(--admos-orange);
+      border-radius: 7px;
+      color: var(--admos-orange);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+    footer {
+      padding: 70px 0;
+      width: 100%;
+      background: var(--admos-ice);
+    }
+
+    .footer-content {
+      width: min(100%, 1200px);
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--admos-text);
+    }
+
+    .footer-content div {
+      display: flex;
+      gap: 30px;
+    }
+
+    .footer-content a {
+      color: var(--admos-text);
+      text-decoration: none;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+    @media (max-width: 980px) {
+      .header-row {
+        grid-template-columns: 1fr auto;
+        min-height: 82px;
+      }
+
+      .brand a {
+        width: min(25vw, 210px);
+        min-width: 150px;
+      }
+
+      .desktop-nav { display: none; }
+      .menu-icon { display: flex; }
+
+      .menu-toggle:checked + .menu-icon span { background: transparent; }
+      .menu-toggle:checked + .menu-icon span::before { top: 0; transform: rotate(45deg); }
+      .menu-toggle:checked + .menu-icon span::after { top: 0; transform: rotate(-45deg); }
+      .menu-toggle:checked ~ .mobile-nav { display: block; }
+
+      .mobile-nav {
+        border-top: 1px solid rgba(69,73,75,.10);
+        padding: 10px 0 18px;
+      }
+
+      .mobile-nav a,
+      .mobile-nav summary {
+        display: block;
+        padding: 12px 4px;
+        color: var(--admos-text);
+        text-decoration: none;
+      }
+
+      .mobile-nav details > div { padding-left: 18px; }
+
+      .page-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+
+      .sidebar { position: static; }
+    }
+
+    @media (max-width: 700px) {
+      .hero-meta {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true,
+        tags: 'none'
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script
+    id="MathJax-script"
+    async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+  <style>
+    .math-display {
+      text-align: center;
+      margin: 1.4rem 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+  </style>
+
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="header-shell">
+    <div class="header-row">
+
+      <div class="brand">
+        <a href="https://www.admos.de/" aria-label="AdMOS Home">
+          <img
+            src="https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-455x160.png"
+            alt="AdMOS">
+        </a>
+      </div>
+
+      <nav class="desktop-nav" aria-label="Header navigation">
+        <div class="nav-item"><a class="nav-link" href="https://www.admos.de/">Home</a></div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/leistungen-und-produkte/">
+            <span>Services &amp; Products</span>
+            <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/">1/f-Measurement System</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/">CMOS Modeling</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/">Semiconductor Measurement Lab</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/">Software Development</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/">Design Analysis</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/">Simulation &amp; Consulting</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/">Research</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link active" href="../../../">Technical Articles</a>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/uber-admos/">
+            <span>About AdMOS</span>
+            <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/uber-admos/ueber-uns/">About Us</a>
+            <a href="https://www.admos.de/uber-admos/karriere/">Careers</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/kontakt/">Contact</a>
+        </div>
+      </nav>
+
+      <input class="menu-toggle" type="checkbox" id="menu-toggle">
+      <label class="menu-icon" for="menu-toggle" aria-label="Open menu"><span></span></label>
+
+      <nav class="mobile-nav" aria-label="Mobile navigation">
+        <a href="https://www.admos.de/">Home</a>
+        <a href="../../../">Technical Articles</a>
+        <a href="https://www.admos.de/kontakt/">Contact</a>
+      </nav>
+
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="article-hero">
+    <div class="hero-inner">
+
+      <div class="eyebrow">
+        <a href="../../../">Technical Articles</a>
+        /
+        <a href="../../">Article Series</a>
+        /
+        <span>Article</span>
+      </div>
+
+      <h1>When One Defect Is Enough: Reliability in the Nanoscale Era</h1>
+
+      <div class="hero-meta">
+        <span><strong>Published:</strong> 25.07.2026</span>
+        <span><strong>Reading time:</strong> approx. 8 minutes</span>
+        <span><strong>Article ID:</strong> RVA_001</span>
+      </div>
+
+      <a
+        class="pdf-button"
+        href="RVA_001.pdf"
+        target="_blank"
+        rel="noopener noreferrer">
+        Open PDF
+      </a>
+
+    </div>
+  </section>
+
+  <div class="page-layout">
+
+    <article class="article">
+<h2 id="end-of-statistical-averaging">End of Statistical Averaging</h2>
+
+<p>The electrical response of a transistor is determined by carrier transport through a channel that inevitably contains defects. In older technology generations, the relatively large device area resulted in a large defect population, and the contribution of any single defect was averaged over many similar perturbations. The measured response therefore represented an ensemble-averaged behavior rather than the influence of a particular defect. As we enter the nanoscale era, the number of defects within each transistor decreases significantly, reducing the effect of statistical averaging. Under these conditions, the dynamics of a single defect can produce a measurable change in the device characteristics, marking the transition from an ensemble-dominated behavior to a defect-resolved behavior.</p>
+
+<figure id="figure-fig-statistical-averaging">
+  <img src="assets/Fig1.png" alt="Statistical averaging suppresses the influence of individual outliers in large populations. As the population size decreases, the impact of a single outlier becomes increasingly significant. Semiconductor scaling produces an analogous effect, making devices more sensitive to individual defects.">
+  <figcaption><span class="caption-label">Figure 1:</span> Statistical averaging suppresses the influence of individual outliers in large populations. As the population size decreases, the impact of a single outlier becomes increasingly significant. Semiconductor scaling produces an analogous effect, making devices more sensitive to individual defects.</figcaption>
+</figure>
+
+<h2 id="the-imperfect-nature-of-semiconductors">The Imperfect Nature of Semiconductors</h2>
+
+<p>The ideal semiconductor crystal is often represented as a perfectly ordered and periodic arrangement of atoms. In reality, however, such structural perfection cannot be achieved. Imperfections are introduced during crystal growth, material processing, and the numerous fabrication steps required to form a semiconductor device. The resulting defects are therefore an inherent part of any real semiconductor structure rather than simply an indication of an imperfect fabrication process.</p>
+
+<p>At the atomic level, defects can take several forms. Figure&nbsp;<a href="#figure-fig-point-defects">2</a> illustrates some common examples of point defects, including vacancies, interstitials, substitutional impurities, and more complex configurations such as Frenkel pairs&nbsp;[<a href="#ref-1">1</a>]. A vacancy corresponds to a missing atom at an otherwise occupied lattice site, whereas an interstitial introduces an additional atom between regular lattice positions. Foreign atoms may also occupy lattice sites as substitutional impurities, either intentionally through doping or unintentionally as a consequence of material processing. In a Frenkel pair, an atom is displaced from its original lattice position and occupies an interstitial site, leaving behind a corresponding vacancy.</p>
+
+<p>Despite their atomic dimensions, defects can modify the local bonding environment and disturb the periodic potential of the crystal. The resulting changes in electronic structure depend on the type and location of the defect. Some remain electrically inactive, while others introduce localized states capable of interacting with charge carriers.</p>
+
+<figure id="figure-fig-point-defects">
+  <img src="assets/Fig2.png" alt="Examples of common point defects in semiconductor crystals compared to a perfect crystal lattice.">
+  <figcaption><span class="caption-label">Figure 2:</span> Examples of common point defects in semiconductor crystals compared to a perfect crystal lattice.</figcaption>
+</figure>
+
+<p>Point defects represent only one class of imperfections in semiconductor devices. Defects can also occur at material boundaries, particularly at the semiconductor–dielectric interface and within the gate dielectric of MOS structures. Their proximity to the conducting channel makes these defects especially important for device operation. How such defects become electrically active is discussed in the following section.</p>
+
+<p>The defect population depends strongly on both the material system and the fabrication process, with steps such as implantation, annealing, oxidation, and dielectric deposition influencing its final distribution. Consequently, even devices fabricated on the same wafer contain different microscopic defect populations. At nanoscale dimensions, where only a few electrically active defects may be present, these differences can translate directly into measurable device-to-device variations.</p>
+
+<h2 id="when-defects-become-electrically-active">When Defects Become Electrically Active</h2>
+
+<p>Not all structural defects influence the electrical behavior of a transistor. A defect becomes electrically active when it introduces an electronic energy level within the semiconductor bandgap that can exchange charge with the surrounding material. These electrically active defects, commonly referred to as traps, are predominantly located at the semiconductor–dielectric interface or within the gate dielectric in close proximity to the interface, where they readily interact with carriers flowing through the channel.</p>
+
+<p>The electrical behavior of a trap is governed by its occupancy. An initially empty trap may capture an electron or hole from the channel, becoming charged, while an occupied trap may subsequently release the carrier and return to its original state. Every capture or emission event changes the charge state of the trap, producing a localized electrostatic perturbation that modifies the electrostatic potential experienced by carriers flowing beneath the gate. Although the trap itself occupies only an atomic-scale region, its influence extends well beyond its physical dimensions through long-range Coulomb interactions, enabling even a single defect to measurably perturb carrier transport.</p>
+
+<p>Figure&nbsp;<a href="#figure-fig-charge-trapping">3</a> illustrates two conceptual examples of how charge trapping influences transistor operation. When multiple traps successively capture carriers as shown in Figure&nbsp;<a href="#figure-fig-charge-trapping">3</a>(a), progressively increasing the number of occupied traps near the semiconductor–dielectric interface. Each newly occupied trap contributes an additional electrostatic perturbation, resulting in a cumulative reduction of the channel current. This behavior forms the physical basis of bias temperature instability (BTI)&nbsp;[<a href="#ref-2">2</a>], where the gradual occupation of traps under electrical stress leads to a time-dependent degradation of the transistor characteristics. In practice, trapping and de-trapping events occur continuously over a broad distribution of time constants, giving rise to a more complex response than the simplified illustration presented here.</p>
+
+<figure id="figure-fig-charge-trapping">
+  <img src="assets/Fig3.png" alt="Schematic examples of charge trapping by (a) multiple traps and (b) a single switching trap in a MOS transistor.">
+  <figcaption><span class="caption-label">Figure 3:</span> Schematic examples of charge trapping by (a) multiple traps and (b) a single switching trap in a MOS transistor.</figcaption>
+</figure>
+
+<p>As transistor dimensions continue to shrink, the number of electrically active traps within an individual device decreases significantly. Under these conditions, the electrical response may become dominated by the activity of a single trap, as illustrated in Figure&nbsp;<a href="#figure-fig-charge-trapping">3</a>(b). The repeated capture and emission of a carrier causes the trap to alternate between different charge states, producing reversible transitions between discrete current levels. This phenomenon is commonly referred to as random telegraph noise (RTN)&nbsp;[<a href="#ref-3">3</a>], where the stochastic activity of a single trap becomes directly observable in the electrical characteristics of the device.</p>
+
+<p>Although BTI and RTN are often studied as separate phenomena, they originate from the same fundamental process of charge trapping and de-trapping by electrically active defects. The primary distinction lies in the number of active traps and their capture and emission dynamics. When many traps collectively contribute to the device response, their cumulative effect manifests as gradual parameter degradation and aging. Conversely, when only one or a few traps dominate the response, the electrical signature of individual defects becomes directly observable. Understanding this common physical origin is fundamental to explaining both the variability and long-term reliability of modern nanoscale semiconductor devices.</p>
+
+<h2 id="reliability-and-variability-two-sides-of-the-same-coin">Reliability and Variability: Two Sides of the Same Coin</h2>
+
+<p>Reliability and variability are traditionally treated as two distinct aspects of an electronic device. Reliability concerns the gradual evolution of their electrical characteristics during operation, whereas variability describes the differences observed between nominally identical devices. At nanoscale dimensions, this separation becomes increasingly difficult to maintain. When only a small number of electrically active defects are present, the particular defect configuration of each transistor can influence not only its initial characteristics, but also how those characteristics evolve with time.</p>
+
+<p>Figure&nbsp;<a href="#figure-fig-reliability-variability">4</a> illustrates this relationship using the threshold voltage, $V_{\mathrm{TH}}$, as a representative device parameter. As shown in Figure&nbsp;<a href="#figure-fig-reliability-variability">4</a>(a), nominally identical transistors already exhibit a distribution of after fabrication. During operation, electrically active defects respond to electrical and thermal stress, shifting the threshold voltage and moving the device population away from its initial distribution. This shift represents reliability degradation at the population level.</p>
+
+<p>The situation becomes particularly important when the individual devices responsible for this distribution are considered. Figure&nbsp;<a href="#figure-fig-reliability-variability">4</a>(b) shows that each transistor can follow its own degradation trajectory. Since the number, location, and dynamics of active defects differ from device to device, the resulting shift is not identical across the population. Some devices may remain comparatively stable, while others undergo substantially larger changes under the same operating conditions. What appears as a distribution at the population level is therefore the collective outcome of many individual and increasingly defect-specific histories.</p>
+
+<figure id="figure-fig-reliability-variability">
+  <img src="assets/Fig4.png" alt="Conceptual illustration of (a) device-to-device variability in $V_TH$, and (b) the device-specific evolution of $V_TH$ with aging.">
+  <figcaption><span class="caption-label">Figure 4:</span> Conceptual illustration of (a) device-to-device variability in $V_{\mathrm{TH}}$, and (b) the device-specific evolution of $V_{\mathrm{TH}}$ with aging.</figcaption>
+</figure>
+
+<p>Reliability and variability thus become closely intertwined in nanoscale technologies&nbsp;[<a href="#ref-4">4</a>]. Reliability determines how the device population evolves with time, while the stochastic nature of individual defects determines how differently its members evolve. Both are therefore closely coupled at nanoscale dimensions. The relevant question is no longer only how much an average transistor degrades, but also how differently individual transistors may evolve under the same operating conditions. This shift from deterministic, population-averaged degradation toward increasingly stochastic and device-specific behavior places the statistics of individual devices at the center of modern reliability assessment.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Semiconductor defects have always influenced device behavior, but technology scaling has fundamentally changed their significance. As statistical averaging diminishes at nanoscale dimensions, the electrical response can become governed by only a few, or even a single, electrically active defect. Consequently, microscopic trapping events can produce measurable electrical changes, contribute to device-to-device variability, and influence how individual transistors degrade over time. Understanding the properties and dynamics of individual defects is therefore becoming increasingly important for predicting the performance and reliability of modern semiconductor technologies.</p>
+
+<h2 id="references">References</h2>
+
+<ol class="references">
+
+<li id="ref-1">R. De Souza and G. Harrington, &ldquo;Revisiting point defects in ionic solids and semiconductors,&rdquo; <em>Nature Materials</em>, vol. 22, pp. 794–797, 2023.</li>
+
+<li id="ref-2">T. Grasser, Ed., <em>Bias Temperature Instability for Devices and Circuits</em>. New York, NY, USA: Springer, 2014.</li>
+
+<li id="ref-3">M. J. Uren, D. J. Day, and M. J. Kirton, &ldquo;1/f and random telegraph noise in silicon metal-oxide-semiconductor field-effect transistors,&rdquo; <em>Applied Physics Letters</em>, vol. 47, no. 11, pp. 1195–1197, 1985.</li>
+
+<li id="ref-4">R. Hussin et al., &ldquo;Interplay Between Statistical Variability and Reliability in Contemporary pMOSFETs,&rdquo; <em>IEEE Transactions on Electron Devices</em>, vol. 61, no. 9, pp. 3265–3273, 2014.</li>
+
+</ol>
+    </article>
+
+    <aside class="sidebar">
+
+      <div class="sidebar-block">
+        <h3>On this page</h3>
+        <ul class="toc">
+          <li><a href="#end-of-statistical-averaging">End of Statistical Averaging</a></li>
+          <li><a href="#the-imperfect-nature-of-semiconductors">The Imperfect Nature of Semiconductors</a></li>
+          <li><a href="#when-defects-become-electrically-active">When Defects Become Electrically Active</a></li>
+          <li><a href="#reliability-and-variability-two-sides-of-the-same-coin">Reliability and Variability: Two Sides of the Same Coin</a></li>
+          <li><a href="#conclusion">Conclusion</a></li>
+          <li><a href="#references">References</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-block">
+        <h3>Article Tags</h3>
+        <div class="tags">
+          <span class="tag">Semiconductor Reliability</span>
+          <span class="tag">Device Variability</span>
+          <span class="tag">Semiconductor Defects</span>
+          <span class="tag">Bias Temperature Instability</span>
+          <span class="tag">Random Telegraph Noise</span>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-content">
+    <div>
+      <a href="https://www.admos.de/impressum/">Legal Notice</a>
+      <a href="https://www.admos.de/datenschutzerklarung/">Privacy Policy</a>
+    </div>
+    <p>@Copyright. All rights reserved</p>
+  </div>
+</footer>
+
+</body>
+</html>
