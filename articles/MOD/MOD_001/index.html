@@ -600,7 +600,7 @@
 
       <div class="hero-meta">
         <span><strong>Published:</strong> 25.08.2026</span>
-        <span><strong>Reading time:</strong> approx. 5 minutes</span>
+        <span><strong>Reading time:</strong> approx. 7 minutes</span>
         <span><strong>Article ID:</strong> MOD_001</span>
       </div>
 
@@ -618,75 +618,90 @@
   <div class="page-layout">
 
     <article class="article">
+<p>Modern electronic systems span an enormous range of scales, from physical processes inside individual semiconductor devices to the behavior of complete electronic systems. No single model can capture all these levels efficiently, which is why semiconductor simulation is organized into a hierarchy of abstraction, as illustrated in Figure&nbsp;<a href="#figure-fig-fig1">1</a>. At the lower levels, the emphasis is on physical detail and device behavior, while higher levels progressively trade this detail for computational efficiency and the ability to simulate increasingly complex circuits and systems. The central challenge is therefore to choose the level of abstraction that provides enough detail to answer the engineering question at hand.</p>
+
+<figure id="figure-fig-fig1">
+  <img src="assets/fig1.png" alt="The hierarchy of semiconductor models: from devices to systems.">
+  <figcaption>Figure 1: The hierarchy of semiconductor models: from devices to systems.</figcaption>
+</figure>
+
 <h2 id="device-level-simulations-physics-at-the-core">Device-Level Simulations: Physics at the Core</h2>
 
 <p>At the device level, the question is not simply <em>what does the transistor do?</em>, but <em>why does it behave that way?</em> Device simulation explicitly represents the semiconductor structure, including its geometry, materials, doping profiles, interfaces and operating conditions, and uses numerical methods to calculate quantities such as electrostatic potential, carrier concentration, current density and electric-field distributions.</p>
 
-<p>The most widely used industrial framework is Technology Computer-Aided Design (TCAD), which typically solves Poisson’s equation together with carrier-transport models such as drift-diffusion. More advanced descriptions, including hydrodynamic or energy-transport models, may be required when non-equilibrium effects become important. Figure~\ref{fig:fig2} illustrates a typical TCAD representation, in which spatially resolved quantities such as doping concentration, electrostatic potential, electric field, or current density can be visualized across the device cross-section. TCAD is therefore particularly valuable in semiconductor technology development, where foundries use it to analyze and optimize fabrication processes, device geometries and material stacks before committing each design iteration to silicon.</p>
+<p>The most widely used industrial framework is Technology Computer-Aided Design (TCAD), which typically solves Poisson’s equation together with carrier-transport models such as drift-diffusion. More advanced descriptions, including hydrodynamic or energy-transport models, may be required when non-equilibrium effects become important. Figure&nbsp;<a href="#figure-fig-fig2">2</a> illustrates a typical TCAD representation, in which spatially resolved quantities such as doping concentration, electrostatic potential, electric field, or current density can be visualized across the device cross-section. TCAD is therefore particularly valuable in semiconductor technology development, where foundries use it to analyze and optimize fabrication processes, device geometries and material stacks before committing each design iteration to silicon.</p>
 
-<p>Device-level simulation, however, extends well beyond TCAD. Density Functional Theory (DFT) and other ab initio methods[Jones2015] address electronic structure and material properties at the atomistic scale, NEGF methods describe quantum transport in ultra-scaled devices[Datta2000], and Monte Carlo approaches provide a statistical treatment of carrier transport and scattering. Together, these techniques span a wide range of physical scales and computational complexity allowing engineers to choose the level of physical detail appropriate to the device and the phenomenon being investigated.</p>
+<figure id="figure-fig-fig2">
+  <img src="assets/fig2.png" alt="Typical TCAD simulation of a MOS transistor showing the spatial distribution of doping concentration.">
+  <figcaption>Figure 2: Typical TCAD simulation of a MOS transistor showing the spatial distribution of doping concentration.</figcaption>
+</figure>
+
+<p>Device-level simulation, however, extends well beyond TCAD. Density Functional Theory (DFT) and other ab initio methods[<a href="#ref-1">1</a>] address electronic structure and material properties at the atomistic scale, NEGF methods describe quantum transport in ultra-scaled devices[<a href="#ref-2">2</a>], and Monte Carlo approaches provide a statistical treatment of carrier transport and scattering. Together, these techniques span a wide range of physical scales and computational complexity allowing engineers to choose the level of physical detail appropriate to the device and the phenomenon being investigated.</p>
 
 <h2 id="compact-models-compressing-physics-into-equations">Compact Models: Compressing Physics into Equations</h2>
 
-<p>To use a semiconductor device as a building block for larger circuits, its behavior must be translated into a form that can be evaluated rapidly and repeatedly. This is the role of compact models, which represent device behavior through computationally efficient equations relating terminal voltages, currents, and charges. Rather than resolving the internal physics at every point in the device, compact models reproduce the behavior visible at its terminals while retaining the physical effects required for accurate circuit simulation[Bhattacharyya2009].</p>
+<p>To use a semiconductor device as a building block for larger circuits, its behavior must be translated into a form that can be evaluated rapidly and repeatedly. This is the role of compact models, which represent device behavior through computationally efficient equations relating terminal voltages, currents, and charges. Rather than resolving the internal physics at every point in the device, compact models reproduce the behavior visible at its terminals while retaining the physical effects required for accurate circuit simulation[<a href="#ref-3">3</a>].</p>
 
 <p>Modern compact models therefore describe far more than basic current–voltage characteristics. Depending on the device technology, they may include short-channel effects, mobility degradation, leakage currents, parasitic resistances and capacitances, self-heating, noise, and statistical variability. The challenge is to capture these effects accurately while keeping the model sufficiently robust and efficient to be evaluated millions of times during circuit simulation.</p>
 
-<p>Many widely used compact models are standardized through the Compact Model Coalition (CMC)[Si2CMC], covering a broad range of semiconductor technologies, and some of them are listed in Table~\ref{tab:tab1}.</p>
+<p>Many widely used compact models are standardized through the Compact Model Coalition (CMC)[<a href="#ref-4">4</a>], covering a broad range of semiconductor technologies, and some of them are listed in Table&nbsp;<a href="#table-tab-tab1">1</a>.</p>
 
-<p>\centering</p>
-
-<p>\begin{tabular}{@{}ll@{}}</p>
-
-<p>\toprule</p>
-
-<p><strong>Technology</strong>
-			&
-			<strong>Compact Models</strong>
-			\\</p>
-
-<p>\midrule</p>
-
-<p>Bulk CMOS
-			& BSIM-BULK, BSIM4, PSP, HiSIM2 \\</p>
-
-<p>SOI / FDSOI MOSFET
-			& BSIM-SOI, HiSIM-SOI, L-UTSOI \\</p>
-
-<p>Multigate / FinFET / GAA
-			& BSIM-CMG, BSIM-IMG \\</p>
-
-<p>High-voltage MOSFET
-			& HiSIM-HV \\</p>
-
-<p>Bipolar / HBT
-			& HICUM, MEXTRAM \\</p>
-
-<p>GaN HEMT
-			& ASM-HEMT, MVSG_CMC \\</p>
-
-<p>Diode / ESD
-			& DIODE_CMC, ASM-ESD \\</p>
-
-<p>\bottomrule</p>
-
-<p>\end{tabular}</p>
-
-<p>\caption{
-			CMC-standard compact models for various technologies.
-		}
-		\label{tab:tab1}
-	\end{table}</p>
+<div class="table-wrapper" id="table-tab-tab1">
+<table>
+<thead>
+<tr>
+<th>ll@{}} Technology</th>
+<th>Compact Models</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bulk CMOS</td>
+<td>BSIM-BULK, BSIM4, PSP, HiSIM2</td>
+</tr>
+<tr>
+<td>SOI / FDSOI MOSFET</td>
+<td>BSIM-SOI, HiSIM-SOI, L-UTSOI</td>
+</tr>
+<tr>
+<td>Multigate / FinFET / GAA</td>
+<td>BSIM-CMG, BSIM-IMG</td>
+</tr>
+<tr>
+<td>High-voltage MOSFET</td>
+<td>HiSIM-HV</td>
+</tr>
+<tr>
+<td>Bipolar / HBT</td>
+<td>HICUM, MEXTRAM</td>
+</tr>
+<tr>
+<td>GaN HEMT</td>
+<td>ASM-HEMT, MVSG_CMC</td>
+</tr>
+<tr>
+<td>Diode / ESD</td>
+<td>DIODE_CMC, ASM-ESD</td>
+</tr>
+</tbody>
+</table>
+<div class="table-caption">Table 1: CMC-standard compact models for various technologies.</div>
+</div>
 
 <p>For a specific fabrication technology, the parameters of the selected compact model are typically extracted from electrical measurements and validated across device geometries, bias conditions, and temperatures. In commercial IC design, these calibrated models are usually delivered as part of a Process Design Kit (PDK). A PDK combines the compact models with technology-specific information such as process corners, device libraries, layer definitions, parasitic-extraction data, and design-verification rules. The PDK is therefore not another simulation level itself, but the practical interface that connects a foundry process to the circuit-design environment.</p>
 
 <h2 id="circuit-level-simulations-putting-the-pieces-together">Circuit-Level Simulations: Putting the Pieces Together</h2>
 
-<p>With compact models providing an efficient description of individual devices, the next level of abstraction is concerned with how those devices behave when connected together to perform a function. Circuit simulation treats the circuit as a network of interconnected components and predicts the resulting voltages, currents, and overall electrical behavior. As illustrated in Figure~\ref{fig:fig3}, compact device models are combined within a circuit schematic and used to predict the corresponding circuit response.</p>
+<p>With compact models providing an efficient description of individual devices, the next level of abstraction is concerned with how those devices behave when connected together to perform a function. Circuit simulation treats the circuit as a network of interconnected components and predicts the resulting voltages, currents, and overall electrical behavior. As illustrated in Figure&nbsp;<a href="#figure-fig-fig3">3</a>, compact device models are combined within a circuit schematic and used to predict the corresponding circuit response.</p>
 
-<p>At the heart of this level is SPICE (Simulation Program with Integrated Circuit Emphasis) and the many simulators based on its principles[Nagel1973]. Compact models determine the electrical response of each transistor at a given operating point, while the simulator solves the complete set of circuit equations. Depending on the analysis, designers can evaluate DC operating points, frequency response, transient behavior, noise, distortion, stability, gain, bandwidth, switching delay, and power consumption.</p>
+<p>At the heart of this level is SPICE (Simulation Program with Integrated Circuit Emphasis) and the many simulators based on its principles[<a href="#ref-5">5</a>]. Compact models determine the electrical response of each transistor at a given operating point, while the simulator solves the complete set of circuit equations. Depending on the analysis, designers can evaluate DC operating points, frequency response, transient behavior, noise, distortion, stability, gain, bandwidth, switching delay, and power consumption.</p>
 
 <p>Circuit simulation is also essential for assessing robustness. Devices vary across fabrication processes, supply voltages change, and circuits operate over a range of temperatures. Designers therefore evaluate circuits across process, voltage, and temperature (PVT) conditions, while statistical methods such as Monte Carlo analysis are used to study the impact of device and process variability. At this level, the focus is no longer on the internal physics of an individual transistor, but on how modeled devices interact to create useful electronic functions such as amplifiers, oscillators, memory cells, and logic circuits.</p>
+
+<figure id="figure-fig-fig3">
+  <img src="assets/fig3.png" alt="Functional circuit behavior is predicted by combining compact device models in circuit-level simulation.">
+  <figcaption>Figure 3: Functional circuit behavior is predicted by combining compact device models in circuit-level simulation.</figcaption>
+</figure>
 
 <h2 id="system-level-simulations-the-bigger-picture">System-Level Simulations: The Bigger Picture</h2>
 
@@ -698,39 +713,21 @@
 
 <p>Semiconductor simulation is most effective when the level of abstraction matches the engineering question. Device-level methods provide physical insight, compact models translate this behavior into efficient electrical descriptions, circuit simulation predicts the interaction of many devices, and behavioral models enable the analysis of complete systems. Each level deliberately sacrifices some detail to gain speed, scalability, and practical usefulness. The strength of the overall modeling hierarchy therefore lies not in any single method, but in how these different levels complement one another to connect semiconductor physics with functional electronic systems.</p>
 
-<p>% ============================================================
-	% REFERENCES
-	% ============================================================</p>
+<h2 id="references">References</h2>
 
-<p>\bibitem{Jones2015}
-		R. O. Jones,
-		``Density functional theory: Its origins, rise to prominence, and future,''
-		\emph{Reviews of Modern Physics},
-		vol. 87, no. 3, pp. 897--923, 2015.</p>
+<ol class="references">
 
-<p>\bibitem{Datta2000}
-		S. Datta,
-		``Nanoscale device modeling: The Green's function method,''
-		\emph{Superlattices and Microstructures},
-		vol. 28, no. 4, pp. 253--278, 2000.</p>
+<li id="ref-1">R. O. Jones, &ldquo;Density functional theory: Its origins, rise to prominence, and future,&rdquo; <em>Reviews of Modern Physics</em>, vol. 87, no. 3, pp. 897–923, 2015.</li>
 
-<p>\bibitem{Bhattacharyya2009}
-		A. B. Bhattacharyya,
-		\emph{Compact MOSFET Models for VLSI Design}.
-		Chichester, U.K.: Wiley, 2009.</p>
+<li id="ref-2">S. Datta, &ldquo;Nanoscale device modeling: The Green's function method,&rdquo; <em>Superlattices and Microstructures</em>, vol. 28, no. 4, pp. 253–278, 2000.</li>
 
-<p>\bibitem{Si2CMC}
-		Silicon Integration Initiative (Si2),
-		``CMC Standard Models,''
-		Compact Model Coalition.</p>
+<li id="ref-3">A. B. Bhattacharyya, <em>Compact MOSFET Models for VLSI Design</em>. Chichester, U.K.: Wiley, 2009.</li>
 
-<p>\bibitem{Nagel1973}
-		L. W. Nagel and D. O. Pederson,
-		``Simulation Program with Integrated Circuit Emphasis (SPICE),''
-		Electronics Research Laboratory, University of California, Berkeley,
-		Memorandum No. ERL-M382, 1973.</p>
+<li id="ref-4">Silicon Integration Initiative (Si2), &ldquo;CMC Standard Models,&rdquo; Compact Model Coalition.</li>
 
-<p>\end{thebibliography}</p>
+<li id="ref-5">L. W. Nagel and D. O. Pederson, &ldquo;Simulation Program with Integrated Circuit Emphasis (SPICE),&rdquo; Electronics Research Laboratory, University of California, Berkeley, Memorandum No. ERL-M382, 1973.</li>
+
+</ol>
     </article>
 
     <aside class="sidebar">
@@ -743,13 +740,18 @@
           <li><a href="#circuit-level-simulations-putting-the-pieces-together">Circuit-Level Simulations: Putting the Pieces Together</a></li>
           <li><a href="#system-level-simulations-the-bigger-picture">System-Level Simulations: The Bigger Picture</a></li>
           <li><a href="#conclusion">Conclusion</a></li>
+          <li><a href="#references">References</a></li>
         </ul>
       </div>
 
       <div class="sidebar-block">
         <h3>Article Tags</h3>
         <div class="tags">
-
+          <span class="tag">Device Simulation</span>
+          <span class="tag">Compact Modeling</span>
+          <span class="tag">SPICE</span>
+          <span class="tag">TCAD</span>
+          <span class="tag">Semiconductor Modeling</span>
         </div>
       </div>
 
