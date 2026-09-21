@@ -57,9 +57,16 @@ jobs:
 
             mv article.pdf "${article_id}.pdf"
 
+      - name: Get article ID
+        id: article
+        shell: bash
+        run: |
+          article_id=$(basename "${{ matrix.article_dir }}")
+          echo "id=$article_id" >> "$GITHUB_OUTPUT"
+
       - name: Upload PDF
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.article_dir }}
+          name: ${{ steps.article.outputs.id }}
           path: ${{ matrix.article_dir }}/*.pdf
           if-no-files-found: error
