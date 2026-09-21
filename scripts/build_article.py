@@ -452,6 +452,181 @@ def convert_inline(
 
 
 # ============================================================
+# DISPLAY MATH
+# ============================================================
+
+def parse_equations(
+    body,
+    reference_map
+):
+    """
+    Convert common LaTeX display-math environments into protected
+    HTML blocks for MathJax.
+
+    Supported forms:
+        \begin{equation} ... \end{equation}
+        \begin{equation*} ... \end{equation*}
+        \[ ... \]
+
+    Equation labels are removed from the displayed expression and
+    registered so that \ref{...} can resolve in the HTML output.
+    """
+
+    equations = []
+    equation_number = 0
+
+    environment_pattern = re.compile(
+        r"\\begin\{(equation\*?)\}(.*?)\\end\{\1\}",
+        re.DOTALL
+    )
+
+    def environment_replacement(match):
+        nonlocal equation_number
+
+        environment = match.group(1)
+        content = match.group(2).strip()
+
+        label = ""
+        label_match = re.search(
+            r"\\label\s*\{([^}]+)\}",
+            content
+        )
+
+        if label_match:
+            label = label_match.group(1).strip()
+            content = re.sub(
+                r"\\label\s*\{[^}]+\}",
+                "",
+                content
+            ).strip()
+
+        numbered = environment == "equation"
+        number = None
+
+        if numbered:
+            equation_number += 1
+            number = equation_number
+
+        if label and number is not None:
+            html_id = "equation-" + slugify(label)
+            reference_map[label] = {
+                "type": "equation",
+                "number": number,
+                "html_id": html_id
+            }
+        elif number is not None:
+            html_id = f"equation-{number}"
+        else:
+            html_id = f"equation-star-{len(equations) + 1}"
+
+        if numbered:
+            math_source = (
+                "\\[\n"
+                f"{content}\\tag{{{number}}}\n"
+                "\\]"
+            )
+        else:
+            math_source = (
+                "\\[\n"
+                f"{content}\n"
+                "\\]"
+            )
+
+        equation_html = (
+            f'<div class="math-display" id="{html_id}">\n'
+            f'{math_source}\n'
+            f'</div>'
+        )
+
+        token = f"@@EQUATION_{len(equations)}@@"
+        equations.append(equation_html)
+
+        return "\n\n" + token + "\n\n"
+
+    body = environment_pattern.sub(
+        environment_replacement,
+        body
+    )
+
+    bracket_pattern = re.compile(
+        r"\\\[(.*?)\\\]",
+        re.DOTALL
+    )
+
+    def bracket_replacement(match):
+        content = match.group(1).strip()
+
+        equation_html = (
+            '<div class="math-display">\n'
+            '\\[\n'
+            f'{content}\n'
+            '\\]\n'
+            '</div>'
+        )
+
+        token = f"@@EQUATION_{len(equations)}@@"
+        equations.append(equation_html)
+
+        return "\n\n" + token + "\n\n"
+
+    body = bracket_pattern.sub(
+        bracket_replacement,
+        body
+    )
+
+    return body, equations
+
+
+def ensure_mathjax(html_text):
+    """
+    Add MathJax support to the generated HTML when the template does
+    not already load MathJax. This enables both inline $...$ math and
+    display math written as \[...\].
+    """
+
+    if "MathJax-script" in html_text or "mathjax" in html_text.lower():
+        return html_text
+
+    mathjax_head = (
+        "\n  <script>\n"
+        "    window.MathJax = {\n"
+        "      tex: {\n"
+        "        inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],\n"
+        "        displayMath: [['\\\\[', '\\\\]']],\n"
+        "        processEscapes: true,\n"
+        "        tags: 'none'\n"
+        "      },\n"
+        "      options: {\n"
+        "        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']\n"
+        "      }\n"
+        "    };\n"
+        "  </script>\n"
+        "  <script\n"
+        "    id=\"MathJax-script\"\n"
+        "    async\n"
+        "    src=\"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js\">\n"
+        "  </script>\n"
+        "  <style>\n"
+        "    .math-display {\n"
+        "      text-align: center;\n"
+        "      margin: 1.4rem 0;\n"
+        "      overflow-x: auto;\n"
+        "      overflow-y: hidden;\n"
+        "    }\n"
+        "  </style>\n"
+    )
+
+    if "</head>" in html_text:
+        return html_text.replace(
+            "</head>",
+            mathjax_head + "\n</head>",
+            1
+        )
+
+    return mathjax_head + "\n" + html_text
+
+
+# ============================================================
 # FIGURE FILE RESOLUTION
 # ============================================================
 
@@ -1204,6 +1379,11 @@ def parse_article_body(
         reference_map
     )
 
+    body, equations = parse_equations(
+        body,
+        reference_map
+    )
+
     blocks = []
 
     toc_entries = []
@@ -1335,6 +1515,27 @@ def parse_article_body(
 
         blocks.append(
             table_html
+        )
+
+        body = body.replace(
+            token,
+            block_token
+        )
+
+    for index, equation_html in enumerate(
+        equations
+    ):
+
+        token = (
+            f"@@EQUATION_{index}@@"
+        )
+
+        block_token = (
+            f"@@BLOCK_{len(blocks)}@@"
+        )
+
+        blocks.append(
+            equation_html
         )
 
         body = body.replace(
@@ -1767,6 +1968,10 @@ def main():
             placeholder,
             value
         )
+
+    html_output = ensure_mathjax(
+        html_output
+    )
 
     output_file = (
         output_dir
