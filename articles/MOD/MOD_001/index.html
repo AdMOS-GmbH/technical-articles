@@ -323,7 +323,7 @@
 
     .article figcaption {
       margin-top: 10px;
-      color: #6f7477;
+      color: var(--admos-orange);
       font-size: 13px;
       line-height: 1.55;
       font-style: italic;
@@ -331,9 +331,25 @@
 
     .article table {
       width: 100%;
-      margin: 2rem 0;
+      margin: 0;
       border-collapse: collapse;
       font-size: 15px;
+    }
+
+    .table-wrapper {
+      margin: 2.3rem 0;
+    }
+
+    .table-caption {
+      margin-top: 10px;
+      color: var(--admos-orange);
+      font-size: 13px;
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    .caption-label {
+      font-weight: 600;
     }
 
     .article th,
@@ -622,7 +638,7 @@
 
 <figure id="figure-fig-fig1">
   <img src="assets/Fig1.png" alt="The hierarchy of semiconductor models: from devices to systems.">
-  <figcaption>Figure 1: The hierarchy of semiconductor models: from devices to systems.</figcaption>
+  <figcaption><span class="caption-label">Figure 1:</span> The hierarchy of semiconductor models: from devices to systems.</figcaption>
 </figure>
 
 <h2 id="device-level-simulations-physics-at-the-core">Device-Level Simulations: Physics at the Core</h2>
@@ -633,7 +649,7 @@
 
 <figure id="figure-fig-fig2">
   <img src="assets/Fig2.png" alt="Typical TCAD simulation of a MOS transistor showing the spatial distribution of doping concentration.">
-  <figcaption>Figure 2: Typical TCAD simulation of a MOS transistor showing the spatial distribution of doping concentration.</figcaption>
+  <figcaption><span class="caption-label">Figure 2:</span> Typical TCAD simulation of a MOS transistor showing the spatial distribution of doping concentration.</figcaption>
 </figure>
 
 <p>Device-level simulation, however, extends well beyond TCAD. Density Functional Theory (DFT) and other ab initio methods[<a href="#ref-1">1</a>] address electronic structure and material properties at the atomistic scale, NEGF methods describe quantum transport in ultra-scaled devices[<a href="#ref-2">2</a>], and Monte Carlo approaches provide a statistical treatment of carrier transport and scattering. Together, these techniques span a wide range of physical scales and computational complexity allowing engineers to choose the level of physical detail appropriate to the device and the phenomenon being investigated.</p>
@@ -685,7 +701,7 @@
 </tr>
 </tbody>
 </table>
-<div class="table-caption">Table 1: CMC-standard compact models for various technologies.</div>
+<div class="table-caption"><span class="caption-label">Table 1:</span> CMC-standard compact models for various technologies.</div>
 </div>
 
 <p>For a specific fabrication technology, the parameters of the selected compact model are typically extracted from electrical measurements and validated across device geometries, bias conditions, and temperatures. In commercial IC design, these calibrated models are usually delivered as part of a Process Design Kit (PDK). A PDK combines the compact models with technology-specific information such as process corners, device libraries, layer definitions, parasitic-extraction data, and design-verification rules. The PDK is therefore not another simulation level itself, but the practical interface that connects a foundry process to the circuit-design environment.</p>
@@ -700,7 +716,7 @@
 
 <figure id="figure-fig-fig3">
   <img src="assets/Fig3.png" alt="Functional circuit behavior is predicted by combining compact device models in circuit-level simulation.">
-  <figcaption>Figure 3: Functional circuit behavior is predicted by combining compact device models in circuit-level simulation.</figcaption>
+  <figcaption><span class="caption-label">Figure 3:</span> Functional circuit behavior is predicted by combining compact device models in circuit-level simulation.</figcaption>
 </figure>
 
 <h2 id="system-level-simulations-the-bigger-picture">System-Level Simulations: The Bigger Picture</h2>
