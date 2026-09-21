@@ -8,6 +8,8 @@ on:
       - main
     paths:
       - "source/**"
+      - "templates/**"
+      - "scripts/**"
       - ".github/workflows/build-articles.yml"
 
 permissions:
@@ -67,7 +69,13 @@ jobs:
             pdflatex -interaction=nonstopmode -halt-on-error article.tex
 
             article_id=$(basename "${{ matrix.article_dir }}")
+
             mv article.pdf "${article_id}.pdf"
+
+      - name: Generate HTML article
+        shell: bash
+        run: |
+          python scripts/build_article.py "${{ matrix.article_dir }}"
 
       - name: Copy PDF to article folder
         shell: bash
@@ -88,7 +96,7 @@ jobs:
           path: ${{ matrix.article_dir }}/*.pdf
           if-no-files-found: error
 
-      - name: Commit generated PDF
+      - name: Commit generated article files
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
@@ -97,11 +105,11 @@ jobs:
           article_id="${{ steps.article.outputs.id }}"
           series="${{ steps.article.outputs.series }}"
 
-          git add "articles/$series/$article_id/${article_id}.pdf"
+          git add "articles/$series/$article_id"
 
           if git diff --cached --quiet; then
-            echo "No PDF changes to commit."
+            echo "No generated article changes to commit."
           else
-            git commit -m "Build ${article_id} PDF"
+            git commit -m "Build ${article_id} article"
             git push
           fi
