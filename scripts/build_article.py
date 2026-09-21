@@ -645,7 +645,8 @@ def parse_figures(
             f'src="assets/{html.escape(image_name)}" '
             f'alt="{alt_text}">\n'
             f'  <figcaption>'
-            f'Figure {number}: {caption_html}'
+            f'<span class="caption-label">Figure {number}:</span> '
+            f'{caption_html}'
             f'</figcaption>\n'
             f'</figure>'
         )
@@ -698,9 +699,6 @@ def extract_tabular_content(content):
     handling column specifications such as:
 
         {@{}ll@{}}
-
-    A simple regex cannot parse these correctly because they contain
-    nested braces.
     """
 
     tabular_start = re.search(
@@ -1020,7 +1018,7 @@ def parse_tables(
 
             html_lines.append(
                 f'<div class="table-caption">'
-                f'Table {number}: '
+                f'<span class="caption-label">Table {number}:</span> '
                 f'{caption_html}'
                 f'</div>'
             )
@@ -1607,9 +1605,6 @@ def copy_assets(
                 destination
             )
 
-    # Copy common hero background.
-    # Your template expects assets/bg.jpg.
-
     background_candidates = [
         article_dir / "bg.jpg",
         ROOT / "templates" / "bg.jpg"
@@ -1641,10 +1636,7 @@ def main():
 
     if len(sys.argv) != 2:
 
-        print(
-            "Usage:"
-        )
-
+        print("Usage:")
         print(
             "python scripts/build_article.py "
             "source/MOD/MOD_001"
