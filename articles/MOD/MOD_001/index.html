@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>The Landscape of Semiconductor Modeling and Simulation | AdMOS Technical Articles</title>
+
+  <link rel="icon" type="image/png" href="../../../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --admos-orange: #c97924;
+      --admos-text: #45494b;
+      --admos-bg: #ffffff;
+      --admos-blue: #303F6E;
+      --admos-ice: #CAD2D9;
+      --header-max: 1920px;
+      --header-pad: clamp(16px, 3vw, 48px);
+      --content-max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Poppins, Arial, sans-serif;
+      color: var(--admos-text);
+      background: #ffffff;
+    }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      background: var(--admos-bg);
+      border-bottom: 1px solid rgba(69,73,75,.10);
+    }
+
+    .header-shell {
+      width: min(100%, var(--header-max));
+      margin: 0 auto;
+      padding: 8px var(--header-pad);
+    }
+
+    .header-row {
+      display: grid;
+      grid-template-columns: minmax(150px, 2fr) minmax(0, 10fr);
+      align-items: center;
+      gap: 24px;
+      min-height: 120px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      min-width: 0;
+      transform: translateX(-15px);
+    }
+
+    .brand a {
+      display: block;
+      width: min(22vw, 300px);
+      min-width: 150px;
+      line-height: 0;
+    }
+
+    .brand img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .desktop-nav {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: .2px;
+      line-height: 1.5;
+    }
+
+    .nav-item { position: relative; }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px 16px;
+      color: var(--admos-text);
+      text-decoration: none;
+      background: transparent;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover,
+    .nav-item:focus-within > .nav-link {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.05);
+    }
+
+    .nav-link.active {
+      color: var(--admos-orange);
+      position: relative;
+    }
+
+    .nav-link.active::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 4px;
+      height: 2px;
+      background: var(--admos-orange);
+    }
+
+    .caret {
+      width: 8px;
+      height: 8px;
+      border-right: 1.6px solid currentColor;
+      border-bottom: 1.6px solid currentColor;
+      transform: rotate(45deg) translateY(-2px);
+    }
+
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 2px);
+      right: 0;
+      min-width: 270px;
+      padding: 8px;
+      background: #fff;
+      border: 1px solid rgba(69,73,75,.10);
+      box-shadow: 0 12px 35px rgba(0,0,0,.10);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(6px);
+      transition: .16s ease;
+    }
+
+    .nav-item:hover .dropdown,
+    .nav-item:focus-within .dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px 12px;
+      color: var(--admos-text);
+      text-decoration: none;
+      white-space: nowrap;
+      font-size: 15px;
+    }
+
+    .dropdown a:hover {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.10);
+    }
+
+    .menu-toggle { display: none; }
+
+    .menu-icon {
+      display: none;
+      justify-self: end;
+      width: 46px;
+      height: 46px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .menu-icon span,
+    .menu-icon span::before,
+    .menu-icon span::after {
+      content: "";
+      display: block;
+      width: 28px;
+      height: 3px;
+      background: var(--admos-text);
+      position: relative;
+      transition: .2s ease;
+    }
+
+    .menu-icon span::before { position: absolute; top: -9px; }
+    .menu-icon span::after { position: absolute; top: 9px; }
+
+    .mobile-nav { display: none; }
+
+    .eyebrow {
+      margin-bottom: 24px;
+      color: var(--admos-orange);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow a {
+      color: var(--admos-orange);
+      text-decoration: none;
+    }
+
+    .eyebrow a:hover { color: #ffffff; }
+
+    /* =========================================================
+       ARTICLE HERO
+       ========================================================= */
+    .article-hero {
+      padding: 2rem 0;
+      background:
+        linear-gradient(
+          to right,
+          rgba(48, 63, 110, 0.98) 0%,
+          rgba(48, 63, 110, 0.90) 45%,
+          rgba(48, 63, 110, 0.62) 75%,
+          rgba(48, 63, 110, 0.28) 100%
+        ),
+        url("assets/bg.jpg");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero-inner {
+      width: min(100%, var(--content-max));
+      margin: 0 auto;
+      color: #ffffff;
+    }
+
+    .article-hero h1 {
+      max-width: 980px;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(38px, 5vw, 66px);
+      line-height: 1.06;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 28px;
+      margin-top: 24px;
+      font-size: 15px;
+    }
+
+    .pdf-button {
+      display: inline-block;
+      margin-top: 28px;
+      padding: 9px 14px;
+      border: 2px solid var(--admos-orange);
+      border-radius: 8px;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 500;
+      background: var(--admos-orange);
+    }
+
+    .pdf-button:hover {
+      color: var(--admos-ice);
+      background: var(--admos-orange);
+    }
+
+    /* =========================================================
+       ARTICLE LAYOUT
+       ========================================================= */
+    .page-layout {
+      width: min(100%, var(--content-max));
+      margin: 0 auto;
+      padding: 56px 0 80px;
+      display: grid;
+      grid-template-columns: minmax(0, 760px) minmax(250px, 320px);
+      gap: 70px;
+      align-items: start;
+    }
+
+    .article { min-width: 0; }
+
+    .article h2 {
+      margin: 2.3rem 0 1rem;
+      color: var(--admos-blue);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(26px, 3vw, 34px);
+      line-height: 1.15;
+    }
+
+    .article h2:first-child { margin-top: 0; }
+
+    .article h3 {
+      margin: 1.8rem 0 .8rem;
+      color: var(--admos-blue);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .article p {
+      margin: 0 0 1.25rem;
+      color: var(--admos-text);
+      font-size: 17px;
+      line-height: 1.8;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .article figure { margin: 2.3rem 0; }
+
+    .article figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .article figcaption {
+      margin-top: 10px;
+      color: #6f7477;
+      font-size: 13px;
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    .article table {
+      width: 100%;
+      margin: 2rem 0;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+
+    .article th,
+    .article td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #d8dadd;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .article th {
+      color: var(--admos-blue);
+      font-weight: 600;
+      border-top: 2px solid var(--admos-blue);
+      border-bottom: 1px solid var(--admos-blue);
+    }
+
+    .equation {
+      margin: 1.4rem 0 1.8rem;
+      padding: 18px;
+      text-align: center;
+      font-family: "Times New Roman", serif;
+      font-size: 26px;
+      background: #f6f7f8;
+      border-left: 4px solid var(--admos-orange);
+    }
+
+    .references {
+      padding-left: 1.2rem;
+      margin-bottom: 0;
+    }
+
+    .references li {
+      margin-bottom: .8rem;
+      color: var(--admos-text);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* =========================================================
+       SIDEBAR
+       ========================================================= */
+    .sidebar {
+      position: sticky;
+      top: 150px;
+    }
+
+    .sidebar-block {
+      margin-bottom: 34px;
+      padding: 22px;
+      background: #f7f7f6;
+      border-top: 3px solid var(--admos-blue);
+    }
+
+    .sidebar h3 {
+      margin: 0 0 16px;
+      color: var(--admos-blue);
+      font-size: 19px;
+    }
+
+    .toc {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc li { margin-bottom: 10px; }
+
+    .toc a {
+      color: var(--admos-text);
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .toc a:hover { color: var(--admos-orange); }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      padding: 5px 9px;
+      border: 1px solid var(--admos-orange);
+      border-radius: 7px;
+      color: var(--admos-orange);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+    footer {
+      padding: 70px 0;
+      width: 100%;
+      background: var(--admos-ice);
+    }
+
+    .footer-content {
+      width: min(100%, 1200px);
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--admos-text);
+    }
+
+    .footer-content div {
+      display: flex;
+      gap: 30px;
+    }
+
+    .footer-content a {
+      color: var(--admos-text);
+      text-decoration: none;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+    @media (max-width: 980px) {
+      .header-row {
+        grid-template-columns: 1fr auto;
+        min-height: 82px;
+      }
+
+      .brand a {
+        width: min(25vw, 210px);
+        min-width: 150px;
+      }
+
+      .desktop-nav { display: none; }
+      .menu-icon { display: flex; }
+
+      .menu-toggle:checked + .menu-icon span { background: transparent; }
+      .menu-toggle:checked + .menu-icon span::before { top: 0; transform: rotate(45deg); }
+      .menu-toggle:checked + .menu-icon span::after { top: 0; transform: rotate(-45deg); }
+      .menu-toggle:checked ~ .mobile-nav { display: block; }
+
+      .mobile-nav {
+        border-top: 1px solid rgba(69,73,75,.10);
+        padding: 10px 0 18px;
+      }
+
+      .mobile-nav a,
+      .mobile-nav summary {
+        display: block;
+        padding: 12px 4px;
+        color: var(--admos-text);
+        text-decoration: none;
+      }
+
+      .mobile-nav details > div { padding-left: 18px; }
+
+      .page-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+
+      .sidebar { position: static; }
+    }
+
+    @media (max-width: 700px) {
+      .hero-meta {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="header-shell">
+    <div class="header-row">
+
+      <div class="brand">
+        <a href="https://www.admos.de/" aria-label="AdMOS Home">
+          <img
+            src="https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-455x160.png"
+            alt="AdMOS">
+        </a>
+      </div>
+
+      <nav class="desktop-nav" aria-label="Header navigation">
+        <div class="nav-item"><a class="nav-link" href="https://www.admos.de/">Home</a></div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/leistungen-und-produkte/">
+            <span>Services &amp; Products</span>
+            <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/">1/f-Measurement System</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/">CMOS Modeling</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/">Semiconductor Measurement Lab</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/">Software Development</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/">Design Analysis</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/">Simulation &amp; Consulting</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/">Research</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link active" href="../../../">Technical Articles</a>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/uber-admos/">
+            <span>About AdMOS</span>
+            <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/uber-admos/ueber-uns/">About Us</a>
+            <a href="https://www.admos.de/uber-admos/karriere/">Careers</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/kontakt/">Contact</a>
+        </div>
+      </nav>
+
+      <input class="menu-toggle" type="checkbox" id="menu-toggle">
+      <label class="menu-icon" for="menu-toggle" aria-label="Open menu"><span></span></label>
+
+      <nav class="mobile-nav" aria-label="Mobile navigation">
+        <a href="https://www.admos.de/">Home</a>
+        <a href="../../../">Technical Articles</a>
+        <a href="https://www.admos.de/kontakt/">Contact</a>
+      </nav>
+
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="article-hero">
+    <div class="hero-inner">
+
+      <div class="eyebrow">
+        <a href="../../../">Technical Articles</a>
+        /
+        <a href="../../">Article Series</a>
+        /
+        <span>Article</span>
+      </div>
+
+      <h1>The Landscape of Semiconductor Modeling and Simulation</h1>
+
+      <div class="hero-meta">
+        <span><strong>Published:</strong> 25.08.2026</span>
+        <span><strong>Reading time:</strong> approx. 5 minutes</span>
+        <span><strong>Article ID:</strong> MOD_001</span>
+      </div>
+
+      <a
+        class="pdf-button"
+        href="MOD_001.pdf"
+        target="_blank"
+        rel="noopener noreferrer">
+        Open PDF
+      </a>
+
+    </div>
+  </section>
+
+  <div class="page-layout">
+
+    <article class="article">
+<h2 id="device-level-simulations-physics-at-the-core">Device-Level Simulations: Physics at the Core</h2>
+
+<p>At the device level, the question is not simply <em>what does the transistor do?</em>, but <em>why does it behave that way?</em> Device simulation explicitly represents the semiconductor structure, including its geometry, materials, doping profiles, interfaces and operating conditions, and uses numerical methods to calculate quantities such as electrostatic potential, carrier concentration, current density and electric-field distributions.</p>
+
+<p>The most widely used industrial framework is Technology Computer-Aided Design (TCAD), which typically solves Poisson’s equation together with carrier-transport models such as drift-diffusion. More advanced descriptions, including hydrodynamic or energy-transport models, may be required when non-equilibrium effects become important. Figure~\ref{fig:fig2} illustrates a typical TCAD representation, in which spatially resolved quantities such as doping concentration, electrostatic potential, electric field, or current density can be visualized across the device cross-section. TCAD is therefore particularly valuable in semiconductor technology development, where foundries use it to analyze and optimize fabrication processes, device geometries and material stacks before committing each design iteration to silicon.</p>
+
+<p>Device-level simulation, however, extends well beyond TCAD. Density Functional Theory (DFT) and other ab initio methods[Jones2015] address electronic structure and material properties at the atomistic scale, NEGF methods describe quantum transport in ultra-scaled devices[Datta2000], and Monte Carlo approaches provide a statistical treatment of carrier transport and scattering. Together, these techniques span a wide range of physical scales and computational complexity allowing engineers to choose the level of physical detail appropriate to the device and the phenomenon being investigated.</p>
+
+<h2 id="compact-models-compressing-physics-into-equations">Compact Models: Compressing Physics into Equations</h2>
+
+<p>To use a semiconductor device as a building block for larger circuits, its behavior must be translated into a form that can be evaluated rapidly and repeatedly. This is the role of compact models, which represent device behavior through computationally efficient equations relating terminal voltages, currents, and charges. Rather than resolving the internal physics at every point in the device, compact models reproduce the behavior visible at its terminals while retaining the physical effects required for accurate circuit simulation[Bhattacharyya2009].</p>
+
+<p>Modern compact models therefore describe far more than basic current–voltage characteristics. Depending on the device technology, they may include short-channel effects, mobility degradation, leakage currents, parasitic resistances and capacitances, self-heating, noise, and statistical variability. The challenge is to capture these effects accurately while keeping the model sufficiently robust and efficient to be evaluated millions of times during circuit simulation.</p>
+
+<p>Many widely used compact models are standardized through the Compact Model Coalition (CMC)[Si2CMC], covering a broad range of semiconductor technologies, and some of them are listed in Table~\ref{tab:tab1}.</p>
+
+<p>\centering</p>
+
+<p>\begin{tabular}{@{}ll@{}}</p>
+
+<p>\toprule</p>
+
+<p><strong>Technology</strong>
+			&
+			<strong>Compact Models</strong>
+			\\</p>
+
+<p>\midrule</p>
+
+<p>Bulk CMOS
+			& BSIM-BULK, BSIM4, PSP, HiSIM2 \\</p>
+
+<p>SOI / FDSOI MOSFET
+			& BSIM-SOI, HiSIM-SOI, L-UTSOI \\</p>
+
+<p>Multigate / FinFET / GAA
+			& BSIM-CMG, BSIM-IMG \\</p>
+
+<p>High-voltage MOSFET
+			& HiSIM-HV \\</p>
+
+<p>Bipolar / HBT
+			& HICUM, MEXTRAM \\</p>
+
+<p>GaN HEMT
+			& ASM-HEMT, MVSG_CMC \\</p>
+
+<p>Diode / ESD
+			& DIODE_CMC, ASM-ESD \\</p>
+
+<p>\bottomrule</p>
+
+<p>\end{tabular}</p>
+
+<p>\caption{
+			CMC-standard compact models for various technologies.
+		}
+		\label{tab:tab1}
+	\end{table}</p>
+
+<p>For a specific fabrication technology, the parameters of the selected compact model are typically extracted from electrical measurements and validated across device geometries, bias conditions, and temperatures. In commercial IC design, these calibrated models are usually delivered as part of a Process Design Kit (PDK). A PDK combines the compact models with technology-specific information such as process corners, device libraries, layer definitions, parasitic-extraction data, and design-verification rules. The PDK is therefore not another simulation level itself, but the practical interface that connects a foundry process to the circuit-design environment.</p>
+
+<h2 id="circuit-level-simulations-putting-the-pieces-together">Circuit-Level Simulations: Putting the Pieces Together</h2>
+
+<p>With compact models providing an efficient description of individual devices, the next level of abstraction is concerned with how those devices behave when connected together to perform a function. Circuit simulation treats the circuit as a network of interconnected components and predicts the resulting voltages, currents, and overall electrical behavior. As illustrated in Figure~\ref{fig:fig3}, compact device models are combined within a circuit schematic and used to predict the corresponding circuit response.</p>
+
+<p>At the heart of this level is SPICE (Simulation Program with Integrated Circuit Emphasis) and the many simulators based on its principles[Nagel1973]. Compact models determine the electrical response of each transistor at a given operating point, while the simulator solves the complete set of circuit equations. Depending on the analysis, designers can evaluate DC operating points, frequency response, transient behavior, noise, distortion, stability, gain, bandwidth, switching delay, and power consumption.</p>
+
+<p>Circuit simulation is also essential for assessing robustness. Devices vary across fabrication processes, supply voltages change, and circuits operate over a range of temperatures. Designers therefore evaluate circuits across process, voltage, and temperature (PVT) conditions, while statistical methods such as Monte Carlo analysis are used to study the impact of device and process variability. At this level, the focus is no longer on the internal physics of an individual transistor, but on how modeled devices interact to create useful electronic functions such as amplifiers, oscillators, memory cells, and logic circuits.</p>
+
+<h2 id="system-level-simulations-the-bigger-picture">System-Level Simulations: The Bigger Picture</h2>
+
+<p>At the system level, behavioral models describe the functional response of electronic blocks without reproducing their internal circuit implementation. Depending on the required accuracy, a behavioral model may be as simple as a gain or transfer function, or it may include more realistic effects such as bandwidth limitations, delay, saturation, nonlinearity, quantization, noise, and temperature dependence. In this way, complex blocks such as amplifiers, data converters, oscillators, sensors, or communication channels can be represented by the characteristics that are most relevant to the overall system.</p>
+
+<p>These models are especially useful for evaluating complete signal chains and mixed-signal architectures, where the interaction between blocks is more important than the internal details of each one. They also allow different levels of fidelity to be combined within the same simulation, for example by using a detailed model for a critical block and simpler behavioral descriptions elsewhere. Environments such as MATLAB/Simulink, SystemC, and Verilog-AMS are commonly used to implement such models for architectural exploration, algorithm development, and system-level verification.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Semiconductor simulation is most effective when the level of abstraction matches the engineering question. Device-level methods provide physical insight, compact models translate this behavior into efficient electrical descriptions, circuit simulation predicts the interaction of many devices, and behavioral models enable the analysis of complete systems. Each level deliberately sacrifices some detail to gain speed, scalability, and practical usefulness. The strength of the overall modeling hierarchy therefore lies not in any single method, but in how these different levels complement one another to connect semiconductor physics with functional electronic systems.</p>
+
+<p>% ============================================================
+	% REFERENCES
+	% ============================================================</p>
+
+<p>\bibitem{Jones2015}
+		R. O. Jones,
+		``Density functional theory: Its origins, rise to prominence, and future,''
+		\emph{Reviews of Modern Physics},
+		vol. 87, no. 3, pp. 897--923, 2015.</p>
+
+<p>\bibitem{Datta2000}
+		S. Datta,
+		``Nanoscale device modeling: The Green's function method,''
+		\emph{Superlattices and Microstructures},
+		vol. 28, no. 4, pp. 253--278, 2000.</p>
+
+<p>\bibitem{Bhattacharyya2009}
+		A. B. Bhattacharyya,
+		\emph{Compact MOSFET Models for VLSI Design}.
+		Chichester, U.K.: Wiley, 2009.</p>
+
+<p>\bibitem{Si2CMC}
+		Silicon Integration Initiative (Si2),
+		``CMC Standard Models,''
+		Compact Model Coalition.</p>
+
+<p>\bibitem{Nagel1973}
+		L. W. Nagel and D. O. Pederson,
+		``Simulation Program with Integrated Circuit Emphasis (SPICE),''
+		Electronics Research Laboratory, University of California, Berkeley,
+		Memorandum No. ERL-M382, 1973.</p>
+
+<p>\end{thebibliography}</p>
+    </article>
+
+    <aside class="sidebar">
+
+      <div class="sidebar-block">
+        <h3>On this page</h3>
+        <ul class="toc">
+          <li><a href="#device-level-simulations-physics-at-the-core">Device-Level Simulations: Physics at the Core</a></li>
+          <li><a href="#compact-models-compressing-physics-into-equations">Compact Models: Compressing Physics into Equations</a></li>
+          <li><a href="#circuit-level-simulations-putting-the-pieces-together">Circuit-Level Simulations: Putting the Pieces Together</a></li>
+          <li><a href="#system-level-simulations-the-bigger-picture">System-Level Simulations: The Bigger Picture</a></li>
+          <li><a href="#conclusion">Conclusion</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-block">
+        <h3>Article Tags</h3>
+        <div class="tags">
+
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-content">
+    <div>
+      <a href="https://www.admos.de/impressum/">Legal Notice</a>
+      <a href="https://www.admos.de/datenschutzerklarung/">Privacy Policy</a>
+    </div>
+    <p>@Copyright. All rights reserved</p>
+  </div>
+</footer>
+
+</body>
+</html>
