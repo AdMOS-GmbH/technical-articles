@@ -109,7 +109,25 @@ jobs:
 
           if git diff --cached --quiet; then
             echo "No generated article changes to commit."
-          else
-            git commit -m "Build ${article_id} article"
-            git push
+            exit 0
           fi
+
+          git commit -m "Build ${article_id} article"
+
+          for attempt in 1 2 3 4 5; do
+            echo "Push attempt $attempt"
+
+            git pull --rebase origin main
+
+            if git push origin main; then
+              echo "Push successful."
+              exit 0
+            fi
+
+            echo "Push failed because main may have changed."
+            echo "Retrying in 5 seconds..."
+            sleep 5
+          done
+
+          echo "Push failed after 5 attempts."
+          exit 1
