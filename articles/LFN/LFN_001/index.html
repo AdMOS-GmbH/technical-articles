@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Small Signals, Huge Consequences: Origins of Low-frequency Noise in Electronic Devices | AdMOS Technical Articles</title>
+
+  <link rel="icon" type="image/png" href="../../../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --admos-orange: #c97924;
+      --admos-text: #45494b;
+      --admos-bg: #ffffff;
+      --admos-blue: #303F6E;
+      --admos-ice: #CAD2D9;
+      --header-max: 1920px;
+      --header-pad: clamp(16px, 3vw, 48px);
+      --content-max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Poppins, Arial, sans-serif;
+      color: var(--admos-text);
+      background: #ffffff;
+    }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      background: var(--admos-bg);
+      border-bottom: 1px solid rgba(69,73,75,.10);
+    }
+
+    .header-shell {
+      width: min(100%, var(--header-max));
+      margin: 0 auto;
+      padding: 8px var(--header-pad);
+    }
+
+    .header-row {
+      display: grid;
+      grid-template-columns: minmax(150px, 2fr) minmax(0, 10fr);
+      align-items: center;
+      gap: 24px;
+      min-height: 120px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      min-width: 0;
+      transform: translateX(-15px);
+    }
+
+    .brand a {
+      display: block;
+      width: min(22vw, 300px);
+      min-width: 150px;
+      line-height: 0;
+    }
+
+    .brand img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .desktop-nav {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: .2px;
+      line-height: 1.5;
+    }
+
+    .nav-item { position: relative; }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px 16px;
+      color: var(--admos-text);
+      text-decoration: none;
+      background: transparent;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover,
+    .nav-item:focus-within > .nav-link {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.05);
+    }
+
+    .nav-link.active {
+      color: var(--admos-orange);
+      position: relative;
+    }
+
+    .nav-link.active::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 4px;
+      height: 2px;
+      background: var(--admos-orange);
+    }
+
+    .caret {
+      width: 8px;
+      height: 8px;
+      border-right: 1.6px solid currentColor;
+      border-bottom: 1.6px solid currentColor;
+      transform: rotate(45deg) translateY(-2px);
+    }
+
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 2px);
+      right: 0;
+      min-width: 270px;
+      padding: 8px;
+      background: #fff;
+      border: 1px solid rgba(69,73,75,.10);
+      box-shadow: 0 12px 35px rgba(0,0,0,.10);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(6px);
+      transition: .16s ease;
+    }
+
+    .nav-item:hover .dropdown,
+    .nav-item:focus-within .dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px 12px;
+      color: var(--admos-text);
+      text-decoration: none;
+      white-space: nowrap;
+      font-size: 15px;
+    }
+
+    .dropdown a:hover {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.10);
+    }
+
+    .menu-toggle { display: none; }
+
+    .menu-icon {
+      display: none;
+      justify-self: end;
+      width: 46px;
+      height: 46px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .menu-icon span,
+    .menu-icon span::before,
+    .menu-icon span::after {
+      content: "";
+      display: block;
+      width: 28px;
+      height: 3px;
+      background: var(--admos-text);
+      position: relative;
+      transition: .2s ease;
+    }
+
+    .menu-icon span::before { position: absolute; top: -9px; }
+    .menu-icon span::after { position: absolute; top: 9px; }
+
+    .mobile-nav { display: none; }
+
+    .eyebrow {
+      margin-bottom: 24px;
+      color: var(--admos-orange);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow a {
+      color: var(--admos-orange);
+      text-decoration: none;
+    }
+
+    .eyebrow a:hover { color: #ffffff; }
+
+    /* =========================================================
+       ARTICLE HERO
+       ========================================================= */
+    .article-hero {
+      padding: 2rem 0;
+      background:
+        linear-gradient(
+          to right,
+          rgba(48, 63, 110, 0.98) 0%,
+          rgba(48, 63, 110, 0.90) 45%,
+          rgba(48, 63, 110, 0.62) 75%,
+          rgba(48, 63, 110, 0.28) 100%
+        ),
+        url("assets/bg.jpg");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero-inner {
+      width: min(100%, var(--content-max));
+      margin: 0 auto;
+      color: #ffffff;
+    }
+
+    .article-hero h1 {
+      max-width: 980px;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(38px, 5vw, 66px);
+      line-height: 1.06;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 28px;
+      margin-top: 24px;
+      font-size: 15px;
+    }
+
+    .pdf-button {
+      display: inline-block;
+      margin-top: 28px;
+      padding: 9px 14px;
+      border: 2px solid var(--admos-orange);
+      border-radius: 8px;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 500;
+      background: var(--admos-orange);
+    }
+
+    .pdf-button:hover {
+      color: var(--admos-ice);
+      background: var(--admos-orange);
+    }
+
+    /* =========================================================
+       ARTICLE LAYOUT
+       ========================================================= */
+    .page-layout {
+      width: min(100%, var(--content-max));
+      margin: 0 auto;
+      padding: 56px 0 80px;
+      display: grid;
+      grid-template-columns: minmax(0, 760px) minmax(250px, 320px);
+      gap: 70px;
+      align-items: start;
+    }
+
+    .article { min-width: 0; }
+
+    .article h2 {
+      margin: 2.3rem 0 1rem;
+      color: var(--admos-blue);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(26px, 3vw, 34px);
+      line-height: 1.15;
+    }
+
+    .article h2:first-child { margin-top: 0; }
+
+    .article h3 {
+      margin: 1.8rem 0 .8rem;
+      color: var(--admos-blue);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .article p {
+      margin: 0 0 1.25rem;
+      color: var(--admos-text);
+      font-size: 17px;
+      line-height: 1.8;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .article figure { margin: 2.3rem 0; }
+
+    .article figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .article figcaption {
+      margin-top: 10px;
+      color: var(--admos-orange);
+      font-size: 13px;
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    .article table {
+      width: 100%;
+      margin: 0;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+
+    .table-wrapper {
+      margin: 2.3rem 0;
+    }
+
+    .table-caption {
+      margin-top: 10px;
+      color: var(--admos-orange);
+      font-size: 13px;
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    .caption-label {
+      font-weight: 600;
+    }
+
+    .article th,
+    .article td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #d8dadd;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .article th {
+      color: var(--admos-blue);
+      font-weight: 600;
+      border-top: 2px solid var(--admos-blue);
+      border-bottom: 1px solid var(--admos-blue);
+    }
+
+    .equation {
+      margin: 1.4rem 0 1.8rem;
+      padding: 18px;
+      text-align: center;
+      font-family: "Times New Roman", serif;
+      font-size: 26px;
+      background: #f6f7f8;
+      border-left: 4px solid var(--admos-orange);
+    }
+
+    .references {
+      padding-left: 1.2rem;
+      margin-bottom: 0;
+    }
+
+    .references li {
+      margin-bottom: .8rem;
+      color: var(--admos-text);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* =========================================================
+       SIDEBAR
+       ========================================================= */
+    .sidebar {
+      position: sticky;
+      top: 150px;
+    }
+
+    .sidebar-block {
+      margin-bottom: 34px;
+      padding: 22px;
+      background: #f7f7f6;
+      border-top: 3px solid var(--admos-blue);
+    }
+
+    .sidebar h3 {
+      margin: 0 0 16px;
+      color: var(--admos-blue);
+      font-size: 19px;
+    }
+
+    .toc {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc li { margin-bottom: 10px; }
+
+    .toc a {
+      color: var(--admos-text);
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .toc a:hover { color: var(--admos-orange); }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      padding: 5px 9px;
+      border: 1px solid var(--admos-orange);
+      border-radius: 7px;
+      color: var(--admos-orange);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+    footer {
+      padding: 70px 0;
+      width: 100%;
+      background: var(--admos-ice);
+    }
+
+    .footer-content {
+      width: min(100%, 1200px);
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--admos-text);
+    }
+
+    .footer-content div {
+      display: flex;
+      gap: 30px;
+    }
+
+    .footer-content a {
+      color: var(--admos-text);
+      text-decoration: none;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+    @media (max-width: 980px) {
+      .header-row {
+        grid-template-columns: 1fr auto;
+        min-height: 82px;
+      }
+
+      .brand a {
+        width: min(25vw, 210px);
+        min-width: 150px;
+      }
+
+      .desktop-nav { display: none; }
+      .menu-icon { display: flex; }
+
+      .menu-toggle:checked + .menu-icon span { background: transparent; }
+      .menu-toggle:checked + .menu-icon span::before { top: 0; transform: rotate(45deg); }
+      .menu-toggle:checked + .menu-icon span::after { top: 0; transform: rotate(-45deg); }
+      .menu-toggle:checked ~ .mobile-nav { display: block; }
+
+      .mobile-nav {
+        border-top: 1px solid rgba(69,73,75,.10);
+        padding: 10px 0 18px;
+      }
+
+      .mobile-nav a,
+      .mobile-nav summary {
+        display: block;
+        padding: 12px 4px;
+        color: var(--admos-text);
+        text-decoration: none;
+      }
+
+      .mobile-nav details > div { padding-left: 18px; }
+
+      .page-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+
+      .sidebar { position: static; }
+    }
+
+    @media (max-width: 700px) {
+      .hero-meta {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="header-shell">
+    <div class="header-row">
+
+      <div class="brand">
+        <a href="https://www.admos.de/" aria-label="AdMOS Home">
+          <img
+            src="https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-455x160.png"
+            alt="AdMOS">
+        </a>
+      </div>
+
+      <nav class="desktop-nav" aria-label="Header navigation">
+        <div class="nav-item"><a class="nav-link" href="https://www.admos.de/">Home</a></div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/leistungen-und-produkte/">
+            <span>Services &amp; Products</span>
+            <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/">1/f-Measurement System</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/">CMOS Modeling</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/">Semiconductor Measurement Lab</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/">Software Development</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/">Design Analysis</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/">Simulation &amp; Consulting</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/">Research</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link active" href="../../../">Technical Articles</a>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/uber-admos/">
+            <span>About AdMOS</span>
+            <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/uber-admos/ueber-uns/">About Us</a>
+            <a href="https://www.admos.de/uber-admos/karriere/">Careers</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/kontakt/">Contact</a>
+        </div>
+      </nav>
+
+      <input class="menu-toggle" type="checkbox" id="menu-toggle">
+      <label class="menu-icon" for="menu-toggle" aria-label="Open menu"><span></span></label>
+
+      <nav class="mobile-nav" aria-label="Mobile navigation">
+        <a href="https://www.admos.de/">Home</a>
+        <a href="../../../">Technical Articles</a>
+        <a href="https://www.admos.de/kontakt/">Contact</a>
+      </nav>
+
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="article-hero">
+    <div class="hero-inner">
+
+      <div class="eyebrow">
+        <a href="../../../">Technical Articles</a>
+        /
+        <a href="../../">Article Series</a>
+        /
+        <span>Article</span>
+      </div>
+
+      <h1>Small Signals, Huge Consequences: Origins of Low-frequency Noise in Electronic Devices</h1>
+
+      <div class="hero-meta">
+        <span><strong>Published:</strong> 18.05.2026</span>
+        <span><strong>Reading time:</strong> approx. 8 minutes</span>
+        <span><strong>Article ID:</strong> LFN_001</span>
+      </div>
+
+      <a
+        class="pdf-button"
+        href="LFN_001.pdf"
+        target="_blank"
+        rel="noopener noreferrer">
+        Open PDF
+      </a>
+
+    </div>
+  </section>
+
+  <div class="page-layout">
+
+    <article class="article">
+<h2 id="the-growing-impact-of-low-frequency-noise">The Growing Impact of Low-Frequency Noise</h2>
+
+<p>As transistors scale into the nanometer regime, reduced carrier populations, smaller signal levels, and tighter noise margins make circuits increasingly sensitive to microscopic fluctuations. Low-frequency noise that was once negligible in larger devices can now significantly influence timing stability, analog precision, RF performance, and overall reliability. In nanoscale technologies, even a single defect or trapping event can become large enough to noticeably affect device behavior.</p>
+
+<figure id="figure-fig-liner-kayak">
+  <img src="assets/Fig1.png" alt="An ocean liner and a kayak encounter the same waves, yet their responses are dramatically different. While the massive ship remains largely stable, the kayak is constantly disturbed by the very same turbulence.">
+  <figcaption><span class="caption-label">Figure 1:</span> An ocean liner and a kayak encounter the same waves, yet their responses are dramatically different. While the massive ship remains largely stable, the kayak is constantly disturbed by the very same turbulence.</figcaption>
+</figure>
+
+<h2 id="electronic-fingerprint-of-low-frequency-noise">Electronic Fingerprint of Low-frequency Noise</h2>
+
+<p>In electronic devices, the term low-frequency noise (LFN) refers to electrical fluctuations that dominate the lower end of the frequency spectrum, typically ranging from a few millihertz to several kilohertz depending on the device and application. Unlike rapidly varying high-frequency noise processes, LFN originates from comparatively slow phenomena within the device itself, including defect-assisted carrier interactions, generation-recombination processes, and stochastic fluctuations associated with localized imperfections. LFN is intrinsic to devices and fundamentally different from externally coupled disturbances such as electromagnetic interference or environmental noise.</p>
+
+<p>The current flowing through an electronic device is not perfectly constant. Instead, small random fluctuations can be observed by monitoring the current over time, as shown in Figure&nbsp;<a href="#figure-fig-time-psd">2</a>. While the time-domain signal reveals the presence of noise, it does not provide the full picture regarding the characteristic frequencies contributing to these fluctuations. The time-dependent current signal is transformed into the frequency domain using a Fast Fourier Transform (FFT), from which the power spectral density (PSD) is obtained, as plotted in Figure&nbsp;<a href="#figure-fig-time-psd">2</a>. The PSD describes how the noise power is distributed over frequency and provides a direct fingerprint of the underlying noise mechanisms in the device. The noise power increases significantly toward lower frequencies, following approximately a $1/f$ dependence. For this reason, LFN is also generally referred to as $1/f$ noise or flicker noise.</p>
+
+<figure id="figure-fig-time-psd">
+  <img src="assets/Fig2.png" alt="(a) Fluctuations in a transistor current in the time domain. (b) Power spectral density obtained from FFT with different averaging windows.">
+  <figcaption><span class="caption-label">Figure 2:</span> (a) Fluctuations in a transistor current in the time domain. (b) Power spectral density obtained from FFT with different averaging windows.</figcaption>
+</figure>
+
+<p>The $1/f$ behavior is universally observed across a wide range of electronic components&nbsp;[<a href="#ref-1">1</a>, <a href="#ref-2">2</a>], including resistors, diodes, bipolar junction transistors (BJTs), metal–oxide–semiconductor field-effect transistors (MOSFETs), and other semiconductor devices, although the dominant origin of the noise may vary depending on the material system and transport mechanism involved.</p>
+
+<h2 id="noise-components-in-semiconductors">Noise Components in Semiconductors</h2>
+
+<p>In semiconductor devices, the measured noise spectrum is rarely governed by a single mechanism over the entire frequency range. Instead, different physical processes dominate at different frequencies, giving rise to a characteristic spectrum shown in Figure&nbsp;<a href="#figure-fig-noise-components">3</a>. Depending on the material system, device architecture, and operating conditions, the relative contribution of each mechanism can vary significantly. One important contribution arises from generation–recombination (G–R) noise, which originates from the trapping and de-trapping of charge carriers at localized defect states. In the frequency domain, such processes appear as Lorentzian-shaped features in the PSD, each characterized by a specific relaxation time constant. At very low frequencies, a distinct plateau is observed, after which the spectrum rolls off with a $1/f^{2}$ dependence. As shown schematically in Figure&nbsp;<a href="#figure-fig-noise-components">3</a>(b), the superposition of many Lorentzian spectra spanning a broad distribution of time constants can collectively produce the characteristic $1/f$-like dependence. In addition, thermal and shot noise contribute a frequency-independent white-noise background associated with thermal carrier agitation and the discrete nature of charge transport. The interplay of these different mechanisms determines the overall spectral shape observed experimentally.</p>
+
+<figure id="figure-fig-noise-components">
+  <img src="assets/Fig3.png" alt="(a) Typical noise spectrum observed in semiconductor devices illustrating the dominant noise mechanisms across different frequency regimes. (b) Superposition of multiple Lorentzian spectra results in a $1/f$-like behavior.">
+  <figcaption><span class="caption-label">Figure 3:</span> (a) Typical noise spectrum observed in semiconductor devices illustrating the dominant noise mechanisms across different frequency regimes. (b) Superposition of multiple Lorentzian spectra results in a $1/f$-like behavior.</figcaption>
+</figure>
+
+<h2 id="emergence-of-random-telegraph-noise-in-nanoscale-devices">Emergence of Random Telegraph Noise in Nanoscale Devices</h2>
+
+<p>For advanced semiconductor technologies, particularly in nanoscale MOSFETs, FinFETs, gate-all-around (GAA) transistors, and low-dimensional material systems, aggressive device scaling enhances the influence of individual defects on the electrical characteristics of the device. As a result, the dynamics of single charge traps can directly manifest in the measured current in the form of random telegraph noise (RTN). Although RTN has long been observed for smaller devices in older semiconductor nodes&nbsp;[<a href="#ref-3">3</a>], its impact becomes especially pronounced in nanoscale structures. Figure&nbsp;<a href="#figure-fig-rtn">4</a> illustrates a typical RTN signal, where the drain current randomly switches between two discrete current levels over time. RTN can be understood as the discrete limit of G–R noise, arising when the activity of an individual defect or trap becomes sufficiently strong to directly modulate the device current. Unlike conventional G–R noise, RTN is directly observable in the time domain as abrupt switching events between metastable current states.</p>
+
+<figure id="figure-fig-rtn">
+  <img src="assets/Fig4.png" alt="A classic example of RTN switching, illustrating the stochastic capture and emission times of charge carriers. The corresponding histogram reveals a characteristic bimodal current distribution.">
+  <figcaption><span class="caption-label">Figure 4:</span> A classic example of RTN switching, illustrating the stochastic capture and emission times of charge carriers. The corresponding histogram reveals a characteristic bimodal current distribution.</figcaption>
+</figure>
+
+<p>More complex multi-level RTN behavior may also occur when multiple traps or interacting defect systems simultaneously influence the conduction channel. In such cases, the current fluctuates between several discrete states, each corresponding to a different trap occupancy configuration, leading to multiple peaks in the associated current histogram. A key characteristic of RTN is that the time constants of the active traps are typically of comparable magnitude, allowing the individual switching events to remain temporally distinguishable in the time domain. In contrast, conventional $1/f$ noise emerges from the collective contribution of a very large number of traps with relaxation times distributed over several orders of magnitude. The superposition and averaging of these numerous fluctuators smear out the discrete switching signatures, resulting instead in the continuous $1/f$-like spectrum commonly observed in the frequency domain.</p>
+
+<h2 id="the-two-schools-behind-lfn">The Two Schools Behind LFN</h2>
+
+<p>Despite decades of research, the microscopic origin of low-frequency noise (LFN) remains one of the most debated topics in semiconductor physics. Two major theories emerged to explain the characteristic $1/f$ behavior.</p>
+
+<p>The most widely accepted model for MOS devices is the carrier number fluctuation (CNF) theory&nbsp;[<a href="#ref-1">1</a>], where carriers are randomly captured and emitted by oxide or interface traps near the channel inversion region. These trapping events modulate the number of free carriers participating in conduction, leading to current fluctuations. The corresponding noise PSD follows the well-known relation:</p>
+
+<p>\begin{equation} S(f) \propto \frac{1}{f^{\gamma}} \label{eq:cnf} \end{equation}</p>
+
+<p>where $\gamma \approx 1$ for classical flicker noise emerging from the superposition of several traps.</p>
+
+<p>The CNF theory cannot fully explain the presence of $1/f$ noise in homogenous materials and resistors, where oxide trapping effects are negligible. An alternative explanation is provided by the carrier mobility fluctuation (CMF) theory by Hooge&nbsp;[<a href="#ref-4">4</a>], which attributes LFN to variations in carrier mobility caused by scattering processes due to lattice vibrations, surface roughness, and crystal defects. Hooge proposed the empirical relation for the PSD as:</p>
+
+<p>\begin{equation} S(f) = \frac{I^{2}\alpha_{H}}{Nf} \label{eq:hooge} \end{equation}</p>
+
+<p>where $I$ is the current, $\alpha_{H}$ is Hooge's parameter and $N$ is the number of free carriers. The relation predicts that the relative noise increases as the carrier population decreases, explaining why LFN becomes increasingly important in aggressively scaled nanoscale devices.</p>
+
+<p>For many years, the CNF and CMF theories were treated as competing explanations. However, modern experimental observations suggest that both mechanisms are often intrinsically linked. A trapped charge not only changes the carrier density in the channel but also influences the local electric field and scattering environment, thereby affecting carrier mobility simultaneously. This coupled behavior led to the concept of a unified correlated CMF/CNF theory&nbsp;[<a href="#ref-5">5</a>]. Such correlated effects become particularly important in modern nanoscale devices, where even a single defect can significantly perturb the entire conductive channel.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Low-frequency noise represents one of the clearest examples of how atomic-scale defect dynamics can produce large-scale technological consequences. What begins as the trapping and release of one or few charge carriers can ultimately influence processor timing, communication reliability, sensor accuracy, device variability, and long-term operational stability. As semiconductor technologies continue to evolve toward increasingly scaled and complex nanoscale architectures, the relative importance of low-frequency noise will continue to grow, making its understanding essential for both device optimization and reliability engineering. Beyond being a performance limitation, low-frequency noise also serves as a powerful diagnostic window into the fundamental interactions between carriers, defects, and materials that ultimately govern the behavior of modern electronic devices.</p>
+
+<h2 id="references">References</h2>
+
+<ol class="references">
+
+<li id="ref-1">A. L. McWhorter, <em>1/f Noise and Germanium Surface Properties</em>, Semiconductor Surface Physics, University of Pennsylvania, 1957.</li>
+
+<li id="ref-2">P. Dutta and P. M. Horn, &ldquo;Low-frequency fluctuations in solids: 1/f noise,&rdquo; <em>Rev. Mod. Phys.</em>, vol. 53, no. 3, pp. 497–516, Jul. 1981.</li>
+
+<li id="ref-3">M. J. Uren, D. J. Day, and M. J. Kirton, &ldquo;1/f and random telegraph noise in silicon metal-oxide-semiconductor field-effect transistors,&rdquo; <em>Appl. Phys. Lett.</em>, vol. 47, no. 11, pp. 1195–1197, 1985.</li>
+
+<li id="ref-4">F. N. Hooge, &ldquo;1/f Noise Sources,&rdquo; <em>IEEE Transactions on Electron Devices</em>, vol. 41, no. 11, pp. 1926–1935, 1994.</li>
+
+<li id="ref-5">K. K. Hung et al., &ldquo;A unified model for the flicker noise in metal-oxide-semiconductor field-effect transistors,&rdquo; <em>IEEE Transactions on Electron Devices</em>, vol. 37, no. 3, pp. 654–665, 1990.</li>
+
+</ol>
+    </article>
+
+    <aside class="sidebar">
+
+      <div class="sidebar-block">
+        <h3>On this page</h3>
+        <ul class="toc">
+          <li><a href="#the-growing-impact-of-low-frequency-noise">The Growing Impact of Low-Frequency Noise</a></li>
+          <li><a href="#electronic-fingerprint-of-low-frequency-noise">Electronic Fingerprint of Low-frequency Noise</a></li>
+          <li><a href="#noise-components-in-semiconductors">Noise Components in Semiconductors</a></li>
+          <li><a href="#emergence-of-random-telegraph-noise-in-nanoscale-devices">Emergence of Random Telegraph Noise in Nanoscale Devices</a></li>
+          <li><a href="#the-two-schools-behind-lfn">The Two Schools Behind LFN</a></li>
+          <li><a href="#conclusion">Conclusion</a></li>
+          <li><a href="#references">References</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-block">
+        <h3>Article Tags</h3>
+        <div class="tags">
+
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-content">
+    <div>
+      <a href="https://www.admos.de/impressum/">Legal Notice</a>
+      <a href="https://www.admos.de/datenschutzerklarung/">Privacy Policy</a>
+    </div>
+    <p>@Copyright. All rights reserved</p>
+  </div>
+</footer>
+
+</body>
+</html>
