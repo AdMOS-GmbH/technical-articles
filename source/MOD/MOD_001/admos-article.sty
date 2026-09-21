@@ -1,0 +1,225 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{admos-article}[2026/09/21 AdMOS Technical Article Style]
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[defaultfam,lining]{montserrat}
+\usepackage{microtype}
+\usepackage[a4paper,left=19mm,right=21mm,top=28mm,bottom=17mm]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{eso-pic}
+\usepackage{lastpage}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{etoolbox}
+\usepackage{ragged2e}
+\usepackage{hyperref}
+
+% ---------- Brand colors ----------
+\definecolor{AdMOSNavy}{HTML}{1e294e}
+\definecolor{AdMOSGold}{HTML}{c97924}
+\definecolor{AdMOSText}{HTML}{303F6E}
+
+% ---------- PDF metadata ----------
+\hypersetup{
+	colorlinks=true,
+	linkcolor=AdMOSNavy,
+	urlcolor=AdMOSNavy,
+	citecolor=AdMOSNavy,
+	pdfcreator={AdMOS GmbH Technical Article Template}
+}
+
+% ---------- AdMOS defaults ----------
+\newcommand{\ContactEmail}{info@admos.de}
+\newcommand{\CompanyName}{AdMOS GmbH}
+
+% ---------- Typography ----------
+\color{AdMOSText}
+\setcounter{secnumdepth}{0}
+\setlength{\parskip}{0.72em}
+\linespread{1.03}
+
+\justifying
+\setlength{\JustifyingParindent}{0pt}
+\setlength{\parindent}{0pt}
+
+\emergencystretch=2em
+
+% ---------- Full-page header and footer ----------
+\newcommand{\AdMOSPageFurniture}{%
+	\begin{tikzpicture}[remember picture,overlay]
+		
+		% Header image, full bleed across page width
+		\node[anchor=north west,inner sep=0pt] at (current page.north west) {%
+			\includegraphics[width=\paperwidth]{admos-letterhead.png}%
+		};
+		
+		% Header label on top of the navy banner
+		\node[
+		anchor=west,
+		text=white,
+		font=\bfseries\fontsize{10.5}{11.5}\selectfont
+		]
+		at ([xshift=19mm,yshift=-10.3mm]current page.north west)
+		{\ArticleType};
+		
+		% Footer navy bar
+		\fill[AdMOSNavy]
+		(current page.south west)
+		rectangle
+		([yshift=7.2mm]current page.south east);
+		
+		% Footer text
+		\node[
+		anchor=west,
+		text=white,
+		font=\bfseries\fontsize{8.2}{9}\selectfont
+		]
+		at ([xshift=4.5mm,yshift=3.6mm]current page.south west)
+		{\ContactEmail};
+		
+		\node[
+		anchor=center,
+		text=white,
+		font=\bfseries\fontsize{8.2}{9}\selectfont
+		]
+		at ([yshift=3.6mm]current page.south)
+		{\textcopyright\ \CompanyName};
+		
+		\node[
+		anchor=east,
+		text=white,
+		font=\bfseries\fontsize{8.2}{9}\selectfont
+		]
+		at ([xshift=-4.5mm,yshift=3.6mm]current page.south east)
+		{\thepage\ / \pageref*{LastPage}};
+		
+	\end{tikzpicture}%
+}
+
+\AddToShipoutPictureFG{\AdMOSPageFurniture}
+
+% ---------- Metadata line used on page 1 ----------
+\newcommand{\ArticleMetadata}{%
+	
+	% Top orange line
+	\noindent
+	{\color{AdMOSGold}\rule{\textwidth}{1.5pt}}
+	
+	\vspace{-2mm}
+	
+	% Metadata row
+	\noindent
+	\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}} l l r @{}}
+		
+		\textcolor{AdMOSGold}{%
+			\textbf{Series:} \ArticleSeries
+		}
+		&
+		\textcolor{AdMOSGold}{%
+			\textbf{Article ID:} \ArticleID
+		}
+		&
+		\textcolor{AdMOSGold}{%
+			\ArticleDate
+		}
+		
+	\end{tabular*}
+	
+	\vspace{-4mm}
+	
+	% Bottom orange line
+	\noindent
+	{\color{AdMOSGold}\rule{\textwidth}{1.5pt}}
+	\par
+	
+	\vspace{4.5mm}
+}
+
+% ---------- Title block ----------
+\newcommand{\ArticleTitleBlock}{%
+	{\color{AdMOSNavy}
+		\bfseries
+		\fontsize{24}{23}\selectfont
+		\ArticleTitle
+		\par}
+	
+	\vspace{1.05em}
+	
+	{\color{AdMOSNavy}
+		\bfseries
+		\fontsize{16}{17}\selectfont
+		\ArticleSubtitle
+		\par}
+	
+	\vspace{0.65em}
+}
+
+% ---------- Section formatting ----------
+\makeatletter
+
+\renewcommand\section{
+	\@startsection{section}{1}{0pt}
+	{1.45em plus .3em minus .2em}
+	{0.5em}
+	{\color{AdMOSNavy}\bfseries\fontsize{16}{17}\selectfont}
+}
+
+\renewcommand\subsection{
+	\@startsection{subsection}{2}{0pt}
+	{1.15em plus .2em minus .1em}
+	{0.4em}
+	{\color{AdMOSNavy}\bfseries\fontsize{11.6}{14}\selectfont}
+}
+
+\makeatother
+
+% ---------- Figure and table captions ----------
+\captionsetup{
+	font={small,it},
+	labelfont={bf,it,color=AdMOSGold},
+	textfont={it,color=AdMOSGold},
+	labelsep=colon,
+	justification=raggedright,
+	singlelinecheck=false,
+	skip=5pt
+}
+
+% ---------- Reusable figure placeholder ----------
+\newcommand{\FigurePlaceholder}[2][52mm]{%
+	\begin{figure}[htbp]
+		
+		\centering
+		
+		\fbox{%
+			\begin{minipage}[c][#1][c]{0.72\linewidth}
+				\centering
+				\color{gray}
+				\bfseries
+				Insert figure here
+			\end{minipage}%
+		}
+		
+		\caption{#2}
+		
+	\end{figure}
+}
+
+% ---------- Table defaults ----------
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{6pt}
+
+% ---------- Bibliography ----------
+\renewcommand{\refname}{References}
+
+\AtBeginEnvironment{thebibliography}{%
+	\small
+	\setlength{\itemsep}{0.55em}
+	\setlength{\parskip}{0pt}
+}
+
