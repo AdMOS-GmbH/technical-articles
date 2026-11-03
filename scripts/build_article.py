@@ -1889,6 +1889,11 @@ def main():
         "ArticleDate"
     )
 
+    article_subtitle = extract_newcommand(
+        tex,
+        "ArticleSubtitle"
+    )
+
     if not article_title:
         article_title = article_id
 
@@ -1900,6 +1905,26 @@ def main():
         tex,
         article_dir
     )
+
+    # The LaTeX title block shows ArticleSubtitle above the introduction.
+    # Mirror it as the first HTML section, with the same heading style and
+    # table-of-contents entry as the explicit LaTeX sections.
+    if article_subtitle:
+        subtitle_id = slugify(article_subtitle)
+
+        subtitle_heading = (
+            f'<h2 id="{subtitle_id}">'
+            f'{convert_inline(article_subtitle)}'
+            '</h2>'
+        )
+
+        article_body = subtitle_heading + "\n\n" + article_body
+        toc = (
+            f'          <li><a href="#{subtitle_id}">'
+            f'{html.escape(latex_plain_text(article_subtitle))}'
+            '</a></li>\n'
+            + toc
+        )
 
     reading_time = calculate_reading_time(
         article_body
