@@ -40,7 +40,8 @@ def main():
     all_articles = collect_articles(limit=None)
     for series, slug in SERIES_PAGES.items():
         page_path = ROOT / slug / "index.html"
-        page = page_path.read_text(encoding="utf-8")
+        original_page = page_path.read_text(encoding="utf-8")
+        page = original_page
         # Series pages sit one level below the site root. Reuse the shared
         # favicon instead of referring to a nonexistent series/assets folder.
         page = page.replace('href="assets/favicon.png"', 'href="../assets/favicon.png"')
@@ -56,7 +57,7 @@ def main():
         before, rest = page.split(START, 1)
         _, after = rest.split(END, 1)
         updated = before + START + "\n" + content + "\n      " + END + after
-        if updated != page:
+        if updated != original_page:
             page_path.write_text(updated, encoding="utf-8")
             print(f"Updated {slug}/index.html with {len(series_articles)} articles")
         else:
