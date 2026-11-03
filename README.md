@@ -6,11 +6,25 @@ The AdMOS Technical Articles website is a collection of accessible, technically 
 
 This repository contains the **website, LaTeX article sources, and automated publication pipeline**. Authors work primarily with LaTeX, while GitHub Actions generates readable HTML pages, downloadable PDFs, and up-to-date article listings.
 
-> **Current website:** [admos-gmbh.github.io/technical-articles](https://admos-gmbh.github.io/technical-articles/)
+> **Current website:** [GitHub Pages](https://admos-gmbh.github.io/technical-articles/)
 >
-> **Future website:** [articles.admos.de](https://articles.admos.de) is the planned AdMOS subdomain. The site is currently deployed on GitHub Pages at the URL above. The custom-domain migration has not yet been completed.
+> **Planned destination:** `articles.admos.de` (see section 1).
 
-## 1. Browse the articles
+## 1. Planned migration to articles.admos.de
+
+The website is **currently deployed through GitHub Pages** at:
+
+**https://admos-gmbh.github.io/technical-articles/**
+
+The long-term goal is to make the same site available at:
+
+**https://articles.admos.de/**
+
+This is a planned domain migration, not a completed one. Before switching, the custom domain must be configured in GitHub Pages, its DNS record validated, and HTTPS enabled. Site links should then be checked in the context of the new domain, because the current GitHub Pages project URL contains the additional `/technical-articles/` path.
+
+Until the move is complete, use the GitHub Pages URL for sharing and testing articles.
+
+## 2. Browse the articles
 
 Articles are organized into technical series:
 
@@ -27,45 +41,9 @@ The homepage automatically highlights the **three newest published technical art
 
 The technical articles are currently available in **English only**. The homepage displays a short English/German notice about language availability.
 
-## 2. Repository structure
-
-\`\`\`text
-technical-articles/
-├── .github/workflows/
-│   └── build-articles.yml          # GitHub Actions publishing workflow
-├── source/                         # LaTeX sources, edited by authors
-│   ├── LFN/LFN_001/
-│   │   ├── article.tex
-│   │   ├── admos-article.sty
-│   │   ├── admos-letterhead.png
-│   │   └── figures/
-│   ├── MAC/MAC_001/
-│   ├── RVA/RVA_001/
-│   ├── MOD/MOD_001/
-│   └── EST/EST001/
-├── articles/                       # Automatically generated published articles
-│   └── <SERIES>/<ARTICLE_ID>/
-│       ├── index.html
-│       ├── <ARTICLE_ID>.pdf
-│       └── assets/
-├── scripts/
-│   ├── build_article.py            # LaTeX to HTML conversion
-│   ├── update_latest_articles.py   # Refresh newest three homepage cards
-│   └── update_series_articles.py   # Refresh category article cards
-├── templates/
-│   ├── article-template.html       # Common layout for generated article pages
-│   └── bg.jpg
-├── assets/                         # Shared homepage imagery and icons
-├── index.html                      # Website homepage
-├── lfn/  mac/  rva/  mod/  est/     # Technical series landing pages
-└── jpa/                            # Peer-reviewed publications
-\`\`\`
-
-**Source of truth:** The technical content belongs under \`source/\`. Generated HTML, PDF, and image copies are written to \`articles/\` by the publishing workflow. Do not edit generated article HTML as your primary way of changing an article, because the next build may overwrite it.
-
 ## 3. How the publishing system works
 
-\`\`\`text
+```text
 Author edits article.tex and figures
                 |
                 v
@@ -86,28 +64,28 @@ Author edits article.tex and figures
                 |
                 v
         GitHub Pages deploys
-\`\`\`
+```
 
 The [Build Technical Articles workflow](.github/workflows/build-articles.yml) performs these steps:
 
-1. **Discovery:** Finds each \`source/*/*/article.tex\`.
-2. **PDF generation:** Runs \`pdflatex\` twice in a TeX Live environment.
-3. **HTML generation:** Runs \`scripts/build_article.py\` using the common article HTML template.
-4. **Publishing files:** Copies the resulting PDF, HTML, and assets into \`articles/<SERIES>/<ARTICLE_ID>/\`, and commits generated changes.
-5. **Homepage refresh:** Runs \`scripts/update_latest_articles.py\` to choose the three newest published articles using \`ArticleDate\`.
-6. **Category refresh:** Runs \`scripts/update_series_articles.py\` to list published articles under their matching series pages.
+1. **Discovery:** Finds each `source/*/*/article.tex`.
+2. **PDF generation:** Runs `pdflatex` twice in a TeX Live environment.
+3. **HTML generation:** Runs `scripts/build_article.py` using the common article HTML template.
+4. **Publishing files:** Copies the resulting PDF, HTML, and assets into `articles/<SERIES>/<ARTICLE_ID>/`, and commits generated changes.
+5. **Homepage refresh:** Runs `scripts/update_latest_articles.py` to choose the three newest published articles using `ArticleDate`.
+6. **Category refresh:** Runs `scripts/update_series_articles.py` to list published articles under their matching series pages.
 7. **Deployment:** GitHub Pages publishes the updated site from the repository.
 
 The article builds are configured to run sequentially to reduce competing Git commits. Listing updates run after the article-building jobs succeed.
 
 ### What triggers a build?
 
-Pushing changes to \`main\` under any of these locations starts the article workflow:
+Pushing changes to `main` under any of these locations starts the article workflow:
 
-- \`source/**\`
-- \`templates/**\`
-- \`scripts/**\`
-- \`.github/workflows/build-articles.yml\`
+- `source/**`
+- `templates/**`
+- `scripts/**`
+- `.github/workflows/build-articles.yml`
 
 The same workflow can be started manually from [GitHub Actions](https://github.com/AdMOS-GmbH/technical-articles/actions/workflows/build-articles.yml) using **Run workflow**.
 
@@ -117,9 +95,9 @@ A README-only change does not trigger the article-building workflow. Updates to 
 
 ### Step 1. Choose the category and article ID
 
-Create a folder in the relevant series under \`source/\`. For a new LFN article, for example:
+Create a folder in the relevant series under `source/`. For a new LFN article, for example:
 
-\`\`\`text
+```text
 source/LFN/LFN_002/
 ├── article.tex
 ├── admos-article.sty
@@ -127,15 +105,15 @@ source/LFN/LFN_002/
 └── figures/
     ├── Fig1.png
     └── Fig2.png
-\`\`\`
+```
 
 Start from the structure of an existing article. Keep the series code consistent with the existing folders: LFN, MAC, RVA, MOD, or EST.
 
 ### Step 2. Set the article metadata
 
-Edit the metadata near the top of \`article.tex\`:
+Edit the metadata near the top of `article.tex`:
 
-\`\`\`latex
+```latex
 \documentclass[10pt,a4paper]{article}
 \usepackage{admos-article}
 
@@ -154,29 +132,29 @@ Edit the metadata near the top of \`article.tex\`:
 % Your technical content goes here.
 
 \end{document}
-\`\`\`
+```
 
 **Important conventions:**
 
-- The publication date must follow **DD.MM.YYYY**, for example \`15.11.2026\`. This date determines the order of the homepage's latest-article cards.
-- The title is taken from \`ArticleTitle\`.
-- The **folder name** determines the generated website path and PDF filename, for example \`LFN_002\`. Keep \`ArticleID\` consistent as document metadata, although it can follow the printed article-ID convention.
+- The publication date must follow **DD.MM.YYYY**, for example `15.11.2026`. This date determines the order of the homepage's latest-article cards.
+- The title is taken from `ArticleTitle`.
+- The **folder name** determines the generated website path and PDF filename, for example `LFN_002`. Keep `ArticleID` consistent as document metadata, although it can follow the printed article-ID convention.
 - Keep referenced figures and supporting assets alongside the source. Filename case matters on the Linux build runner.
 
 For more useful article previews, optional metadata can be supplied:
 
-\`\`\`latex
+```latex
 \newcommand{\ArticleSummaryEN}{A short English description for article listings.}
 \newcommand{\ArticleThumbnail}{Fig1.png}
-\`\`\`
+```
 
-The listing scripts can fall back to an introduction excerpt and the first published figure when preview metadata is missing. Some existing article summaries are curated directly in \`scripts/update_latest_articles.py\`.
+The listing scripts can fall back to an introduction excerpt and the first published figure when preview metadata is missing. Some existing article summaries are curated directly in `scripts/update_latest_articles.py`.
 
 ### Step 3. Commit source files
 
-Commit \`article.tex\`, the supporting style and letterhead files, and relevant figure assets. Push to \`main\`, directly or through a reviewed pull request.
+Commit `article.tex`, the supporting style and letterhead files, and relevant figure assets. Push to `main`, directly or through a reviewed pull request.
 
-**Do not commit temporary LaTeX artifacts**, such as \`.aux\`, \`.log\`, \`.out\`, or \`.synctex.gz\`. Avoid manually creating old-style article folders beneath a category page. Published articles belong under the generated \`articles/\` directory.
+**Do not commit temporary LaTeX artifacts**, such as `.aux`, `.log`, `.out`, or `.synctex.gz`. Avoid manually creating old-style article folders beneath a category page. Published articles belong under the generated `articles/` directory.
 
 ### Step 4. Check GitHub Actions
 
@@ -184,27 +162,27 @@ Open [the Actions page](https://github.com/AdMOS-GmbH/technical-articles/actions
 
 After publishing the example article, its pages would follow this pattern:
 
-- HTML: \`https://admos-gmbh.github.io/technical-articles/articles/LFN/LFN_002/\`
-- PDF: \`https://admos-gmbh.github.io/technical-articles/articles/LFN/LFN_002/LFN_002.pdf\`
-- Series listing: \`https://admos-gmbh.github.io/technical-articles/lfn/\`
+- HTML: `https://admos-gmbh.github.io/technical-articles/articles/LFN/LFN_002/`
+- PDF: `https://admos-gmbh.github.io/technical-articles/articles/LFN/LFN_002/LFN_002.pdf`
+- Series listing: `https://admos-gmbh.github.io/technical-articles/lfn/`
 
 These are examples, not links to an article that currently exists.
 
 ## 5. Local build and preview
 
-For local work, install **Python 3** and a LaTeX distribution that provides \`pdflatex\`. The publishing workflow uses the TeX Live GitHub Action.
+For local work, install **Python 3** and a LaTeX distribution that provides `pdflatex`. The publishing workflow uses the TeX Live GitHub Action.
 
 From the repository root, you can compile an existing article and convert it to HTML:
 
-\`\`\`bash
+```bash
 cd source/LFN/LFN_001
 pdflatex -interaction=nonstopmode -halt-on-error article.tex
 pdflatex -interaction=nonstopmode -halt-on-error article.tex
 cd ../../..
 python scripts/build_article.py source/LFN/LFN_001
-\`\`\`
+```
 
-The HTML output is written to \`articles/LFN/LFN_001/index.html\`. The HTML script does not perform every publishing step. In GitHub Actions, additional steps rename and copy the PDF, upload a build artifact, refresh the category lists, and deploy the website.
+The HTML output is written to `articles/LFN/LFN_001/index.html`. The HTML script does not perform every publishing step. In GitHub Actions, additional steps rename and copy the PDF, upload a build artifact, refresh the category lists, and deploy the website.
 
 The HTML generator and article-listing scripts use Python's standard library.
 
@@ -212,57 +190,29 @@ The HTML generator and article-listing scripts use Python's standard library.
 
 | Goal | Edit |
 | --- | --- |
-| Change article text, formulas, metadata, or figures | \`source/<SERIES>/<ARTICLE_ID>/\` |
-| Change styling or navigation shared by generated articles | \`templates/article-template.html\` |
-| Change the homepage's general layout or content | \`index.html\` |
-| Change the layout of a technical category | \`lfn/index.html\`, \`mac/index.html\`, \`rva/index.html\`, \`mod/index.html\`, or \`est/index.html\` |
-| Change the newest-three logic or generated homepage cards | \`scripts/update_latest_articles.py\` |
-| Change generated category article cards | \`scripts/update_series_articles.py\` |
-| Change LaTeX-to-HTML conversion | \`scripts/build_article.py\` |
-| Change publishing automation | \`.github/workflows/build-articles.yml\` |
-| Update peer-reviewed publications | \`jpa/index.html\` |
+| Change article text, formulas, metadata, or figures | `source/<SERIES>/<ARTICLE_ID>/` |
+| Change styling or navigation shared by generated articles | `templates/article-template.html` |
+| Change the homepage's general layout or content | `index.html` |
+| Change the layout of a technical category | `lfn/index.html`, `mac/index.html`, `rva/index.html`, `mod/index.html`, or `est/index.html` |
+| Change the newest-three logic or generated homepage cards | `scripts/update_latest_articles.py` |
+| Change generated category article cards | `scripts/update_series_articles.py` |
+| Change LaTeX-to-HTML conversion | `scripts/build_article.py` |
+| Change publishing automation | `.github/workflows/build-articles.yml` |
+| Update peer-reviewed publications | `jpa/index.html` |
 
 **Important:** Do not manually edit generated article cards in the homepage or category pages. The scripts replace the content between these markers:
 
-\`\`\`html
+```html
 <!-- AUTO-LATEST-ARTICLES:START -->
 <!-- AUTO-LATEST-ARTICLES:END -->
 
 <!-- AUTO-SERIES-ARTICLES:START -->
 <!-- AUTO-SERIES-ARTICLES:END -->
-\`\`\`
+```
 
 Modify the generating scripts, or add preview metadata to the source article, instead.
 
-## 7. Troubleshooting
-
-| Problem | Check |
-| --- | --- |
-| Article not published | Confirm the \`article.tex\` path and whether the build workflow succeeded |
-| HTML works but the PDF is missing | Check the compile and PDF-copy steps in the Actions job |
-| Article absent from homepage or category page | Confirm the generated article HTML exists and the final listing-update job succeeded |
-| Latest article order is wrong | Check \`ArticleDate\` and its DD.MM.YYYY format |
-| Figures are missing | Check figure paths, naming, and capitalization |
-| Changes to the shared HTML template are not visible | Trigger or verify a successful rebuild of the affected articles |
-| Build fails while pushing files | Inspect the Git commit/push step, especially when \`main\` has changed during the run |
-
-A successful HTML or PDF generation step alone does not guarantee that the whole build workflow and subsequent GitHub Pages deployment completed.
-
-## 8. Planned migration to articles.admos.de
-
-The website is **currently deployed through GitHub Pages** at:
-
-**https://admos-gmbh.github.io/technical-articles/**
-
-The long-term goal is to make the same site available at:
-
-**https://articles.admos.de/**
-
-This is a planned domain migration, not a completed one. Before switching, the custom domain must be configured in GitHub Pages, its DNS record validated, and HTTPS enabled. Site links should then be checked in the context of the new domain, because the current GitHub Pages project URL contains the additional \`/technical-articles/\` path.
-
-Until the move is complete, use the GitHub Pages URL for sharing and testing articles.
-
-## 9. About AdMOS
+## 7. About AdMOS
 
 **[AdMOS GmbH](https://www.admos.de)**, Advanced Modeling Solutions, works in semiconductor characterization, electrical measurements, compact modeling, simulation, reliability, and related technologies.
 
