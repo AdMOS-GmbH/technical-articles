@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Fachbeiträge | Modellierung & Simulation</title>
+  <title>Modeling & Simulation | AdMOS Technical Articles</title>
 
   <!-- Poppins matches the navigation font used in the supplied AdMOS header code -->
   <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -496,113 +496,6 @@
       }
     }
 
-    /* =========================================================
-       LANGUAGE SELECTOR
-       ========================================================= */
-    .language-switcher {
-      position: fixed;
-      right: 38px;
-      bottom: 24px;
-      z-index: 10000;
-      font-family: Poppins, Arial, sans-serif;
-    }
-
-    .language-switcher-button {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 118px;
-      padding: 10px 14px;
-      border: 0;
-      background: #ffffff;
-      color: #333333;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
-      cursor: pointer;
-      font: inherit;
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .language-switcher-button:hover {
-      background: #f7f7f7;
-    }
-
-    .language-flag {
-      width: 32px;
-      height: 21px;
-      display: block;
-      flex: 0 0 auto;
-    }
-
-    .language-switcher-arrow {
-      margin-left: auto;
-      width: 8px;
-      height: 8px;
-      border-right: 2px solid #555555;
-      border-bottom: 2px solid #555555;
-      transform: rotate(225deg);
-      transition: transform .2s ease;
-    }
-
-    .language-switcher.open .language-switcher-arrow {
-      transform: rotate(45deg);
-    }
-
-    .language-switcher-menu {
-      position: absolute;
-      left: 0;
-      bottom: calc(100% + 6px);
-      min-width: 150px;
-      padding: 6px;
-      margin: 0;
-      list-style: none;
-      background: #ffffff;
-      box-shadow: 0 3px 14px rgba(0, 0, 0, 0.16);
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(8px);
-      transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
-    }
-
-    .language-switcher.open .language-switcher-menu {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-
-    .language-switcher-option {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      width: 100%;
-      padding: 9px 10px;
-      border: 0;
-      background: transparent;
-      color: #333333;
-      cursor: pointer;
-      font: inherit;
-      font-size: 15px;
-      text-align: left;
-    }
-
-    .language-switcher-option:hover,
-    .language-switcher-option.active {
-      background: rgba(201, 121, 36, .10);
-      color: var(--admos-orange);
-    }
-
-    @media (max-width: 600px) {
-      .language-switcher {
-        right: 16px;
-        bottom: 16px;
-      }
-
-      .language-switcher-button {
-        min-width: 106px;
-        padding: 9px 12px;
-      }
-    }
-
   </style>
 </head>
 <body>
@@ -615,7 +508,7 @@
     <div class="header-row">
 
       <div class="brand">
-        <a href="https://www.admos.de/" aria-label="AdMOS Startseite">
+        <a href="https://www.admos.de/" aria-label="AdMOS homepage">
           <img
             src="https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-455x160.png"
             srcset="
@@ -629,79 +522,79 @@
         </a>
       </div>
 
-      <nav class="desktop-nav" aria-label="Kopfzeilen-Navigation">
+      <nav class="desktop-nav" aria-label="Header Navigation">
         <div class="nav-item">
-          <a class="nav-link" href="https://www.admos.de/" data-de="Startseite" data-en="Home">Startseite</a>
+          <a class="nav-link" href="https://www.admos.de/">Home</a>
         </div>
 
         <div class="nav-item">
           <a class="nav-link" href="https://www.admos.de/leistungen-und-produkte/">
-            <span data-de="Leistungen und Produkte" data-en="Services &amp; Products">Leistungen und Produkte</span> <span class="caret"></span>
+            <span>Services &amp; Products</span> <span class="caret"></span>
           </a>
           <div class="dropdown">
-            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/"><span data-de="1/f-Measurement System" data-en="1/f Measurement System">1/f-Measurement System</span></a>
-            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/"><span data-de="CMOS Modellierung" data-en="CMOS Modeling">CMOS Modellierung</span></a>
-            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/"><span data-de="Halbleiter - Messlabor" data-en="Semiconductor Measurement Lab">Halbleiter - Messlabor</span></a>
-            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/"><span data-de="Softwareentwicklung" data-en="Software Development">Softwareentwicklung</span></a>
-            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/"><span data-de="Designanalyse" data-en="Design Analysis">Designanalyse</span></a>
-            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/"><span data-de="Simulation und Beratung" data-en="Simulation & Consulting">Simulation und Beratung</span></a>
-            <a href="https://www.admos.de/leistungen-und-produkte/forschung/"><span data-de="Forschung" data-en="Research">Forschung</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/"><span>1/f Measurement System</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/"><span>CMOS Modeling</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/"><span>Semiconductor Measurement Lab</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/"><span>Software Development</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/"><span>Design Analysis</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/"><span>Simulation & Consulting</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/"><span>Research</span></a>
           </div>
         </div>
 
         <div class="nav-item">
-          <a class="nav-link active" href="https://www.admos.de/fachbeitraege/" data-de="Fachbeiträge" data-en="Technical Articles">Fachbeiträge</a>
+          <a class="nav-link active" href="https://www.admos.de/fachbeitraege/">Technical Articles</a>
         </div>
 
         <div class="nav-item">
           <a class="nav-link" href="https://www.admos.de/uber-admos/">
-            <span data-de="Über AdMOS" data-en="About AdMOS">Über AdMOS</span> <span class="caret"></span>
+            <span>About AdMOS</span> <span class="caret"></span>
           </a>
           <div class="dropdown">
-            <a href="https://www.admos.de/uber-admos/ueber-uns/"><span data-de="Über uns" data-en="About Us">Über uns</span></a>
-            <a href="https://www.admos.de/uber-admos/karriere/"><span data-de="Karriere" data-en="Careers">Karriere</span></a>
+            <a href="https://www.admos.de/uber-admos/ueber-uns/"><span>About Us</span></a>
+            <a href="https://www.admos.de/uber-admos/karriere/"><span>Careers</span></a>
           </div>
         </div>
 
         <div class="nav-item">
-          <a class="nav-link" href="https://www.admos.de/kontakt/" data-de="Kontakt" data-en="Contact">Kontakt</a>
+          <a class="nav-link" href="https://www.admos.de/kontakt/">Contact</a>
         </div>
       </nav>
 
       <input class="menu-toggle" type="checkbox" id="menu-toggle">
-      <label class="menu-icon" for="menu-toggle" aria-label="Menü öffnen">
+      <label class="menu-icon" for="menu-toggle" aria-label="Open menu">
         <span></span>
       </label>
 
       <nav class="mobile-nav" aria-label="Mobile Navigation">
-        <a href="https://www.admos.de/"><span data-de="Startseite" data-en="Home">Startseite</span></a>
+        <a href="https://www.admos.de/"><span>Home</span></a>
 
         <details>
-          <summary data-de="Leistungen und Produkte" data-en="Services & Products">Leistungen und Produkte</summary>
+          <summary>Services & Products</summary>
           <div>
-            <a href="https://www.admos.de/leistungen-und-produkte/"><span data-de="Übersicht" data-en="Overview">Übersicht</span></a>
-            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/"><span data-de="1/f-Measurement System" data-en="1/f Measurement System">1/f-Measurement System</span></a>
-            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/"><span data-de="CMOS Modellierung" data-en="CMOS Modeling">CMOS Modellierung</span></a>
-            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/"><span data-de="Halbleiter - Messlabor" data-en="Semiconductor Measurement Lab">Halbleiter - Messlabor</span></a>
-            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/"><span data-de="Softwareentwicklung" data-en="Software Development">Softwareentwicklung</span></a>
-            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/"><span data-de="Designanalyse" data-en="Design Analysis">Designanalyse</span></a>
-            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/"><span data-de="Simulation und Beratung" data-en="Simulation & Consulting">Simulation und Beratung</span></a>
-            <a href="https://www.admos.de/leistungen-und-produkte/forschung/"><span data-de="Forschung" data-en="Research">Forschung</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/"><span>Overview</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/"><span>1/f Measurement System</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/"><span>CMOS Modeling</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/"><span>Semiconductor Measurement Lab</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/"><span>Software Development</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/"><span>Design Analysis</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/"><span>Simulation & Consulting</span></a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/"><span>Research</span></a>
           </div>
         </details>
 
-        <a href="https://www.admos.de/fachbeitraege/"><span data-de="Fachbeiträge" data-en="Technical Articles">Fachbeiträge</span></a>
+        <a href="https://www.admos.de/fachbeitraege/"><span>Technical Articles</span></a>
 
         <details>
-          <summary data-de="Über AdMOS" data-en="About AdMOS">Über AdMOS</summary>
+          <summary>About AdMOS</summary>
           <div>
-            <a href="https://www.admos.de/uber-admos/"><span data-de="Übersicht" data-en="Overview">Übersicht</span></a>
-            <a href="https://www.admos.de/uber-admos/ueber-uns/"><span data-de="Über uns" data-en="About Us">Über uns</span></a>
-            <a href="https://www.admos.de/uber-admos/karriere/"><span data-de="Karriere" data-en="Careers">Karriere</span></a>
+            <a href="https://www.admos.de/uber-admos/"><span>Overview</span></a>
+            <a href="https://www.admos.de/uber-admos/ueber-uns/"><span>About Us</span></a>
+            <a href="https://www.admos.de/uber-admos/karriere/"><span>Careers</span></a>
           </div>
         </details>
 
-        <a href="https://www.admos.de/kontakt/"><span data-de="Kontakt" data-en="Contact">Kontakt</span></a>
+        <a href="https://www.admos.de/kontakt/"><span>Contact</span></a>
       </nav>
 
     </div>
@@ -718,13 +611,9 @@
        ========================================================= -->
   <section class="hero">
     <div class="content-wrap">
-      <div class="eyebrow"><a href="../" data-de="Fachbeiträge" data-en="Technical Articles">Fachbeiträge</a> / <span data-de="Artikelserien" data-en="Article Series">Artikelserien</span></div>
-      <h2 data-de="Modellierung & Simulation" data-en="Modeling & Simulation">Modellierung & Simulation</h2>
-      <p class="lead"
-         data-de="Entdecken Sie Fachbeiträge zu Modellierung und Simulation – von der Bauelementphysik über Schaltungen bis hin zur Systemebene."
-         data-en="Explore technical articles on modeling and simulation – from device physics and circuits to system-level analysis.">
-        Entdecken Sie Fachbeiträge zu Modellierung und Simulation – von der Bauelementphysik über Schaltungen bis hin zur Systemebene.
-      </p>
+      <div class="eyebrow"><a href="../">Technical Articles</a> / <span>Article Series</span></div>
+      <h2>Modeling & Simulation</h2>
+      <p class="lead">Explore technical articles on modeling and simulation – from device physics and circuits to system-level analysis.</p>
     </div>
   </section>
 
@@ -733,7 +622,7 @@
        ========================================================= -->
   <section class="section">
     <div class="content-wrap">
-    <h3 class="h3-whitebg" data-de="Alle Beiträge" data-en="All Articles">Alle Beiträge</h3>
+    <h3 class="h3-whitebg">All Articles</h3>
 
     <div class="article-box">
       <!-- AUTO-SERIES-ARTICLES:START -->
@@ -742,10 +631,8 @@
         <img src="../articles/MOD/MOD_001/assets/Fig1.png" alt="The Landscape of Semiconductor Modeling and Simulation">
         <div>
           <h3>The Landscape of Semiconductor Modeling and Simulation</h3>
-          <p data-de="Von der physikalischen Bauelementmodellierung bis zur Schaltungs- und Systemsimulation: Warum unterschiedliche Modelle und Abstraktionsebenen benötigt werden." data-en="From physics-based device modeling to circuit and system simulation: why semiconductor engineering requires different models and levels of abstraction.">
-            Von der physikalischen Bauelementmodellierung bis zur Schaltungs- und Systemsimulation: Warum unterschiedliche Modelle und Abstraktionsebenen benötigt werden.
-          </p>
-          <a href="../articles/MOD/MOD_001/" data-de="Lesen ►" data-en="Read ►">Lesen ►</a>
+          <p>From physics-based device modeling to circuit and system simulation: why semiconductor engineering requires different models and levels of abstraction.</p>
+          <a href="../articles/MOD/MOD_001/">Read ►</a>
         </div>
       </section>
       <!-- AUTO-SERIES-ARTICLES:END -->
@@ -762,125 +649,15 @@
 <footer>
   <div class="footer-content">
     <div>
-      <a href="https://www.admos.de/impressum/" data-de="Impressum" data-en="Legal Notice">Impressum</a>
-      <a href="https://www.admos.de/datenschutzerklarung/" data-de="Datenschutzerklärung" data-en="Privacy Policy">Datenschutzerklärung</a>
+      <a href="https://www.admos.de/impressum/">Legal Notice</a>
+      <a href="https://www.admos.de/datenschutzerklarung/">Privacy Policy</a>
     </div>
-    <p align="right" data-de="@Urheberrecht. Alle Rechte vorbehalten" data-en="@Copyright. All rights reserved">@Urheberrecht. Alle Rechte vorbehalten</p>
+    <p align="right">@Copyright. All rights reserved</p>
   </div>
 </footer>
 
 
-<!-- =========================================================
-     LANGUAGE SELECTOR
-     ========================================================= -->
-<div class="language-switcher" id="languageSwitcher">
-  <button class="language-switcher-button" id="languageSwitcherButton"
-          type="button" aria-haspopup="true" aria-expanded="false">
-    <svg class="language-flag" id="currentFlag" viewBox="0 0 30 20" aria-hidden="true">
-      <rect width="30" height="6.67" y="0" fill="#000000"/>
-      <rect width="30" height="6.67" y="6.67" fill="#DD0000"/>
-      <rect width="30" height="6.66" y="13.34" fill="#FFCE00"/>
-    </svg>
-    <span id="currentLanguageCode">DE</span>
-    <span class="language-switcher-arrow"></span>
-  </button>
 
-  <div class="language-switcher-menu" role="menu">
-    <button class="language-switcher-option active" type="button" data-language="de" role="menuitem">
-      <svg class="language-flag" viewBox="0 0 30 20" aria-hidden="true">
-        <rect width="30" height="6.67" y="0" fill="#000000"/>
-        <rect width="30" height="6.67" y="6.67" fill="#DD0000"/>
-        <rect width="30" height="6.66" y="13.34" fill="#FFCE00"/>
-      </svg>
-      Deutsch
-    </button>
-
-    <button class="language-switcher-option" type="button" data-language="en" role="menuitem">
-      <svg class="language-flag" viewBox="0 0 60 30" aria-hidden="true">
-        <clipPath id="ukClip"><rect width="60" height="30"/></clipPath>
-        <g clip-path="url(#ukClip)">
-          <rect width="60" height="30" fill="#012169"/>
-          <path d="M0 0L60 30M60 0L0 30" stroke="#FFFFFF" stroke-width="6"/>
-          <path d="M0 0L60 30M60 0L0 30" stroke="#C8102E" stroke-width="2.5"/>
-          <path d="M30 0V30M0 15H60" stroke="#FFFFFF" stroke-width="10"/>
-          <path d="M30 0V30M0 15H60" stroke="#C8102E" stroke-width="6"/>
-        </g>
-      </svg>
-      English
-    </button>
-  </div>
-</div>
-
-<script>
-  (function () {
-    const switcher = document.getElementById("languageSwitcher");
-    const button = document.getElementById("languageSwitcherButton");
-    const code = document.getElementById("currentLanguageCode");
-    const options = switcher.querySelectorAll(".language-switcher-option");
-    const currentFlag = document.getElementById("currentFlag");
-
-    const germanFlag = `
-      <rect width="30" height="6.67" y="0" fill="#000000"/>
-      <rect width="30" height="6.67" y="6.67" fill="#DD0000"/>
-      <rect width="30" height="6.66" y="13.34" fill="#FFCE00"/>
-    `;
-
-    const englishFlag = `
-      <rect width="60" height="30" fill="#012169"/>
-      <path d="M0 0L60 30M60 0L0 30" stroke="#FFFFFF" stroke-width="6"/>
-      <path d="M0 0L60 30M60 0L0 30" stroke="#C8102E" stroke-width="2.5"/>
-      <path d="M30 0V30M0 15H60" stroke="#FFFFFF" stroke-width="10"/>
-      <path d="M30 0V30M0 15H60" stroke="#C8102E" stroke-width="6"/>
-    `;
-
-    function setLanguage(language) {
-      document.documentElement.lang = language;
-
-      document.querySelectorAll("[data-de][data-en]").forEach(function (element) {
-        element.textContent = element.dataset[language];
-      });
-
-      code.textContent = language.toUpperCase();
-
-      if (language === "de") {
-        currentFlag.setAttribute("viewBox", "0 0 30 20");
-        currentFlag.innerHTML = germanFlag;
-      } else {
-        currentFlag.setAttribute("viewBox", "0 0 60 30");
-        currentFlag.innerHTML = englishFlag;
-      }
-
-      options.forEach(function (option) {
-        option.classList.toggle("active", option.dataset.language === language);
-      });
-
-      localStorage.setItem("admos-articles-language", language);
-      switcher.classList.remove("open");
-      button.setAttribute("aria-expanded", "false");
-    }
-
-    button.addEventListener("click", function () {
-      const isOpen = switcher.classList.toggle("open");
-      button.setAttribute("aria-expanded", String(isOpen));
-    });
-
-    options.forEach(function (option) {
-      option.addEventListener("click", function () {
-        setLanguage(option.dataset.language);
-      });
-    });
-
-    document.addEventListener("click", function (event) {
-      if (!switcher.contains(event.target)) {
-        switcher.classList.remove("open");
-        button.setAttribute("aria-expanded", "false");
-      }
-    });
-
-    const savedLanguage = localStorage.getItem("admos-articles-language");
-    setLanguage(savedLanguage === "en" ? "en" : "de");
-  }());
-</script>
 
 </body>
 </html>

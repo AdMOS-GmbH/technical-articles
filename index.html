@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Fachbeiträge</title>
+  <title>Technical Articles | AdMOS</title>
 
   <!-- Poppins matches the navigation font used in the supplied AdMOS header code -->
   <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -557,111 +557,56 @@
       }
     }
 
-    /* =========================================================
-       LANGUAGE SELECTOR
-       ========================================================= */
-    .language-switcher {
-      position: fixed;
-      right: 38px;
-      bottom: 24px;
-      z-index: 10000;
+  
+    /* English-only technical articles availability notice */
+    .language-notice {
+      width: min(440px, calc(100% - 36px));
+      max-width: 440px;
+      padding: 28px;
+      margin: auto;
+      border: 1px solid rgba(69, 73, 75, 0.18);
+      border-top: 4px solid var(--admos-orange);
+      border-radius: 0;
+      color: var(--admos-text);
+      background: #fff;
+      box-shadow: 0 18px 55px rgba(0, 0, 0, 0.22);
       font-family: Poppins, Arial, sans-serif;
-    }
-
-    .language-switcher-button {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 118px;
-      padding: 10px 14px;
-      border: 0;
-      background: #ffffff;
-      color: #333333;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
-      cursor: pointer;
-      font: inherit;
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .language-switcher-button:hover {
-      background: #f7f7f7;
-    }
-
-    .language-flag {
-      width: 32px;
-      height: 21px;
-      display: block;
-      flex: 0 0 auto;
-    }
-
-    .language-switcher-arrow {
-      margin-left: auto;
-      width: 8px;
-      height: 8px;
-      border-right: 2px solid #555555;
-      border-bottom: 2px solid #555555;
-      transform: rotate(225deg);
-      transition: transform .2s ease;
-    }
-
-    .language-switcher.open .language-switcher-arrow {
-      transform: rotate(45deg);
-    }
-
-    .language-switcher-menu {
-      position: absolute;
-      left: 0;
-      bottom: calc(100% + 6px);
-      min-width: 150px;
-      padding: 6px;
-      margin: 0;
-      list-style: none;
-      background: #ffffff;
-      box-shadow: 0 3px 14px rgba(0, 0, 0, 0.16);
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(8px);
-      transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
-    }
-
-    .language-switcher.open .language-switcher-menu {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-
-    .language-switcher-option {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      width: 100%;
-      padding: 9px 10px;
-      border: 0;
-      background: transparent;
-      color: #333333;
-      cursor: pointer;
-      font: inherit;
-      font-size: 15px;
       text-align: left;
     }
-
-    .language-switcher-option:hover,
-    .language-switcher-option.active {
-      background: rgba(201, 121, 36, .10);
-      color: var(--admos-orange);
+    .language-notice::backdrop {
+      background: rgba(15, 26, 42, 0.52);
     }
-
-    @media (max-width: 600px) {
-      .language-switcher {
-        right: 16px;
-        bottom: 16px;
-      }
-
-      .language-switcher-button {
-        min-width: 106px;
-        padding: 9px 12px;
-      }
+    .language-notice h2 {
+      margin: 0 0 16px;
+      font-family: Poppins, Arial, sans-serif;
+      font-size: 21px;
+      line-height: 1.35;
+      color: #303F6E;
+    }
+    .language-notice p {
+      margin: 0 0 12px;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .language-notice p[lang="de"] {
+      margin-bottom: 24px;
+      color: #555;
+    }
+    .language-notice form {
+      text-align: right;
+    }
+    .language-notice button {
+      padding: 10px 24px;
+      border: 0;
+      border-radius: 0;
+      background: var(--admos-orange);
+      color: #fff;
+      font: 600 14px Poppins, Arial, sans-serif;
+      cursor: pointer;
+    }
+    .language-notice button:focus-visible {
+      outline: 3px solid #303F6E;
+      outline-offset: 3px;
     }
 
   </style>
@@ -676,7 +621,7 @@
     <div class="header-row">
 
       <div class="brand">
-        <a href="https://www.admos.de/" aria-label="AdMOS Startseite">
+        <a href="https://www.admos.de/" aria-label="AdMOS homepage">
           <img
             src="https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-455x160.png"
             srcset="
@@ -690,79 +635,79 @@
         </a>
       </div>
 
-      <nav class="desktop-nav" aria-label="Kopfzeilen-Navigation">
+      <nav class="desktop-nav" aria-label="Header Navigation">
         <div class="nav-item">
-          <a class="nav-link" href="https://www.admos.de/" data-de="Startseite" data-en="Home">Startseite</a>
+          <a class="nav-link" href="https://www.admos.de/">Home</a>
         </div>
 
         <div class="nav-item">
           <a class="nav-link" href="https://www.admos.de/leistungen-und-produkte/">
-            <span data-de="Leistungen und Produkte" data-en="Services &amp; Products">Leistungen und Produkte</span> <span class="caret"></span>
+            <span>Services &amp; Products</span> <span class="caret"></span>
           </a>
           <div class="dropdown">
             <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/">1/f-Measurement System</a>
-            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/">CMOS Modellierung</a>
-            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/">Halbleiter - Messlabor</a>
-            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/">Softwareentwicklung</a>
-            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/">Designanalyse</a>
-            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/">Simulation und Beratung</a>
-            <a href="https://www.admos.de/leistungen-und-produkte/forschung/">Forschung</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/">CMOS Modeling</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/">Semiconductor Measurement Lab</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/">Software Development</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/">Design Analysis</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/">Simulation &amp; Consulting</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/">Research</a>
           </div>
         </div>
 
         <div class="nav-item">
-          <a class="nav-link active" href="https://www.admos.de/fachbeitraege/" data-de="Fachbeiträge" data-en="Technical Articles">Fachbeiträge</a>
+          <a class="nav-link active" href="https://www.admos.de/fachbeitraege/">Technical Articles</a>
         </div>
 
         <div class="nav-item">
           <a class="nav-link" href="https://www.admos.de/uber-admos/">
-            <span data-de="Über AdMOS" data-en="About AdMOS">Über AdMOS</span> <span class="caret"></span>
+            <span>About AdMOS</span> <span class="caret"></span>
           </a>
           <div class="dropdown">
-            <a href="https://www.admos.de/uber-admos/ueber-uns/">Über uns</a>
-            <a href="https://www.admos.de/uber-admos/karriere/">Karriere</a>
+            <a href="https://www.admos.de/uber-admos/ueber-uns/">About Us</a>
+            <a href="https://www.admos.de/uber-admos/karriere/">Careers</a>
           </div>
         </div>
 
         <div class="nav-item">
-          <a class="nav-link" href="https://www.admos.de/kontakt/" data-de="Kontakt" data-en="Contact">Kontakt</a>
+          <a class="nav-link" href="https://www.admos.de/kontakt/">Contact</a>
         </div>
       </nav>
 
       <input class="menu-toggle" type="checkbox" id="menu-toggle">
-      <label class="menu-icon" for="menu-toggle" aria-label="Menü öffnen">
+      <label class="menu-icon" for="menu-toggle" aria-label="Open menu">
         <span></span>
       </label>
 
       <nav class="mobile-nav" aria-label="Mobile Navigation">
-        <a href="https://www.admos.de/">Startseite</a>
+        <a href="https://www.admos.de/">Home</a>
 
         <details>
-          <summary>Leistungen und Produkte</summary>
+          <summary>Services &amp; Products</summary>
           <div>
-            <a href="https://www.admos.de/leistungen-und-produkte/">Übersicht</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/">Overview</a>
             <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/">1/f-Measurement System</a>
-            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/">CMOS Modellierung</a>
-            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/">Halbleiter - Messlabor</a>
-            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/">Softwareentwicklung</a>
-            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/">Designanalyse</a>
-            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/">Simulation und Beratung</a>
-            <a href="https://www.admos.de/leistungen-und-produkte/forschung/">Forschung</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/">CMOS Modeling</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/">Semiconductor Measurement Lab</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/">Software Development</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/">Design Analysis</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/">Simulation &amp; Consulting</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/">Research</a>
           </div>
         </details>
 
-        <a href="https://www.admos.de/fachbeitraege/">Fachbeiträge</a>
+        <a href="https://www.admos.de/fachbeitraege/">Technical Articles</a>
 
         <details>
-          <summary>Über AdMOS</summary>
+          <summary>About AdMOS</summary>
           <div>
-            <a href="https://www.admos.de/uber-admos/">Übersicht</a>
-            <a href="https://www.admos.de/uber-admos/ueber-uns/">Über uns</a>
-            <a href="https://www.admos.de/uber-admos/karriere/">Karriere</a>
+            <a href="https://www.admos.de/uber-admos/">Overview</a>
+            <a href="https://www.admos.de/uber-admos/ueber-uns/">About Us</a>
+            <a href="https://www.admos.de/uber-admos/karriere/">Careers</a>
           </div>
         </details>
 
-        <a href="https://www.admos.de/kontakt/">Kontakt</a>
+        <a href="https://www.admos.de/kontakt/">Contact</a>
       </nav>
 
     </div>
@@ -779,13 +724,9 @@
        ========================================================= -->
   <section class="hero">
     <div class="content-wrap">
-      <div class="eyebrow" data-de="Fachbeiträge" data-en="Technical Articles">Fachbeiträge</div>
-      <h2 data-de="Einblicke in Halbleitertechnologie, Messtechnik und Modellierung" data-en="Insights into Semiconductor Technology, Measurement and Modeling">Einblicke in Halbleitertechnologie, Messtechnik und Modellierung</h2>
-      <p class="lead"
-         data-de="Entdecken Sie praxisnahe Fachbeiträge rund um Halbleitertechnologie, Rauschen, Messtechnik, Zuverlässigkeit sowie Modellierung und Simulation: von physikalischen Grundlagen bis hin zu modernen Bauelementen und Anwendungen."
-         data-en="Explore practical technical articles on semiconductor technology, noise, measurement, reliability, modeling and simulation: from fundamental physics to modern devices and applications.">
-        Entdecken Sie praxisnahe Fachbeiträge rund um Halbleitertechnologie, Rauschen, Messtechnik, Zuverlässigkeit sowie Modellierung und Simulation: von physikalischen Grundlagen bis hin zu modernen Bauelementen und Anwendungen.
-      </p>
+      <div class="eyebrow">Technical Articles</div>
+      <h2>Insights into Semiconductor Technology, Measurement and Modeling</h2>
+      <p class="lead">Explore practical technical articles on semiconductor technology, noise, measurement, reliability, modeling and simulation: from fundamental physics to modern devices and applications.</p>
     </div>
   </section>
 
@@ -794,7 +735,7 @@
        ========================================================= -->
   <section class="section">
   <div class="content-wrap">
-    <h3 class="h3-whitebg" data-de="Neueste Fachbeiträge" data-en="Latest Articles">Neueste Fachbeiträge</h3>
+    <h3 class="h3-whitebg">Latest Articles</h3>
 
     <div class="article-box">
       <!-- AUTO-LATEST-ARTICLES:START -->
@@ -804,11 +745,8 @@
         <img src="articles/EST/EST001/assets/fig1.png" alt="The New Frontiers of Nanoscale Semiconductor Technology">
         <div>
           <h3>The New Frontiers of Nanoscale Semiconductor Technology</h3>
-          <p data-de="Wie neue Transistorarchitekturen, Materialien und Betriebsbedingungen die Grenzen der klassischen Halbleiterskalierung erweitern, von GAAFETs und CFETs bis zu 2D-Materialien und kryogener..."
-             data-en="How new transistor architectures, materials and operating regimes extend the limits of conventional semiconductor scaling, from GAAFETs and CFETs to 2D materials and cryogenic electronics.">
-            Wie neue Transistorarchitekturen, Materialien und Betriebsbedingungen die Grenzen der klassischen Halbleiterskalierung erweitern, von GAAFETs und CFETs bis zu 2D-Materialien und kryogener...
-          </p>
-          <a href="articles/EST/EST001/" data-de="Lesen ►" data-en="Read ►">Lesen ►</a>
+          <p>How new transistor architectures, materials and operating regimes extend the limits of conventional semiconductor scaling, from GAAFETs and CFETs to 2D materials and cryogenic electronics.</p>
+          <a href="articles/EST/EST001/">Read ►</a>
         </div>
       </section>
 
@@ -817,11 +755,8 @@
         <img src="articles/MOD/MOD_001/assets/Fig1.png" alt="The Landscape of Semiconductor Modeling and Simulation">
         <div>
           <h3>The Landscape of Semiconductor Modeling and Simulation</h3>
-          <p data-de="Von der physikalischen Bauelementmodellierung bis zur Schaltungs- und Systemsimulation: Warum unterschiedliche Modelle und Abstraktionsebenen benötigt werden."
-             data-en="From physics-based device modeling to circuit and system simulation: why semiconductor engineering requires different models and levels of abstraction.">
-            Von der physikalischen Bauelementmodellierung bis zur Schaltungs- und Systemsimulation: Warum unterschiedliche Modelle und Abstraktionsebenen benötigt werden.
-          </p>
-          <a href="articles/MOD/MOD_001/" data-de="Lesen ►" data-en="Read ►">Lesen ►</a>
+          <p>From physics-based device modeling to circuit and system simulation: why semiconductor engineering requires different models and levels of abstraction.</p>
+          <a href="articles/MOD/MOD_001/">Read ►</a>
         </div>
       </section>
 
@@ -830,11 +765,8 @@
         <img src="articles/RVA/RVA_001/assets/Fig1.png" alt="When One Defect Is Enough: Reliability in the Nanoscale Era">
         <div>
           <h3>When One Defect Is Enough: Reliability in the Nanoscale Era</h3>
-          <p data-de="Wie einzelne Defekte die Eigenschaften nanoskaliger Transistoren beeinflussen und die Grenzen zwischen Variabilität und Zuverlässigkeit zunehmend verschwimmen."
-             data-en="How individual defects influence nanoscale transistors and increasingly blur the boundaries between variability and reliability.">
-            Wie einzelne Defekte die Eigenschaften nanoskaliger Transistoren beeinflussen und die Grenzen zwischen Variabilität und Zuverlässigkeit zunehmend verschwimmen.
-          </p>
-          <a href="articles/RVA/RVA_001/" data-de="Lesen ►" data-en="Read ►">Lesen ►</a>
+          <p>How individual defects influence nanoscale transistors and increasingly blur the boundaries between variability and reliability.</p>
+          <a href="articles/RVA/RVA_001/">Read ►</a>
         </div>
       </section>
 
@@ -849,73 +781,73 @@
        ========================================================= -->
   <section class="section alt">
     <div class="content-wrap">
-      <h3 class="h3-whitebg" data-de="Artikelserien" data-en="Article Series">Artikelserien</h3>
+      <h3 class="h3-whitebg">Article Series</h3>
 
       <div class="series-box">
 
         <section>
           <img src="assets/cat1.png" alt="Article Series Image">
           <div>
-            <h3 data-de="Niederfrequenzrauschen" data-en="Low-Frequency Noise">Niederfrequenzrauschen</h3>
+            <h3>Low-Frequency Noise</h3>
             <p>
-              Physik, Mechanismen und Auswirkungen von Rauschen in Halbleiterbauelementen.
+              Physics, mechanisms, and effects of noise in semiconductor devices.
             </p>
-            <a href="lfn/" data-de="Entdecken ►" data-en="Explore ►">Entdecken ►</a>
+            <a href="lfn/">Explore ►</a>
           </div>
         </section>
 
         <section>
           <img src="assets/cat2.png" alt="Article Series Image">
           <div>
-            <h3 data-de="Messtechnik & Charakterisierung" data-en="Measurement & Characterization">Messtechnik & Charakterisierung</h3>
+            <h3>Measurement & Characterization</h3>
             <p>
-              Methoden und Systeme zur präzisen Charakterisierung elektronischer Bauelemente.
+              Methods and systems for precise characterization of electronic devices.
             </p>
-            <a href="mac/" data-de="Entdecken ►" data-en="Explore ►">Entdecken ►</a>
+            <a href="mac/">Explore ►</a>
           </div>
         </section>
 
         <section>
           <img src="assets/cat3.png" alt="Article Series Image">
           <div>
-            <h3 data-de="Zuverlässigkeit & Variabilität" data-en="Reliability & Variability">Zuverlässigkeit & Variabilität</h3>
+            <h3>Reliability & Variability</h3>
             <p>
-              Defekte, Alterung und Variabilität in modernen Halbleiterbauelementen.
+              Defects, aging, and variability in modern semiconductor devices.
             </p>
-            <a href="rva/" data-de="Entdecken ►" data-en="Explore ►">Entdecken ►</a>
+            <a href="rva/">Explore ►</a>
           </div>
         </section>
 
         <section>
           <img src="assets/cat4.png" alt="Article Series Image">
           <div>
-            <h3 data-de="Modellierung & Simulation" data-en="Modeling & Simulation">Modellierung & Simulation</h3>
+            <h3>Modeling & Simulation</h3>
             <p>
-              Von der Bauelementphysik über Schaltungen bis zur Systemsimulation.
+              From device physics and circuit modeling to system-level simulation.
             </p>
-            <a href="mod/" data-de="Entdecken ►" data-en="Explore ►">Entdecken ►</a>
+            <a href="mod/">Explore ►</a>
           </div>
         </section>
 
         <section>
           <img src="assets/cat5.png" alt="Article Series Image">
           <div>
-            <h3 data-de="Zukunftsweisende Halbleitertechnologien" data-en="Emerging Semiconductor Technologies">Zukunftsweisende Halbleitertechnologien</h3>
+            <h3>Emerging Semiconductor Technologies</h3>
             <p>
-              Neue Bauelemente, Materialien und Konzepte für zukünftige Technologien.
+              New devices, materials, and concepts for future technologies.
             </p>
-            <a href="est/" data-de="Entdecken ►" data-en="Explore ►">Entdecken ►</a>
+            <a href="est/">Explore ►</a>
           </div>
         </section>
 
         <section>
           <img src="assets/cat6.png" alt="Article Series Image">
           <div>
-            <h3 data-de="Peer-Review-Publikationen" data-en="Peer-Reviewed Publications">Peer-Review-Publikationen</h3>
+            <h3>Peer-Reviewed Publications</h3>
             <p>
-              Wissenschaftliche Veröffentlichungen und Forschungsergebnisse von AdMOS.  
+              Peer-reviewed publications and research findings from AdMOS.  
             </p>
-            <a href="jpa/" data-de="Entdecken ►" data-en="Explore ►">Entdecken ►</a>
+            <a href="jpa/">Explore ►</a>
           </div>
         </section>
 
@@ -929,124 +861,35 @@
 <footer>
   <div class="footer-content">
     <div>
-      <a href="https://www.admos.de/impressum/">Impressum</a>
-      <a href="https://www.admos.de/datenschutzerklarung/">Datenschutzerklärung</a>
+      <a href="https://www.admos.de/impressum/">Legal Notice</a>
+      <a href="https://www.admos.de/datenschutzerklarung/">Privacy Policy</a>
     </div>
-    <p align="right">@Urheberrecht. Alle Rechte vorbehalten</p>
+    <p align="right">© AdMOS GmbH. All rights reserved.</p>
   </div>
 </footer>
 
 
-<!-- =========================================================
-     LANGUAGE SELECTOR
-     ========================================================= -->
-<div class="language-switcher" id="languageSwitcher">
-  <button class="language-switcher-button" id="languageSwitcherButton"
-          type="button" aria-haspopup="true" aria-expanded="false">
-    <svg class="language-flag" id="currentFlag" viewBox="0 0 30 20" aria-hidden="true">
-      <rect width="30" height="6.67" y="0" fill="#000000"/>
-      <rect width="30" height="6.67" y="6.67" fill="#DD0000"/>
-      <rect width="30" height="6.66" y="13.34" fill="#FFCE00"/>
-    </svg>
-    <span id="currentLanguageCode">DE</span>
-    <span class="language-switcher-arrow"></span>
-  </button>
 
-  <div class="language-switcher-menu" role="menu">
-    <button class="language-switcher-option active" type="button" data-language="de" role="menuitem">
-      <svg class="language-flag" viewBox="0 0 30 20" aria-hidden="true">
-        <rect width="30" height="6.67" y="0" fill="#000000"/>
-        <rect width="30" height="6.67" y="6.67" fill="#DD0000"/>
-        <rect width="30" height="6.66" y="13.34" fill="#FFCE00"/>
-      </svg>
-      Deutsch
-    </button>
 
-    <button class="language-switcher-option" type="button" data-language="en" role="menuitem">
-      <svg class="language-flag" viewBox="0 0 60 30" aria-hidden="true">
-        <clipPath id="ukClip"><rect width="60" height="30"/></clipPath>
-        <g clip-path="url(#ukClip)">
-          <rect width="60" height="30" fill="#012169"/>
-          <path d="M0 0L60 30M60 0L0 30" stroke="#FFFFFF" stroke-width="6"/>
-          <path d="M0 0L60 30M60 0L0 30" stroke="#C8102E" stroke-width="2.5"/>
-          <path d="M30 0V30M0 15H60" stroke="#FFFFFF" stroke-width="10"/>
-          <path d="M30 0V30M0 15H60" stroke="#C8102E" stroke-width="6"/>
-        </g>
-      </svg>
-      English
-    </button>
-  </div>
-</div>
 
+<!-- English-only availability notice, displayed only on the homepage -->
+<dialog class="language-notice" id="languageNotice"
+        aria-labelledby="languageNoticeTitle"
+        aria-describedby="noticeEnglish noticeGerman">
+  <h2 id="languageNoticeTitle">Language availability</h2>
+  <p id="noticeEnglish" lang="en">Technical articles are only available in English at the moment!</p>
+  <p id="noticeGerman" lang="de">Die Fachbeiträge sind derzeit nur auf Englisch verfügbar!</p>
+  <form method="dialog">
+    <button type="submit">Continue</button>
+  </form>
+</dialog>
 <script>
-  (function () {
-    const switcher = document.getElementById("languageSwitcher");
-    const button = document.getElementById("languageSwitcherButton");
-    const code = document.getElementById("currentLanguageCode");
-    const options = switcher.querySelectorAll(".language-switcher-option");
-    const currentFlag = document.getElementById("currentFlag");
-
-    const germanFlag = `
-      <rect width="30" height="6.67" y="0" fill="#000000"/>
-      <rect width="30" height="6.67" y="6.67" fill="#DD0000"/>
-      <rect width="30" height="6.66" y="13.34" fill="#FFCE00"/>
-    `;
-
-    const englishFlag = `
-      <rect width="60" height="30" fill="#012169"/>
-      <path d="M0 0L60 30M60 0L0 30" stroke="#FFFFFF" stroke-width="6"/>
-      <path d="M0 0L60 30M60 0L0 30" stroke="#C8102E" stroke-width="2.5"/>
-      <path d="M30 0V30M0 15H60" stroke="#FFFFFF" stroke-width="10"/>
-      <path d="M30 0V30M0 15H60" stroke="#C8102E" stroke-width="6"/>
-    `;
-
-    function setLanguage(language) {
-      document.documentElement.lang = language;
-
-      document.querySelectorAll("[data-de][data-en]").forEach(function (element) {
-        element.textContent = element.dataset[language];
-      });
-
-      code.textContent = language.toUpperCase();
-
-      if (language === "de") {
-        currentFlag.setAttribute("viewBox", "0 0 30 20");
-        currentFlag.innerHTML = germanFlag;
-      } else {
-        currentFlag.setAttribute("viewBox", "0 0 60 30");
-        currentFlag.innerHTML = englishFlag;
-      }
-
-      options.forEach(function (option) {
-        option.classList.toggle("active", option.dataset.language === language);
-      });
-
-      localStorage.setItem("admos-articles-language", language);
-      switcher.classList.remove("open");
-      button.setAttribute("aria-expanded", "false");
+  document.addEventListener("DOMContentLoaded", function () {
+    const notice = document.getElementById("languageNotice");
+    if (notice && typeof notice.showModal === "function") {
+      notice.showModal();
     }
-
-    button.addEventListener("click", function () {
-      const isOpen = switcher.classList.toggle("open");
-      button.setAttribute("aria-expanded", String(isOpen));
-    });
-
-    options.forEach(function (option) {
-      option.addEventListener("click", function () {
-        setLanguage(option.dataset.language);
-      });
-    });
-
-    document.addEventListener("click", function (event) {
-      if (!switcher.contains(event.target)) {
-        switcher.classList.remove("open");
-        button.setAttribute("aria-expanded", "false");
-      }
-    });
-
-    const savedLanguage = localStorage.getItem("admos-articles-language");
-    setLanguage(savedLanguage === "en" ? "en" : "de");
-  }());
+  });
 </script>
 
 </body>
