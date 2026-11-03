@@ -41,6 +41,9 @@ def main():
     for series, slug in SERIES_PAGES.items():
         page_path = ROOT / slug / "index.html"
         page = page_path.read_text(encoding="utf-8")
+        # Series pages sit one level below the site root. Reuse the shared
+        # favicon instead of referring to a nonexistent series/assets folder.
+        page = page.replace('href="assets/favicon.png"', 'href="../assets/favicon.png"')
         if page.count(START) != 1 or page.count(END) != 1:
             raise ValueError(f"{page_path}: expected exactly one series marker pair")
 
