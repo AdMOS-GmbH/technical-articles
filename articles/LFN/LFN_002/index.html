@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Beyond the 1/f spectrum: Influence of flicker noise on RF Circuits | AdMOS Technical Articles</title>
+
+  <link rel="icon" type="image/png" href="../../../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --admos-orange: #c97924;
+      --admos-text: #45494b;
+      --admos-bg: #ffffff;
+      --admos-blue: #303F6E;
+      --admos-ice: #CAD2D9;
+      --header-max: 1920px;
+      --header-pad: clamp(16px, 3vw, 48px);
+      --content-max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Poppins, Arial, sans-serif;
+      color: var(--admos-text);
+      background: #ffffff;
+    }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      background: var(--admos-bg);
+      border-bottom: 1px solid rgba(69,73,75,.10);
+    }
+
+    .header-shell {
+      width: min(100%, var(--header-max));
+      margin: 0 auto;
+      padding: 8px var(--header-pad);
+    }
+
+    .header-row {
+      display: grid;
+      grid-template-columns: minmax(150px, 2fr) minmax(0, 10fr);
+      align-items: center;
+      gap: 24px;
+      min-height: 120px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      min-width: 0;
+      transform: translateX(-15px);
+    }
+
+    .brand a {
+      display: block;
+      width: min(22vw, 300px);
+      min-width: 150px;
+      line-height: 0;
+    }
+
+    .brand img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .desktop-nav {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: .2px;
+      line-height: 1.5;
+    }
+
+    .nav-item { position: relative; }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px 16px;
+      color: var(--admos-text);
+      text-decoration: none;
+      background: transparent;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover,
+    .nav-item:focus-within > .nav-link {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.05);
+    }
+
+    .nav-link.active {
+      color: var(--admos-orange);
+      position: relative;
+    }
+
+    .nav-link.active::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 4px;
+      height: 2px;
+      background: var(--admos-orange);
+    }
+
+    .caret {
+      width: 8px;
+      height: 8px;
+      border-right: 1.6px solid currentColor;
+      border-bottom: 1.6px solid currentColor;
+      transform: rotate(45deg) translateY(-2px);
+    }
+
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 2px);
+      right: 0;
+      min-width: 270px;
+      padding: 8px;
+      background: #fff;
+      border: 1px solid rgba(69,73,75,.10);
+      box-shadow: 0 12px 35px rgba(0,0,0,.10);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(6px);
+      transition: .16s ease;
+    }
+
+    .nav-item:hover .dropdown,
+    .nav-item:focus-within .dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px 12px;
+      color: var(--admos-text);
+      text-decoration: none;
+      white-space: nowrap;
+      font-size: 15px;
+    }
+
+    .dropdown a:hover {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.10);
+    }
+
+    .menu-toggle { display: none; }
+
+    .menu-icon {
+      display: none;
+      justify-self: end;
+      width: 46px;
+      height: 46px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .menu-icon span,
+    .menu-icon span::before,
+    .menu-icon span::after {
+      content: "";
+      display: block;
+      width: 28px;
+      height: 3px;
+      background: var(--admos-text);
+      position: relative;
+      transition: .2s ease;
+    }
+
+    .menu-icon span::before { position: absolute; top: -9px; }
+    .menu-icon span::after { position: absolute; top: 9px; }
+
+    .mobile-nav { display: none; }
+
+    .eyebrow {
+      margin-bottom: 24px;
+      color: var(--admos-orange);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow a {
+      color: var(--admos-orange);
+      text-decoration: none;
+    }
+
+    .eyebrow a:hover { color: #ffffff; }
+
+    /* =========================================================
+       ARTICLE HERO
+       ========================================================= */
+    .article-hero {
+      padding: 2rem 0;
+      background:
+        linear-gradient(
+          to right,
+          rgba(48, 63, 110, 0.98) 0%,
+          rgba(48, 63, 110, 0.90) 45%,
+          rgba(48, 63, 110, 0.62) 75%,
+          rgba(48, 63, 110, 0.28) 100%
+        ),
+        url("assets/bg.jpg");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero-inner {
+      width: min(100%, var(--content-max));
+      margin: 0 auto;
+      color: #ffffff;
+    }
+
+    .article-hero h1 {
+      max-width: 980px;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(38px, 5vw, 66px);
+      line-height: 1.06;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 28px;
+      margin-top: 24px;
+      font-size: 15px;
+    }
+
+    .pdf-button {
+      display: inline-block;
+      margin-top: 28px;
+      padding: 9px 14px;
+      border: 2px solid var(--admos-orange);
+      border-radius: 8px;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 500;
+      background: var(--admos-orange);
+    }
+
+    .pdf-button:hover {
+      color: var(--admos-ice);
+      background: var(--admos-orange);
+    }
+
+    /* =========================================================
+       ARTICLE LAYOUT
+       ========================================================= */
+    .page-layout {
+      width: min(100%, var(--content-max));
+      margin: 0 auto;
+      padding: 56px 0 80px;
+      display: grid;
+      grid-template-columns: minmax(0, 760px) minmax(250px, 320px);
+      gap: 70px;
+      align-items: start;
+    }
+
+    .article { min-width: 0; }
+
+    .article h2 {
+      margin: 2.3rem 0 1rem;
+      color: var(--admos-blue);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(26px, 3vw, 34px);
+      line-height: 1.15;
+    }
+
+    .article h2:first-child { margin-top: 0; }
+
+    .article h3 {
+      margin: 1.8rem 0 .8rem;
+      color: var(--admos-blue);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .article p {
+      margin: 0 0 1.25rem;
+      color: var(--admos-text);
+      font-size: 17px;
+      line-height: 1.8;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .article figure { margin: 2.3rem 0; }
+
+    .article figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .article figcaption {
+      margin-top: 10px;
+      color: var(--admos-orange);
+      font-size: 13px;
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    .article table {
+      width: 100%;
+      margin: 0;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+
+    .table-wrapper {
+      margin: 2.3rem 0;
+    }
+
+    .table-caption {
+      margin-top: 10px;
+      color: var(--admos-orange);
+      font-size: 13px;
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    .caption-label {
+      font-weight: 600;
+    }
+
+    .article th,
+    .article td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #d8dadd;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .article th {
+      color: var(--admos-blue);
+      font-weight: 600;
+      border-top: 2px solid var(--admos-blue);
+      border-bottom: 1px solid var(--admos-blue);
+    }
+
+    .equation {
+      margin: 1.4rem 0 1.8rem;
+      padding: 18px;
+      text-align: center;
+      font-family: "Times New Roman", serif;
+      font-size: 26px;
+      background: #f6f7f8;
+      border-left: 4px solid var(--admos-orange);
+    }
+
+    .references {
+      padding-left: 1.2rem;
+      margin-bottom: 0;
+    }
+
+    .references li {
+      margin-bottom: .8rem;
+      color: var(--admos-text);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* =========================================================
+       SIDEBAR
+       ========================================================= */
+    .sidebar {
+      position: sticky;
+      top: 150px;
+    }
+
+    .sidebar-block {
+      margin-bottom: 34px;
+      padding: 22px;
+      background: #f7f7f6;
+      border-top: 3px solid var(--admos-blue);
+    }
+
+    .sidebar h3 {
+      margin: 0 0 16px;
+      color: var(--admos-blue);
+      font-size: 19px;
+    }
+
+    .toc {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc li { margin-bottom: 10px; }
+
+    .toc a {
+      color: var(--admos-text);
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .toc a:hover { color: var(--admos-orange); }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      padding: 5px 9px;
+      border: 1px solid var(--admos-orange);
+      border-radius: 7px;
+      color: var(--admos-orange);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+    footer {
+      padding: 70px 0;
+      width: 100%;
+      background: var(--admos-ice);
+    }
+
+    .footer-content {
+      width: min(100%, 1200px);
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--admos-text);
+    }
+
+    .footer-content div {
+      display: flex;
+      gap: 30px;
+    }
+
+    .footer-content a {
+      color: var(--admos-text);
+      text-decoration: none;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+    @media (max-width: 980px) {
+      .header-row {
+        grid-template-columns: 1fr auto;
+        min-height: 82px;
+      }
+
+      .brand a {
+        width: min(25vw, 210px);
+        min-width: 150px;
+      }
+
+      .desktop-nav { display: none; }
+      .menu-icon { display: flex; }
+
+      .menu-toggle:checked + .menu-icon span { background: transparent; }
+      .menu-toggle:checked + .menu-icon span::before { top: 0; transform: rotate(45deg); }
+      .menu-toggle:checked + .menu-icon span::after { top: 0; transform: rotate(-45deg); }
+      .menu-toggle:checked ~ .mobile-nav { display: block; }
+
+      .mobile-nav {
+        border-top: 1px solid rgba(69,73,75,.10);
+        padding: 10px 0 18px;
+      }
+
+      .mobile-nav a,
+      .mobile-nav summary {
+        display: block;
+        padding: 12px 4px;
+        color: var(--admos-text);
+        text-decoration: none;
+      }
+
+      .mobile-nav details > div { padding-left: 18px; }
+
+      .page-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+
+      .sidebar { position: static; }
+    }
+
+    @media (max-width: 700px) {
+      .hero-meta {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true,
+        tags: 'none'
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script
+    id="MathJax-script"
+    async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+  <style>
+    .math-display {
+      text-align: center;
+      margin: 1.4rem 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+  </style>
+
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="header-shell">
+    <div class="header-row">
+
+      <div class="brand">
+        <a href="https://www.admos.de/" aria-label="AdMOS Home">
+          <img
+            src="https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-455x160.png"
+            alt="AdMOS">
+        </a>
+      </div>
+
+      <nav class="desktop-nav" aria-label="Header navigation">
+        <div class="nav-item"><a class="nav-link" href="https://www.admos.de/">Home</a></div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/leistungen-und-produkte/">
+            <span>Services &amp; Products</span>
+            <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/">1/f-Measurement System</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/">CMOS Modeling</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/">Semiconductor Measurement Lab</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/">Software Development</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/">Design Analysis</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/">Simulation &amp; Consulting</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/">Research</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link active" href="../../../">Technical Articles</a>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/uber-admos/">
+            <span>About AdMOS</span>
+            <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/uber-admos/ueber-uns/">About Us</a>
+            <a href="https://www.admos.de/uber-admos/karriere/">Careers</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/kontakt/">Contact</a>
+        </div>
+      </nav>
+
+      <input class="menu-toggle" type="checkbox" id="menu-toggle">
+      <label class="menu-icon" for="menu-toggle" aria-label="Open menu"><span></span></label>
+
+      <nav class="mobile-nav" aria-label="Mobile navigation">
+        <a href="https://www.admos.de/">Home</a>
+        <a href="../../../">Technical Articles</a>
+        <a href="https://www.admos.de/kontakt/">Contact</a>
+      </nav>
+
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="article-hero">
+    <div class="hero-inner">
+
+      <div class="eyebrow">
+        <a href="../../../">Technical Articles</a>
+        /
+        <a href="../../../lfn/">Article Series</a>
+        /
+        <span>Article</span>
+      </div>
+
+      <h1>Beyond the 1/f spectrum: Influence of flicker noise on RF Circuits</h1>
+
+      <div class="hero-meta">
+        <span><strong>Published:</strong> 25.10.2026</span>
+        <span><strong>Reading time:</strong> approx. 8 minutes</span>
+        <span><strong>Article ID:</strong> LFN_002</span>
+      </div>
+
+      <a
+        class="pdf-button"
+        href="LFN_002.pdf"
+        target="_blank"
+        rel="noopener noreferrer">
+        Open PDF
+      </a>
+
+    </div>
+  </section>
+
+  <div class="page-layout">
+
+    <article class="article">
+<p>Low-frequency noise is often associated with slowly varying electrical fluctuations, seemingly far removed from the operating frequencies of modern analog and RF circuits. However, its influence is not necessarily confined to the low-frequency spectrum. Through nonlinear and time-varying circuit behavior, flicker noise can be translated to higher frequencies, affecting the performance of circuits operating in the megahertz and gigahertz regimes. In oscillators, it contributes to close-in phase noise, while in mixers and precision analog circuits, it can limit signal integrity and resolution. Understanding how these low-frequency fluctuations manifest at the circuit level is therefore essential for designing high-performance analog and RF systems.</p>
+
+<figure id="figure-fig-fig1">
+  <img src="assets/fig1.png" alt="Slowly varying device fluctuations occurring over millisecond timescales can perturb the phase of a high-frequency carrier oscillating on nanosecond or picosecond timescales.">
+  <figcaption><span class="caption-label">Figure 1:</span> Slowly varying device fluctuations occurring over millisecond timescales can perturb the phase of a high-frequency carrier oscillating on nanosecond or picosecond timescales.</figcaption>
+</figure>
+
+<h2 id="the-principle-of-noise-upconversion">The Principle of Noise Upconversion</h2>
+
+<p>In a linear, time-invariant circuit, noise components retain their original frequencies, although their amplitudes may change. However, many analog and RF circuits operate under nonlinear or periodically time-varying conditions, enabling noise to be transferred between different frequency regions. This phenomenon, commonly referred to as noise frequency conversion or upconversion, explains how low-frequency fluctuations can influence signals operating at much higher frequencies.</p>
+
+<p>Consider a transistor operating within an RF circuit. Slow fluctuations in its electrical characteristics, such as drain current, transconductance, or effective capacitance, can interact with the high-frequency signal. Depending on the circuit architecture, these fluctuations may modulate the amplitude, phase, or instantaneous frequency of the carrier [<a href="#ref-1">1</a>].</p>
+
+<p>The frequency-domain interpretation of noise upconversion is illustrated in Figure&nbsp;<a href="#figure-fig-fig2">2</a>. The characteristic $1/f$-like noise spectrum, with increasing power spectral density (PSD) toward lower frequencies near DC, can be translated to frequencies around a high-frequency carrier through nonlinear or time-varying circuit behavior. The resulting noise sidebands appear on either side of the carrier, potentially degrading its spectral purity.</p>
+
+<figure id="figure-fig-fig2">
+  <img src="assets/fig2.png" alt="(a) Low-frequency device noise exhibiting a characteristic $1/f$-like spectrum near DC. (b) Sidebands around a high-frequency carrier due to upconversion.">
+  <figcaption><span class="caption-label">Figure 2:</span> (a) Low-frequency device noise exhibiting a characteristic $1/f$-like spectrum near DC. (b) Sidebands around a high-frequency carrier due to upconversion.</figcaption>
+</figure>
+
+<p>A noise-perturbed carrier can be expressed as</p>
+
+<div class="math-display" id="equation-1">
+\[
+v(t) = [A_0 + a(t)]
+		\cos\left(2\pi f_c t + \phi(t)\right),\tag{1}
+\]
+</div>
+
+<p>where $A_0$ and $f_c$ denote the nominal carrier amplitude and frequency, respectively, while $a(t)$ and $\phi(t)$ represent noise-induced amplitude and phase fluctuations. Although these perturbations vary much more slowly than the carrier itself, they can generate spectral components in its immediate vicinity.</p>
+
+<p>The extent and nature of noise conversion depend strongly on the circuit topology and operating conditions. In oscillators, low-frequency device noise can contribute to close-in phase noise, whereas in mixers, periodically varying circuit behavior can translate noise between RF and baseband frequencies [<a href="#ref-2">2</a>]. Consequently, identical device-level noise characteristics may produce substantially different effects depending on the circuit in which the device operates.</p>
+
+<h2 id="phase-noise-in-oscillators">Phase Noise in Oscillators</h2>
+
+<p>One of the most significant consequences of flicker noise in RF oscillators is its contribution to close-in phase noise, which affects the spectral purity of the oscillating signal. Phase noise is commonly characterized by the single-sideband phase noise $\mathcal{L}(\Delta f)$, expressed in dBc/Hz, where $\Delta f$ denotes the frequency offset from the carrier.</p>
+
+<p>Flicker noise and white noise originating from active devices can perturb the instantaneous oscillation frequency, producing random phase fluctuations. Since phase represents the accumulated frequency deviation over time, their corresponding power spectral densities are related by</p>
+
+<div class="math-display" id="equation-2">
+\[
+S_{\phi}(\Delta f) =
+		\frac{S_{\delta f}(\Delta f)}{(\Delta f)^2},\tag{2}
+\]
+</div>
+
+<p>where $S_{\phi}$ and $S_{\delta f}$ denote the phase- and frequency-fluctuation power spectral densities, respectively. Thus, flicker-induced frequency fluctuations proportional to $1/\Delta f$ produce a $1/(\Delta f)^3$ phase-noise dependence, whereas white frequency noise produces a $1/(\Delta f)^2$ dependence.</p>
+
+<p>These behaviors can also be described using the classical Leeson model, which relates oscillator phase noise to the underlying noise sources and resonator characteristics [<a href="#ref-3">3</a>]. A simplified Leeson-type expression, including an empirical flicker-noise contribution, is</p>
+
+<div class="math-display" id="equation-3">
+\[
+\mathcal{L}_{\mathrm{lin}}(\Delta f)
+		\propto
+		\frac{F k_B T}{P_{\mathrm{osc}}}
+		\left[1+\left(\frac{f_L}{\Delta f}\right)^2\right]
+		\left[1+\frac{f_{\mathrm{flick}}}{\Delta f}\right],\tag{3}
+\]
+</div>
+
+<p>where $F$ is the effective noise factor, $k_B T$ the thermal-noise energy, and $P_{\mathrm{osc}}$ the oscillator signal power. The Leeson frequency $f_L=f_0/(2Q_L)$ depends on the oscillation frequency $f_0$ and loaded resonator quality factor $Q_L$, while $f_{\mathrm{flick}}$ represents an effective flicker-noise corner. The expression describes the approximate spectral behavior in linear units.</p>
+
+<p>Figure&nbsp;<a href="#figure-fig-fig3">3</a> illustrates the characteristic phase-noise regions. At small frequency offsets, flicker-related frequency fluctuations produce a $1/(\Delta f)^3$ dependence ($-30$ dB/decade). Beyond the $1/f^3$ corner, white frequency noise typically produces a $1/(\Delta f)^2$ dependence ($-20$ dB/decade), followed by a far-offset noise floor. This simplified sequence assumes that the flicker-related corner lies below the Leeson frequency.</p>
+
+<figure id="figure-fig-fig3">
+  <img src="assets/fig3.png" alt="Conceptual RF oscillator phase-noise spectrum showing the $1/f^3$, $1/f^2$, and noise-floor regions, with the dashed line marking the $1/f^3$ corner.">
+  <figcaption><span class="caption-label">Figure 3:</span> Conceptual RF oscillator phase-noise spectrum showing the $1/f^3$, $1/f^2$, and noise-floor regions, with the dashed line marking the $1/f^3$ corner.</figcaption>
+</figure>
+
+<p>The oscillator's $1/f^3$ corner is not necessarily identical to the intrinsic transistor flicker-noise corner, since noise conversion also depends on resonator properties and circuit topology. The oscillator's sensitivity to noise varies throughout each oscillation cycle, making the waveform and transistor conduction intervals important. Recent study on current-biased Class-B CMOS oscillators have shown that charge sharing between the tail capacitance and resonant tank during transistor triode operation can significantly enhance flicker-noise upconversion [<a href="#ref-4">4</a>]. Consequently, close-in phase noise depends not only on device-level flicker noise but also on oscillator architecture and operating conditions, highlighting the importance of accurate noise characterization for predicting RF oscillator performance.</p>
+
+<h2 id="effect-on-frequency-mixing">Effect on Frequency Mixing</h2>
+
+<p>In RF mixers, local oscillators (LOs) are typically used to translate carrier signals between different frequency bands. As discussed previously, practical oscillators exhibit phase noise around their carrier frequency. During mixing, this phase noise is transferred to the converted signals, potentially affecting receiver performance.</p>
+
+<p>This effect becomes particularly important when multiple signals of different amplitudes are present at the receiver input. Ideally, each carrier would be translated to a discrete frequency at the intermediate-frequency (IF) output. However, the LO phase noise introduces spectral spreading around each converted carrier. The magnitude of these noise contributions depends on the respective carrier powers and the LO phase-noise characteristics [<a href="#ref-5">5</a>].</p>
+
+<p>Figure&nbsp;<a href="#figure-fig-fig4">4</a> illustrates this behavior using three input carriers, with the strongest located between two weaker signals. After frequency conversion, all three carriers exhibit phase-noise sidebands originating from the LO. Since the central carrier is significantly stronger, its associated noise contribution is also greater and extends over a wider frequency range before reaching the receiver's intrinsic noise floor. The weaker carrier on the left remains distinguishable, whereas the carrier on the right is nearly masked by the phase-noise contribution of the stronger carrier.</p>
+
+<figure id="figure-fig-fig4">
+  <img src="assets/fig4.png" alt="Illustration of reciprocal mixing, showing how LO phase noise from a strong carrier can mask weaker neighboring signals.">
+  <figcaption><span class="caption-label">Figure 4:</span> Illustration of reciprocal mixing, showing how LO phase noise from a strong carrier can mask weaker neighboring signals.</figcaption>
+</figure>
+
+<p>This phenomenon, known as <em>reciprocal mixing</em>, increases the apparent receiver noise floor near strong carriers. Consequently, a receiver tuned to a weaker neighboring signal may experience a significantly reduced signal-to-noise ratio (SNR), even when its intrinsic noise figure remains unchanged. The severity of this degradation depends on the carrier power and the LO phase noise at the corresponding frequency separation. Thus, flicker-noise-induced phase noise can ultimately limit receiver sensitivity and selectivity.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Low-frequency noise can influence RF circuit performance far beyond the frequency range in which it originates. Through nonlinear and time-varying circuit behavior, flicker noise can affect signal stability, spectral purity, and overall system performance. Its impact depends not only on the intrinsic noise characteristics of semiconductor devices but also on circuit topology and operating conditions. Understanding these effects and accurately characterizing device-level noise are therefore essential for developing high-performance RF circuits and communication systems.</p>
+
+<h2 id="references">References</h2>
+
+<ol class="references">
+
+<li id="ref-1">A. Hajimiri and T. H. Lee, &ldquo;A general theory of phase noise in electrical oscillators,&rdquo; <em>IEEE Journal of Solid-State Circuits</em>, vol. 33, no. 2, pp. 179–194, Feb. 1998. doi: 10.1109/4.658619.</li>
+
+<li id="ref-2">H. Darabi and A. A. Abidi, &ldquo;Noise in RF-CMOS mixers: A simple physical model,&rdquo; <em>IEEE Journal of Solid-State Circuits</em>, vol. 35, no. 1, pp. 15–25, Jan. 2000. doi: 10.1109/4.818916.</li>
+
+<li id="ref-3">D. B. Leeson, &ldquo;A simple model of feedback oscillator noise spectrum,&rdquo; <em>Proceedings of the IEEE</em>, vol. 54, no. 2, pp. 329–330, Feb. 1966. doi: 10.1109/PROC.1966.4682.</li>
+
+<li id="ref-4">A. Bevilacqua and A. Mazzanti, &ldquo;On the upconversion of the cross-coupled pair 1/f noise into phase noise in current-biased Class-B CMOS oscillators,&rdquo; <em>IEEE Transactions on Circuits and Systems I: Regular Papers</em>, vol. 73, no. 3, pp. 1777–1786, Mar. 2026. doi: 10.1109/TCSI.2025.3602924.</li>
+
+<li id="ref-5">C. J. Grebenkemper, &ldquo;Local oscillator phase noise and its effect on receiver performance,&rdquo; <em>The Communications Edge</em>, vol. 8, no. 6, Nov./Dec. 1981, reprinted by WJ Communications, 2001.</li>
+
+</ol>
+    </article>
+
+    <aside class="sidebar">
+
+      <div class="sidebar-block">
+        <h3>On this page</h3>
+        <ul class="toc">
+          <li><a href="#the-principle-of-noise-upconversion">The Principle of Noise Upconversion</a></li>
+          <li><a href="#phase-noise-in-oscillators">Phase Noise in Oscillators</a></li>
+          <li><a href="#effect-on-frequency-mixing">Effect on Frequency Mixing</a></li>
+          <li><a href="#conclusion">Conclusion</a></li>
+          <li><a href="#references">References</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-block">
+        <h3>Article Tags</h3>
+        <div class="tags">
+          <span class="tag">Tag1</span>
+          <span class="tag">Tag2</span>
+          <span class="tag">Tag3</span>
+          <span class="tag">Tag4</span>
+          <span class="tag">TAg5</span>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-content">
+    <div>
+      <a href="https://www.admos.de/impressum/">Legal Notice</a>
+      <a href="https://www.admos.de/datenschutzerklarung/">Privacy Policy</a>
+    </div>
+    <p>@Copyright. All rights reserved</p>
+  </div>
+</footer>
+
+</body>
+</html>
