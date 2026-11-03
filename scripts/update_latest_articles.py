@@ -73,7 +73,9 @@ def plain_latex(text):
     text = text.replace("~", " ").replace("---", " - ").replace("--", "-")
     text = re.sub(r"\\[a-zA-Z]+\*?", "", text)
     text = text.replace("{", "").replace("}", "").replace("$", "")
-    return re.sub(r"\s+", " ", text).strip()
+    text = re.sub(r"\s+", " ", text).strip()
+    # Removing citation macros must not leave spaces before punctuation.
+    return re.sub(r"\s+([,.;:!?])", r"\1", text)
 
 
 def short_text(text, max_length=195):
@@ -139,10 +141,12 @@ def collect_articles(limit=3):
             raise ValueError(f"{file}: invalid ArticleDate {raw_date!r}, expected DD.MM.YYYY") from exc
 
         existing = EXISTING_TEASERS.get(f"{series}/{article_id}", {})
+        # Use the article's actual introduction for every English card.
+        # Explicit or curated summaries are fallbacks only when no introduction exists.
         summary_en = (
-            plain_latex(macro(tex, "ArticleSummaryEN"))
+            first_paragraph(tex)
+            or plain_latex(macro(tex, "ArticleSummaryEN"))
             or existing.get("en")
-            or first_paragraph(tex)
             or f"Explore this AdMOS technical article on {series}."
         )
         summary_de = (
