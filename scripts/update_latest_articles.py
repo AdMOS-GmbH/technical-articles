@@ -167,7 +167,6 @@ def collect_articles(limit=3):
 
 def render_card(article):
     title = escape(article["title"], quote=True)
-    summary_de = escape(article["de"], quote=True)
     summary_en = escape(article["en"], quote=True)
     image = escape(article["thumbnail"], quote=True)
     url = escape(f'articles/{article["series"]}/{article["id"]}/', quote=True)
@@ -178,15 +177,11 @@ def render_card(article):
         f'        <img src="{image}" alt="{title}">\n'
         f'        <div>\n'
         f'          <h3>{title}</h3>\n'
-        f'          <p data-de="{summary_de}"\n'
-        f'             data-en="{summary_en}">\n'
-        f'            {summary_de}\n'
-        f'          </p>\n'
-        f'          <a href="{url}" data-de="Lesen ►" data-en="Read ►">Lesen ►</a>\n'
+        f'          <p>{summary_en}</p>\n'
+        f'          <a href="{url}">Read ►</a>\n'
         f'        </div>\n'
         f'      </section>'
     )
-
 
 def main():
     page = HOMEPAGE.read_text(encoding="utf-8")
