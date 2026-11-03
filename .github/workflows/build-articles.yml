@@ -1,5 +1,9 @@
 name: Build Technical Articles
 
+concurrency:
+  group: build-technical-articles-main
+  cancel-in-progress: false
+
 on:
   workflow_dispatch:
 
@@ -42,6 +46,8 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
+      max-parallel: 1
       matrix:
         article_dir: ${{ fromJson(needs.discover.outputs.matrix) }}
 
