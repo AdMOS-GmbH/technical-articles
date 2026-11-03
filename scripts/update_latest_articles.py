@@ -122,7 +122,7 @@ def thumbnail(series, article_id, tex):
     return "assets/bg2.png"
 
 
-def collect_articles():
+def collect_articles(limit=3):
     articles = []
     for file in sorted((ROOT / "source").glob("*/*/article.tex")):
         series, article_id = file.parent.parent.name, file.parent.name
@@ -161,7 +161,8 @@ def collect_articles():
             "thumbnail": thumbnail(series, article_id, tex),
         })
 
-    return sorted(articles, key=lambda a: (a["date"], a["id"]), reverse=True)[:3]
+    sorted_articles = sorted(articles, key=lambda a: (a["date"], a["id"]), reverse=True)
+    return sorted_articles if limit is None else sorted_articles[:limit]
 
 
 def render_card(article):

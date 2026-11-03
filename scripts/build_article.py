@@ -1949,6 +1949,9 @@ def main():
         "{{ARTICLE_ID}}":
             html.escape(article_id),
 
+        "{{SERIES_SLUG}}":
+            html.escape(series.lower(), quote=True),
+
         "{{READING_TIME}}":
             html.escape(reading_time),
 
