@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>The New Frontiers of Nanoscale Semiconductor Technology | AdMOS Technical Articles</title>
+
+  <link rel="icon" type="image/png" href="../../../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --admos-orange: #c97924;
+      --admos-text: #45494b;
+      --admos-bg: #ffffff;
+      --admos-blue: #303F6E;
+      --admos-ice: #CAD2D9;
+      --header-max: 1920px;
+      --header-pad: clamp(16px, 3vw, 48px);
+      --content-max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Poppins, Arial, sans-serif;
+      color: var(--admos-text);
+      background: #ffffff;
+    }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      background: var(--admos-bg);
+      border-bottom: 1px solid rgba(69,73,75,.10);
+    }
+
+    .header-shell {
+      width: min(100%, var(--header-max));
+      margin: 0 auto;
+      padding: 8px var(--header-pad);
+    }
+
+    .header-row {
+      display: grid;
+      grid-template-columns: minmax(150px, 2fr) minmax(0, 10fr);
+      align-items: center;
+      gap: 24px;
+      min-height: 120px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      min-width: 0;
+      transform: translateX(-15px);
+    }
+
+    .brand a {
+      display: block;
+      width: min(22vw, 300px);
+      min-width: 150px;
+      line-height: 0;
+    }
+
+    .brand img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .desktop-nav {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: .2px;
+      line-height: 1.5;
+    }
+
+    .nav-item { position: relative; }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px 16px;
+      color: var(--admos-text);
+      text-decoration: none;
+      background: transparent;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover,
+    .nav-item:focus-within > .nav-link {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.05);
+    }
+
+    .nav-link.active {
+      color: var(--admos-orange);
+      position: relative;
+    }
+
+    .nav-link.active::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 4px;
+      height: 2px;
+      background: var(--admos-orange);
+    }
+
+    .caret {
+      width: 8px;
+      height: 8px;
+      border-right: 1.6px solid currentColor;
+      border-bottom: 1.6px solid currentColor;
+      transform: rotate(45deg) translateY(-2px);
+    }
+
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 2px);
+      right: 0;
+      min-width: 270px;
+      padding: 8px;
+      background: #fff;
+      border: 1px solid rgba(69,73,75,.10);
+      box-shadow: 0 12px 35px rgba(0,0,0,.10);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(6px);
+      transition: .16s ease;
+    }
+
+    .nav-item:hover .dropdown,
+    .nav-item:focus-within .dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px 12px;
+      color: var(--admos-text);
+      text-decoration: none;
+      white-space: nowrap;
+      font-size: 15px;
+    }
+
+    .dropdown a:hover {
+      color: var(--admos-orange);
+      background: rgba(201,121,36,.10);
+    }
+
+    .menu-toggle { display: none; }
+
+    .menu-icon {
+      display: none;
+      justify-self: end;
+      width: 46px;
+      height: 46px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .menu-icon span,
+    .menu-icon span::before,
+    .menu-icon span::after {
+      content: "";
+      display: block;
+      width: 28px;
+      height: 3px;
+      background: var(--admos-text);
+      position: relative;
+      transition: .2s ease;
+    }
+
+    .menu-icon span::before { position: absolute; top: -9px; }
+    .menu-icon span::after { position: absolute; top: 9px; }
+
+    .mobile-nav { display: none; }
+
+    .eyebrow {
+      margin-bottom: 24px;
+      color: var(--admos-orange);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow a {
+      color: var(--admos-orange);
+      text-decoration: none;
+    }
+
+    .eyebrow a:hover { color: #ffffff; }
+
+    /* =========================================================
+       ARTICLE HERO
+       ========================================================= */
+    .article-hero {
+      padding: 2rem 0;
+      background:
+        linear-gradient(
+          to right,
+          rgba(48, 63, 110, 0.98) 0%,
+          rgba(48, 63, 110, 0.90) 45%,
+          rgba(48, 63, 110, 0.62) 75%,
+          rgba(48, 63, 110, 0.28) 100%
+        ),
+        url("assets/bg.jpg");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero-inner {
+      width: min(100%, var(--content-max));
+      margin: 0 auto;
+      color: #ffffff;
+    }
+
+    .article-hero h1 {
+      max-width: 980px;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(38px, 5vw, 66px);
+      line-height: 1.06;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 28px;
+      margin-top: 24px;
+      font-size: 15px;
+    }
+
+    .pdf-button {
+      display: inline-block;
+      margin-top: 28px;
+      padding: 9px 14px;
+      border: 2px solid var(--admos-orange);
+      border-radius: 8px;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 500;
+      background: var(--admos-orange);
+    }
+
+    .pdf-button:hover {
+      color: var(--admos-ice);
+      background: var(--admos-orange);
+    }
+
+    /* =========================================================
+       ARTICLE LAYOUT
+       ========================================================= */
+    .page-layout {
+      width: min(100%, var(--content-max));
+      margin: 0 auto;
+      padding: 56px 0 80px;
+      display: grid;
+      grid-template-columns: minmax(0, 760px) minmax(250px, 320px);
+      gap: 70px;
+      align-items: start;
+    }
+
+    .article { min-width: 0; }
+
+    .article h2 {
+      margin: 2.3rem 0 1rem;
+      color: var(--admos-blue);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(26px, 3vw, 34px);
+      line-height: 1.15;
+    }
+
+    .article h2:first-child { margin-top: 0; }
+
+    .article h3 {
+      margin: 1.8rem 0 .8rem;
+      color: var(--admos-blue);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .article p {
+      margin: 0 0 1.25rem;
+      color: var(--admos-text);
+      font-size: 17px;
+      line-height: 1.8;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .article figure { margin: 2.3rem 0; }
+
+    .article figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .article figcaption {
+      margin-top: 10px;
+      color: var(--admos-orange);
+      font-size: 13px;
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    .article table {
+      width: 100%;
+      margin: 0;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+
+    .table-wrapper {
+      margin: 2.3rem 0;
+    }
+
+    .table-caption {
+      margin-top: 10px;
+      color: var(--admos-orange);
+      font-size: 13px;
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    .caption-label {
+      font-weight: 600;
+    }
+
+    .article th,
+    .article td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #d8dadd;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .article th {
+      color: var(--admos-blue);
+      font-weight: 600;
+      border-top: 2px solid var(--admos-blue);
+      border-bottom: 1px solid var(--admos-blue);
+    }
+
+    .equation {
+      margin: 1.4rem 0 1.8rem;
+      padding: 18px;
+      text-align: center;
+      font-family: "Times New Roman", serif;
+      font-size: 26px;
+      background: #f6f7f8;
+      border-left: 4px solid var(--admos-orange);
+    }
+
+    .references {
+      padding-left: 1.2rem;
+      margin-bottom: 0;
+    }
+
+    .references li {
+      margin-bottom: .8rem;
+      color: var(--admos-text);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* =========================================================
+       SIDEBAR
+       ========================================================= */
+    .sidebar {
+      position: sticky;
+      top: 150px;
+    }
+
+    .sidebar-block {
+      margin-bottom: 34px;
+      padding: 22px;
+      background: #f7f7f6;
+      border-top: 3px solid var(--admos-blue);
+    }
+
+    .sidebar h3 {
+      margin: 0 0 16px;
+      color: var(--admos-blue);
+      font-size: 19px;
+    }
+
+    .toc {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc li { margin-bottom: 10px; }
+
+    .toc a {
+      color: var(--admos-text);
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .toc a:hover { color: var(--admos-orange); }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      padding: 5px 9px;
+      border: 1px solid var(--admos-orange);
+      border-radius: 7px;
+      color: var(--admos-orange);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+    footer {
+      padding: 70px 0;
+      width: 100%;
+      background: var(--admos-ice);
+    }
+
+    .footer-content {
+      width: min(100%, 1200px);
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--admos-text);
+    }
+
+    .footer-content div {
+      display: flex;
+      gap: 30px;
+    }
+
+    .footer-content a {
+      color: var(--admos-text);
+      text-decoration: none;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+    @media (max-width: 980px) {
+      .header-row {
+        grid-template-columns: 1fr auto;
+        min-height: 82px;
+      }
+
+      .brand a {
+        width: min(25vw, 210px);
+        min-width: 150px;
+      }
+
+      .desktop-nav { display: none; }
+      .menu-icon { display: flex; }
+
+      .menu-toggle:checked + .menu-icon span { background: transparent; }
+      .menu-toggle:checked + .menu-icon span::before { top: 0; transform: rotate(45deg); }
+      .menu-toggle:checked + .menu-icon span::after { top: 0; transform: rotate(-45deg); }
+      .menu-toggle:checked ~ .mobile-nav { display: block; }
+
+      .mobile-nav {
+        border-top: 1px solid rgba(69,73,75,.10);
+        padding: 10px 0 18px;
+      }
+
+      .mobile-nav a,
+      .mobile-nav summary {
+        display: block;
+        padding: 12px 4px;
+        color: var(--admos-text);
+        text-decoration: none;
+      }
+
+      .mobile-nav details > div { padding-left: 18px; }
+
+      .page-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+
+      .sidebar { position: static; }
+    }
+
+    @media (max-width: 700px) {
+      .hero-meta {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true,
+        tags: 'none'
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script
+    id="MathJax-script"
+    async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+  <style>
+    .math-display {
+      text-align: center;
+      margin: 1.4rem 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+  </style>
+
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="header-shell">
+    <div class="header-row">
+
+      <div class="brand">
+        <a href="https://www.admos.de/" aria-label="AdMOS Home">
+          <img
+            src="https://www.admos.de/wp-content/uploads/go-x/u/cd5bb185-7653-4858-bd12-fb579904c339/image-455x160.png"
+            alt="AdMOS">
+        </a>
+      </div>
+
+      <nav class="desktop-nav" aria-label="Header navigation">
+        <div class="nav-item"><a class="nav-link" href="https://www.admos.de/">Home</a></div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/leistungen-und-produkte/">
+            <span>Services &amp; Products</span>
+            <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/leistungen-und-produkte/1-f-measurement-system/">1/f-Measurement System</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/cmos-modellierung/">CMOS Modeling</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/halbleiter-messlabor/">Semiconductor Measurement Lab</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/softwareentwicklung/">Software Development</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/designanalyse/">Design Analysis</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/simulation-und-beratung/">Simulation &amp; Consulting</a>
+            <a href="https://www.admos.de/leistungen-und-produkte/forschung/">Research</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link active" href="../../../">Technical Articles</a>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/uber-admos/">
+            <span>About AdMOS</span>
+            <span class="caret"></span>
+          </a>
+          <div class="dropdown">
+            <a href="https://www.admos.de/uber-admos/ueber-uns/">About Us</a>
+            <a href="https://www.admos.de/uber-admos/karriere/">Careers</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="https://www.admos.de/kontakt/">Contact</a>
+        </div>
+      </nav>
+
+      <input class="menu-toggle" type="checkbox" id="menu-toggle">
+      <label class="menu-icon" for="menu-toggle" aria-label="Open menu"><span></span></label>
+
+      <nav class="mobile-nav" aria-label="Mobile navigation">
+        <a href="https://www.admos.de/">Home</a>
+        <a href="../../../">Technical Articles</a>
+        <a href="https://www.admos.de/kontakt/">Contact</a>
+      </nav>
+
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="article-hero">
+    <div class="hero-inner">
+
+      <div class="eyebrow">
+        <a href="../../../">Technical Articles</a>
+        /
+        <a href="../../../est/">Article Series</a>
+        /
+        <span>Article</span>
+      </div>
+
+      <h1>The New Frontiers of Nanoscale Semiconductor Technology</h1>
+
+      <div class="hero-meta">
+        <span><strong>Published:</strong> 25.09.2026</span>
+        <span><strong>Reading time:</strong> approx. 8 minutes</span>
+        <span><strong>Article ID:</strong> EST-001</span>
+      </div>
+
+      <a
+        class="pdf-button"
+        href="EST_001.pdf"
+        target="_blank"
+        rel="noopener noreferrer">
+        Open PDF
+      </a>
+
+    </div>
+  </section>
+
+  <div class="page-layout">
+
+    <article class="article">
+<h2 id="limits-of-conventional-scaling">Limits of Conventional Scaling</h2>
+
+<p>For decades, semiconductor progress was driven by continuously shrinking transistor dimensions, initially supported by the principles of Dennard scaling&nbsp;[<a href="#ref-1">1</a>]. This approach enabled higher transistor densities, improved performance, and increasingly complex integrated circuits within a given chip area. As devices entered the nanoscale regime, however, voltage scaling could no longer keep pace with dimensional scaling, while leakage, short-channel effects, variability, and power density became increasingly significant. These challenges make it progressively more difficult to achieve the traditional benefits of scaling by reducing physical dimensions alone. As illustrated conceptually in Fig.&nbsp;<a href="#figure-fig-fig1">1</a>, simply making conventional transistors smaller is therefore no longer sufficient. Continued progress requires a broader combination of new device architectures, materials, integration approaches, and operating regimes, opening new frontiers for nanoscale semiconductor technology.</p>
+
+<figure id="figure-fig-fig1">
+  <img src="assets/fig1.png" alt="Conventional transistor scaling toward nanoscale dimensions.">
+  <figcaption><span class="caption-label">Figure 1:</span> Conventional transistor scaling toward nanoscale dimensions.</figcaption>
+</figure>
+
+<h2 id="from-finfets-to-gate-all-around-and-beyond">From FinFETs to Gate-All-Around and Beyond</h2>
+
+<p>One of the most important developments in advanced CMOS technology has been the transition from planar transistors toward increasingly three-dimensional device architectures. As illustrated in Fig.&nbsp;<a href="#figure-fig-fig2">2</a>, this evolution has progressed from planar FETs to FinFETs and further toward gate-all-around FETs (GAAFETs) and complementary FETs (CFETs). Rather than relying solely on reducing physical dimensions, these architectures progressively increase the degree of electrostatic control that the gate has over the transistor channel.</p>
+
+<p>FinFETs marked a major departure from the traditional planar structure by forming the channel as a vertical fin. With the gate controlling the channel from multiple sides, FinFETs provide improved electrostatic integrity and better suppression of short-channel effects. GAAFETs extend this principle by surrounding the channel with the gate. Vertically stacked nanowires or nanosheets can be used to provide multiple channels within a compact footprint, combining strong electrostatic control with a larger effective channel width&nbsp;[<a href="#ref-2">2</a>].</p>
+
+<p>The progression does not stop at the individual transistor. CFETs extend scaling into the vertical dimension by stacking n-type and p-type transistors on top of each other instead of placing them side by side. This removes part of the lateral nMOS–pMOS separation from the standard-cell footprint and provides another route toward increasing logic density&nbsp;[<a href="#ref-3">3</a>]. The evolution from planar FETs through FinFETs and GAAFETs toward CFETs therefore represents a gradual transition from primarily lateral scaling toward increasingly three-dimensional device and circuit architectures.</p>
+
+<figure id="figure-fig-fig2">
+  <img src="assets/fig2.png" alt="Evolution of transistor architectures for continued CMOS scaling.">
+  <figcaption><span class="caption-label">Figure 2:</span> Evolution of transistor architectures for continued CMOS scaling.</figcaption>
+</figure>
+
+<h2 id="the-silicon-alternatives">The Silicon Alternatives</h2>
+
+<p>The search for new semiconductor technologies is not limited to changing transistor geometry. Different semiconductor materials offer electrical and physical properties that can be advantageous for specific operating conditions and applications. Figure&nbsp;<a href="#figure-fig-fig3">3</a> highlights four important material families and representative application areas where they are increasingly relevant.</p>
+
+<p>Silicon-germanium (SiGe) combines compatibility with established silicon technology with improved carrier transport and has become particularly important for high-frequency and RF electronics. SiGe heterojunction bipolar transistors are widely used in communication, radar, and high-speed mixed-signal circuits. III–V compound semiconductors such as InP and InGaAs offer very high carrier velocities and excellent high-frequency performance, making them particularly attractive for millimeter-wave and terahertz electronics&nbsp;[<a href="#ref-4">4</a>]. These properties also make III–V technologies interesting for applications where operation far beyond conventional microwave frequencies is required.</p>
+
+<p>Wide-bandgap semiconductors extend the material landscape in a different direction. GaN combines a wide bandgap, high breakdown field, and high electron mobility, enabling efficient operation at high voltages and switching frequencies. These characteristics have made GaN increasingly relevant for power conversion, RF power electronics, and emerging automotive systems. SiC similarly offers a wide bandgap and high breakdown field, together with excellent thermal robustness, making it well suited for demanding high-power and high-temperature environments&nbsp;[<a href="#ref-5">5</a>]. Such characteristics are also attractive for electronics operating under challenging conditions, including aerospace and space applications. These material systems should not be viewed simply as replacements for silicon. Instead, each occupies a different technological space, with its properties determining where it provides the greatest advantage.</p>
+
+<figure id="figure-fig-fig3">
+  <img src="assets/fig3.png" alt="Alternative material platforms and their representative application domains.">
+  <figcaption><span class="caption-label">Figure 3:</span> Alternative material platforms and their representative application domains.</figcaption>
+</figure>
+
+<h2 id="the-rise-of-two-dimensional-materials">The Rise of Two-Dimensional Materials</h2>
+
+<p>Two-dimensional (2D) materials introduce a fundamentally different approach to nanoscale electronics. Unlike conventional bulk semiconductors, these materials can consist of individual or only a few atomic layers, resulting in extremely thin electronic channels. Importantly, 2D materials are not a single class of semiconductor. As illustrated in Fig.&nbsp;<a href="#figure-fig-fig4">4</a>, they span a broad range of electronic properties, from wide-bandgap insulators such as hexagonal boron nitride (hBN), through semiconductors such as MoS$_2$ and black phosphorus, to semimetals such as graphene.</p>
+
+<p>For transistor applications, semiconducting 2D materials are particularly interesting because their atomically thin channels can provide strong electrostatic gate control even at very small dimensions. More broadly, transition-metal dichalcogenides such as MoS$_2$, WS$_2$, and WSe$_2$ offer finite bandgaps while retaining channel thicknesses below a nanometer, making them attractive candidates for aggressively scaled transistors&nbsp;[<a href="#ref-7">7</a>].</p>
+
+<p>Another distinctive feature of 2D materials is that different layers can be combined through van der Waals interactions without requiring the conventional lattice matching associated with many bulk semiconductor heterostructures. This creates opportunities to combine conducting, semiconducting, and insulating 2D layers within vertically integrated structures. At the same time, significant challenges remain before such devices can be introduced into large-scale semiconductor manufacturing. Contact resistance, dielectric integration, controlled doping, material uniformity, defects, and wafer-scale growth are among the key issues that still need to be addressed&nbsp;[<a href="#ref-7">7</a>]. Nevertheless, the combination of atomic-scale thickness and a remarkably diverse range of electronic properties makes 2D materials an important platform for exploring future generations of nanoscale devices.</p>
+
+<figure id="figure-fig-fig4">
+  <img src="assets/fig4.png" alt="Examples of 2D materials with diverse electronic properties, ranging from insulators and semiconductors to semimetals.">
+  <figcaption><span class="caption-label">Figure 4:</span> Examples of 2D materials with diverse electronic properties, ranging from insulators and semiconductors to semimetals.</figcaption>
+</figure>
+
+<h2 id="entering-the-cryogenic-regime">Entering the Cryogenic Regime</h2>
+
+<p>Semiconductor technology is increasingly being pushed far beyond its conventional room-temperature operating environment. Temperatures ranging from a few kelvin down to the millikelvin regime are relevant to a growing number of electronic systems. As illustrated in Fig.&nbsp;<a href="#figure-fig-fig5">5</a>, this development is being driven by applications including quantum computing, high-performance computing (HPC), high-energy physics, and space technologies.</p>
+
+<p>Quantum computing is one of the most prominent drivers, with many quantum processors requiring temperatures close to absolute zero. As these systems grow in complexity, parts of the control and readout electronics are also being brought into the cryogenic environment to reduce the enormous interconnection challenge between the quantum processor and room-temperature electronics. Cryogenic electronics are similarly important in high-energy physics, where highly sensitive detectors and their associated electronics may operate at very low temperatures. Space technologies must withstand extreme thermal environments, while cryogenic operation is also being explored for future HPC systems, where reduced leakage and interconnect resistance together with changes in transistor performance may offer technological advantages&nbsp;[<a href="#ref-8">8</a>].</p>
+
+<p>Operating at such low temperatures, however, significantly alters the underlying semiconductor physics. Reduced phonon scattering can improve carrier mobility, while leakage currents can decrease substantially. At the same time, threshold voltage, subthreshold characteristics, series resistance, and other device properties can change considerably. At sufficiently low temperatures, effects such as incomplete dopant ionization and interface trapping also become increasingly important. The cryogenic regime therefore presents a distinct set of opportunities and challenges as semiconductor technologies expand into applications operating far below conventional temperatures.</p>
+
+<figure id="figure-fig-fig5">
+  <img src="assets/fig5.png" alt="Key application domains driving the development of cryogenic electronics.">
+  <figcaption><span class="caption-label">Figure 5:</span> Key application domains driving the development of cryogenic electronics.</figcaption>
+</figure>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The future of nanoscale semiconductor technology will not be defined by a single device, material, or scaling strategy. Instead, continued progress will come from selecting and combining technologies according to the demands of increasingly diverse applications. Three-dimensional transistor architectures can extend the capabilities of CMOS, alternative and two-dimensional materials can provide properties unavailable in conventional silicon, and cryogenic operation opens entirely different application spaces. Together, these developments point toward a semiconductor landscape that is becoming more specialized and technologically diverse, with innovation increasingly driven by what each application requires rather than by dimensional scaling alone.</p>
+
+<h2 id="references">References</h2>
+
+<ol class="references">
+
+<li id="ref-1">R. H. Dennard, F. H. Gaensslen, H.-N. Yu, V. L. Rideout, E. Bassous, and A. R. LeBlanc, &ldquo;Design of ion-implanted MOSFET's with very small physical dimensions,&rdquo; <em>IEEE Journal of Solid-State Circuits</em>, vol. 9, no. 5, pp. 256–268, Oct. 1974, doi: 10.1109/JSSC.1974.1050511.</li>
+
+<li id="ref-2">N. Loubet et al., &ldquo;Stacked nanosheet gate-all-around transistor to enable scaling beyond FinFET,&rdquo; in <em>Proc. IEEE Symp. VLSI Technology</em>, Kyoto, Japan, 2017, pp. T230–T231, doi: 10.23919/VLSIT.2017.7998183.</li>
+
+<li id="ref-3">J. Ryckaert et al., &ldquo;The complementary FET (CFET) for CMOS scaling beyond N3,&rdquo; in <em>Proc. IEEE Symp. VLSI Technology</em>, Honolulu, HI, USA, 2018, pp. 141–142, doi: 10.1109/VLSIT.2018.8510618.</li>
+
+<li id="ref-4">K. Tomioka, M. Yoshimura, and T. Fukui, &ldquo;A III–V nanowire channel on silicon for high-performance vertical transistors,&rdquo; <em>Nature</em>, vol. 488, pp. 189–192, Aug. 2012, doi: 10.1038/nature11293.</li>
+
+<li id="ref-5">J. Kim et al., &ldquo;Remote epitaxy and freestanding wide bandgap semiconductor membrane technology,&rdquo; <em>Nature Reviews Electrical Engineering</em>, 2024, doi: 10.1038/s44287-024-00091-0.</li>
+
+<li id="ref-6">B. Radisavljevic, A. Radenovic, J. Brivio, V. Giacometti, and A. Kis, &ldquo;Single-layer MoS$_2$ transistors,&rdquo; <em>Nature Nanotechnology</em>, vol. 6, pp. 147–150, Mar. 2011, doi: 10.1038/nnano.2010.279.</li>
+
+<li id="ref-7">S. Das et al., &ldquo;Transistors based on two-dimensional materials for future integrated circuits,&rdquo; <em>Nature Electronics</em>, vol. 4, pp. 786–799, Nov. 2021, doi: 10.1038/s41928-021-00670-1.</li>
+
+<li id="ref-8">F. Bashir, H. Abbas, A. Nisar, U. I. Bature, A. Alzahrani, and F. Zahoor, &ldquo;Cryogenic electronics for high performance computing applications: A comprehensive review,&rdquo; <em>Materials Today Physics</em>, vol. 59, Art. no. 101960, Dec. 2025, doi: 10.1016/j.mtphys.2025.101960.</li>
+
+</ol>
+    </article>
+
+    <aside class="sidebar">
+
+      <div class="sidebar-block">
+        <h3>On this page</h3>
+        <ul class="toc">
+          <li><a href="#limits-of-conventional-scaling">Limits of Conventional Scaling</a></li>
+          <li><a href="#from-finfets-to-gate-all-around-and-beyond">From FinFETs to Gate-All-Around and Beyond</a></li>
+          <li><a href="#the-silicon-alternatives">The Silicon Alternatives</a></li>
+          <li><a href="#the-rise-of-two-dimensional-materials">The Rise of Two-Dimensional Materials</a></li>
+          <li><a href="#entering-the-cryogenic-regime">Entering the Cryogenic Regime</a></li>
+          <li><a href="#conclusion">Conclusion</a></li>
+          <li><a href="#references">References</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-block">
+        <h3>Article Tags</h3>
+        <div class="tags">
+          <span class="tag">Beyond CMOS</span>
+          <span class="tag">Gate-All-Around</span>
+          <span class="tag">CFET</span>
+          <span class="tag">SiGE</span>
+          <span class="tag">GaN</span>
+          <span class="tag">SiGe</span>
+          <span class="tag">2D Materials</span>
+          <span class="tag">Cryogenic Electronics</span>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-content">
+    <div>
+      <a href="https://www.admos.de/impressum/">Legal Notice</a>
+      <a href="https://www.admos.de/datenschutzerklarung/">Privacy Policy</a>
+    </div>
+    <p>@Copyright. All rights reserved</p>
+  </div>
+</footer>
+
+</body>
+</html>

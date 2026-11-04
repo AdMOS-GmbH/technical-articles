@@ -1875,6 +1875,22 @@ def main():
         article_dir.name
     )
 
+    # Directory and output names use SERIES_NNN. The visible ID comes
+    # from the hyphenated \ArticleID metadata.
+    if not re.fullmatch(r"[A-Z]+_[0-9]{3,}", article_id):
+        raise ValueError(
+            f"Invalid article directory {article_id!r}. Expected SERIES_NNN."
+        )
+
+    article_display_id = (
+        extract_newcommand(tex, "ArticleID")
+        or article_id.replace("_", "-", 1)
+    )
+    if article_display_id != article_id.replace("_", "-", 1):
+        raise ValueError(
+            f"ArticleID {article_display_id!r} does not match folder {article_id!r}"
+        )
+
     series = (
         article_dir.parent.name
     )
@@ -1973,6 +1989,9 @@ def main():
 
         "{{ARTICLE_ID}}":
             html.escape(article_id),
+
+        "{{ARTICLE_DISPLAY_ID}}":
+            html.escape(latex_plain_text(article_display_id)),
 
         "{{SERIES_SLUG}}":
             html.escape(series.lower(), quote=True),

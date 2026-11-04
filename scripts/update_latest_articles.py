@@ -27,7 +27,7 @@ SERIES_DE = {
 # Keep the existing, professionally edited bilingual summaries on the homepage.
 # New articles are still listed automatically even without an override.
 EXISTING_TEASERS = {
-    "EST/EST001": {
+    "EST/EST_001": {
         "de": "Wie neue Transistorarchitekturen, Materialien und Betriebsbedingungen die Grenzen der klassischen Halbleiterskalierung erweitern, von GAAFETs und CFETs bis zu 2D-Materialien und kryogener Elektronik.",
         "en": "How new transistor architectures, materials and operating regimes extend the limits of conventional semiconductor scaling, from GAAFETs and CFETs to 2D materials and cryogenic electronics.",
     },
