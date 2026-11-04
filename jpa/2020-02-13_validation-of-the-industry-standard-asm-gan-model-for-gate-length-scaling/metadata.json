@@ -1,0 +1,10 @@
+{
+  "Title": "Validation of the Industry-Standard ASM-GaN Model for Gate-Length Scaling",
+  "PublicationType": "Conference",
+  "PublicationSource": "2020 4th Australian Microwave Symposium (AMS)",
+  "DOI": "https://doi.org/10.1109/AMS48904.2020.9059542",
+  "PublicationDate": "2020-02-13",
+  "PublicationDateBasis": "Conference start date",
+  "ShortAbstract": "Validates the ASM-GaN compact model against pulsed I-V measurements of AlGaN/GaN HEMTs with different gate lengths.",
+  "SourceDocumentID": "9059542"
+}
