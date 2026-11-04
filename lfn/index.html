@@ -426,7 +426,36 @@
       border-radius: 8px;
     }
 
-    /* Mobile */
+        /* =========================================================
+       PUBLICATION METADATA
+       ========================================================= */
+    .publication-meta {
+      margin: 18px 0 20px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(69, 73, 75, 0.15);
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 8px !important;
+    }
+
+    .publication-meta > div {
+      display: grid !important;
+      grid-template-columns: 105px 1fr;
+      gap: 10px;
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
+    .publication-meta span {
+      color: #7a7d80;
+    }
+
+    .publication-meta strong {
+      color: #45494b;
+      font-weight: 500;
+    }
+
+/* Mobile */
     @media (max-width: 800px) {
       .article-box {
         flex-direction: column;
@@ -640,6 +669,9 @@
         <div>
           <h3>Beyond the 1/f spectrum: Influence of flicker noise on RF Circuits</h3>
           <p>Low-frequency noise is often associated with slowly varying electrical fluctuations, seemingly far removed from the operating frequencies of modern analog and RF circuits. However, its...</p>
+          <div class="publication-meta">
+            <div><span>Published:</span><strong>25.10.2026</strong></div>
+          </div>
           <a href="../articles/LFN/LFN_002/">Read ►</a>
         </div>
       </section>
@@ -650,6 +682,9 @@
         <div>
           <h3>Small Signals, Huge Consequences: Origins of Low-frequency Noise in Electronic Devices</h3>
           <p>As transistors scale into the nanometer regime, reduced carrier populations, smaller signal levels, and tighter noise margins make circuits increasingly sensitive to microscopic fluctuations...</p>
+          <div class="publication-meta">
+            <div><span>Published:</span><strong>18.05.2026</strong></div>
+          </div>
           <a href="../articles/LFN/LFN_001/">Read ►</a>
         </div>
       </section>

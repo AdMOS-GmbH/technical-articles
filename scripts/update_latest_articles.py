@@ -175,6 +175,7 @@ def render_card(article):
     image = escape(article["thumbnail"], quote=True)
     url = escape(f'articles/{article["series"]}/{article["id"]}/', quote=True)
     comment = escape(f'{article["id"]}: {article["date"]:%d.%m.%Y}')
+    publication_date = escape(article["date"].strftime("%d.%m.%Y"))
     return (
         f'      <!-- {comment} -->\n'
         f'      <section>\n'
@@ -182,6 +183,9 @@ def render_card(article):
         f'        <div>\n'
         f'          <h3>{title}</h3>\n'
         f'          <p>{summary_en}</p>\n'
+        f'          <div class="publication-meta">\n'
+        f'            <div><span>Published:</span><strong>{publication_date}</strong></div>\n'
+        f'          </div>\n'
         f'          <a href="{url}">Read ►</a>\n'
         f'        </div>\n'
         f'      </section>'

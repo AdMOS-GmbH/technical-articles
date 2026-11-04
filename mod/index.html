@@ -426,7 +426,36 @@
       border-radius: 8px;
     }
 
-    /* Mobile */
+        /* =========================================================
+       PUBLICATION METADATA
+       ========================================================= */
+    .publication-meta {
+      margin: 18px 0 20px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(69, 73, 75, 0.15);
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 8px !important;
+    }
+
+    .publication-meta > div {
+      display: grid !important;
+      grid-template-columns: 105px 1fr;
+      gap: 10px;
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
+    .publication-meta span {
+      color: #7a7d80;
+    }
+
+    .publication-meta strong {
+      color: #45494b;
+      font-weight: 500;
+    }
+
+/* Mobile */
     @media (max-width: 800px) {
       .article-box {
         flex-direction: column;
@@ -640,6 +669,9 @@
         <div>
           <h3>The Landscape of Semiconductor Modeling and Simulation</h3>
           <p>Modern electronic systems span an enormous range of scales, from physical processes inside individual semiconductor devices to the behavior of complete electronic systems. No single model can...</p>
+          <div class="publication-meta">
+            <div><span>Published:</span><strong>25.08.2026</strong></div>
+          </div>
           <a href="../articles/MOD/MOD_001/">Read ►</a>
         </div>
       </section>
