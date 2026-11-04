@@ -1,0 +1,10 @@
+{
+  "Title": "THM-OTFT: A Complete Physics-Based Verilog-A Compact Model for Short-Channel Organic Thin-Film Transistors",
+  "PublicationType": "Journal",
+  "PublicationSource": "IEEE Journal of the Electron Devices Society",
+  "DOI": "https://doi.org/10.1109/JEDS.2023.3294598",
+  "PublicationDate": "2023-07-01",
+  "PublicationDateBasis": "2023 journal publication, July month placeholder for sorting",
+  "ShortAbstract": "Presents a comprehensive physics-based Verilog-A compact model for short-channel organic thin-film transistors, validated using measured device characteristics.",
+  "SourceDocumentID": "10179906"
+}
