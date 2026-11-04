@@ -138,7 +138,8 @@ Edit the metadata near the top of `article.tex`:
 
 - The publication date must follow **DD.MM.YYYY**, for example `15.11.2026`. This date determines the order of the homepage's latest-article cards.
 - The title is taken from `ArticleTitle`.
-- The **folder name** determines the generated website path and PDF filename, for example `LFN_002`. Keep `ArticleID` consistent as document metadata, although it can follow the printed article-ID convention.
+- Use an underscore in source and published directory names: `SERIES_NNN` (for example `LFN_002` and `EST_001`). The directory name also determines the published PDF filename, such as `EST_001.pdf`.
+- Define the corresponding hyphenated `\ArticleID` metadata (for example `EST-001`). This appears in the article hero while URLs and PDF filenames retain underscores.
 - Keep referenced figures and supporting assets alongside the source. Filename case matters on the Linux build runner.
 
 For more useful article previews, optional metadata can be supplied:
