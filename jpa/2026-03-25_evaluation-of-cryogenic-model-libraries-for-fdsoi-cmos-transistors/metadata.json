@@ -1,0 +1,8 @@
+{
+  "Title": "Evaluation of Cryogenic Model Libraries for FDSOI CMOS Transistors",
+  "PublicationType": "Journal",
+  "PublicationSource": "IEEE Transactions on Electron Devices",
+  "DOI": "https://doi.org/10.1109/TED.2026.3675187",
+  "PublicationDate": "2026-03-25",
+  "ShortAbstract": "A cryogenic simulation library for FDSOI transistors enabling accurate device- and circuit-level modeling from 8 K to room temperature."
+}

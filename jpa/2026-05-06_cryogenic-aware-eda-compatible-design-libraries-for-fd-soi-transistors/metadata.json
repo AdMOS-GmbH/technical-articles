@@ -1,0 +1,8 @@
+{
+  "Title": "Cryogenic-Aware EDA-Compatible Design Libraries for FD-SOI Transistors",
+  "PublicationType": "Conference",
+  "PublicationSource": "2026 10th IEEE Electron Devices Technology & Manufacturing Conference (EDTM)",
+  "DOI": "https://doi.org/10.1109/EDTM65772.2026.11497092",
+  "PublicationDate": "2026-05-06",
+  "ShortAbstract": "Extending existing FD-SOI foundry libraries with temperature- and back-bias-dependent effects for seamless integration into established EDA design flows."
+}
