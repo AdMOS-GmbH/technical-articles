@@ -1,0 +1,8 @@
+{
+  "Title": "Towards Automatic Diagnosis of Minority Carriers Propagation Problems in HV/HT Automotive Smart Power ICs",
+  "PublicationType": "Conference",
+  "PublicationSource": "2016 Design, Automation & Test in Europe Conference & Exhibition (DATE)",
+  "DOI": "https://doi.org/10.3850/9783981537079_0291",
+  "PublicationDate": "2016-03-14",
+  "ShortAbstract": "Presents an automated substrate parasitic extraction methodology to diagnose minority-carrier coupling and latch-up risks in high-voltage automotive smart power ICs."
+}

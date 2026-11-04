@@ -1,0 +1,8 @@
+{
+  "Title": "A CAD Integrated Solution of Substrate Modeling for Industrial IC Design",
+  "PublicationType": "Conference",
+  "PublicationSource": "2015 IEEE 20th International Mixed-Signals Testing Workshop (IMSTW)",
+  "DOI": "https://doi.org/10.1109/IMS3TW.2015.7177885",
+  "PublicationDate": "2015-06-24",
+  "ShortAbstract": "Presents a CAD-integrated substrate-modeling approach for smart-power ICs to predict parasitic coupling between switching power stages and sensitive circuits."
+}
