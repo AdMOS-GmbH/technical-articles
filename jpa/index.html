@@ -363,7 +363,8 @@
        ========================================================= */
 
     .article-box {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       width: 100%;
       gap: 30px;
       margin-top: 2rem;
@@ -375,7 +376,6 @@
     .article-box > section {
       display: flex;
       flex-direction: column;
-      flex: 0 1 calc((100% - 60px) / 3);
       min-width: 0;
 
     padding: 1rem;
@@ -456,14 +456,17 @@
       font-weight: 500;
     }
 
-    /* Mobile */
+    /* Tablet */
     @media (max-width: 800px) {
       .article-box {
-        flex-direction: column;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+    }
 
-      .article-box > section {
-        width: 100%;
+    /* Mobile */
+    @media (max-width: 600px) {
+      .article-box {
+        grid-template-columns: 1fr;
       }
     }
 
