@@ -1,0 +1,45 @@
+name: Restore Original JPA Thumbnails
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "jpa/JPA_Original_Images_Restoration.zip"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: restore-jpa-originals
+  cancel-in-progress: false
+
+jobs:
+  restore:
+    name: Verify and restore original PNG files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Restore exact original files
+        run: python3 scripts/restore_jpa_image_archive.py
+
+      - name: Commit restored images and remove upload archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- jpa/*/thumbnail.png
+          git rm -- jpa/JPA_Original_Images_Restoration.zip
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Restore original full-resolution JPA publication thumbnails"
+          git pull --rebase origin main
+          git push origin HEAD:main
