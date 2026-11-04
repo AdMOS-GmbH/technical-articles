@@ -24,6 +24,7 @@ def card(article):
     summary_en = escape(article["en"], quote=True)
     image = escape("../" + article["thumbnail"], quote=True)
     url = escape(f'../articles/{article["series"]}/{article["id"]}/', quote=True)
+    publication_date = escape(article["date"].strftime("%d.%m.%Y"))
     return (
         f'      <!-- {escape(article["id"])} -->\n'
         '      <section>\n'
@@ -31,6 +32,9 @@ def card(article):
         '        <div>\n'
         f'          <h3>{title}</h3>\n'
         f'          <p>{summary_en}</p>\n'
+        f'          <div class="publication-meta">\n'
+        f'            <div><span>Published:</span><strong>{publication_date}</strong></div>\n'
+        f'          </div>\n'
         f'          <a href="{url}">Read ►</a>\n'
         '        </div>\n'
         '      </section>'

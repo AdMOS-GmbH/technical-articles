@@ -420,7 +420,36 @@
     border-radius: 8px;
   }
 
-  /* Mobile */
+      /* =========================================================
+       PUBLICATION METADATA
+       ========================================================= */
+    .publication-meta {
+      margin: 18px 0 20px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(69, 73, 75, 0.15);
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 8px !important;
+    }
+
+    .publication-meta > div {
+      display: grid !important;
+      grid-template-columns: 105px 1fr;
+      gap: 10px;
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
+    .publication-meta span {
+      color: #7a7d80;
+    }
+
+    .publication-meta strong {
+      color: #45494b;
+      font-weight: 500;
+    }
+
+/* Mobile */
   @media (max-width: 800px) {
     .article-box {
       flex-direction: column;
@@ -754,6 +783,9 @@
         <div>
           <h3>Beyond the 1/f spectrum: Influence of flicker noise on RF Circuits</h3>
           <p>Low-frequency noise is often associated with slowly varying electrical fluctuations, seemingly far removed from the operating frequencies of modern analog and RF circuits. However, its...</p>
+          <div class="publication-meta">
+            <div><span>Published:</span><strong>25.10.2026</strong></div>
+          </div>
           <a href="articles/LFN/LFN_002/">Read ►</a>
         </div>
       </section>
@@ -764,6 +796,9 @@
         <div>
           <h3>The New Frontiers of Nanoscale Semiconductor Technology</h3>
           <p>For decades, semiconductor progress was driven by continuously shrinking transistor dimensions, initially supported by the principles of Dennard scaling. This approach enabled higher...</p>
+          <div class="publication-meta">
+            <div><span>Published:</span><strong>25.09.2026</strong></div>
+          </div>
           <a href="articles/EST/EST_001/">Read ►</a>
         </div>
       </section>
@@ -774,6 +809,9 @@
         <div>
           <h3>The Landscape of Semiconductor Modeling and Simulation</h3>
           <p>Modern electronic systems span an enormous range of scales, from physical processes inside individual semiconductor devices to the behavior of complete electronic systems. No single model can...</p>
+          <div class="publication-meta">
+            <div><span>Published:</span><strong>25.08.2026</strong></div>
+          </div>
           <a href="articles/MOD/MOD_001/">Read ►</a>
         </div>
       </section>

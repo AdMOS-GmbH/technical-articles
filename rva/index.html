@@ -426,7 +426,36 @@
       border-radius: 8px;
     }
 
-    /* Mobile */
+        /* =========================================================
+       PUBLICATION METADATA
+       ========================================================= */
+    .publication-meta {
+      margin: 18px 0 20px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(69, 73, 75, 0.15);
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 8px !important;
+    }
+
+    .publication-meta > div {
+      display: grid !important;
+      grid-template-columns: 105px 1fr;
+      gap: 10px;
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
+    .publication-meta span {
+      color: #7a7d80;
+    }
+
+    .publication-meta strong {
+      color: #45494b;
+      font-weight: 500;
+    }
+
+/* Mobile */
     @media (max-width: 800px) {
       .article-box {
         flex-direction: column;
@@ -640,6 +669,9 @@
         <div>
           <h3>When One Defect Is Enough: Reliability in the Nanoscale Era</h3>
           <p>The electrical response of a transistor is determined by carrier transport through a channel that inevitably contains defects. In older technology generations, the relatively large device area...</p>
+          <div class="publication-meta">
+            <div><span>Published:</span><strong>25.07.2026</strong></div>
+          </div>
           <a href="../articles/RVA/RVA_001/">Read ►</a>
         </div>
       </section>
